@@ -1,0 +1,28 @@
+/build
+bootstrap.*
+classic.json*
+modern.json*
+.sencha
+
+# VS Code settings
+.vscode/
+
+# Node.js dependencies (если используешь)
+node_modules/
+
+# Логи
+*.log
+
+# Файлы скомпилированные после билда
+/dist
+/build
+
+# Операционные системы
+.DS_Store
+Thumbs.db
+
+# Среда для тестирования или CI
+*.env
+
+# Другие настройки
+.idea/
