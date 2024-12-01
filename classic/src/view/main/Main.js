@@ -5,7 +5,7 @@
  *
  * TODO - Replace this content of this view to suite the needs of your application.
  */
-Ext.define('NewKanbanApp.view.main.Main', {
+Ext.define('newapp.view.main.Main', {
     extend: 'Ext.tab.Panel',
     xtype: 'app-main',
 
@@ -13,9 +13,9 @@ Ext.define('NewKanbanApp.view.main.Main', {
         'Ext.plugin.Viewport',
         'Ext.window.MessageBox',
 
-        'NewKanbanApp.view.main.MainController',
-        'NewKanbanApp.view.main.MainModel',
-        'NewKanbanApp.view.main.List'
+        'newapp.view.main.MainController',
+        'newapp.view.main.MainModel',
+        'newapp.view.main.List'
     ],
 
     controller: 'main',

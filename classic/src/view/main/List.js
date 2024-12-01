@@ -1,12 +1,12 @@
 /**
  * This view is an example list of people.
  */
-Ext.define('NewKanbanApp.view.main.List', {
+Ext.define('newapp.view.main.List', {
     extend: 'Ext.grid.Panel',
     xtype: 'mainlist',
 
     requires: [
-        'NewKanbanApp.store.Personnel'
+        'newapp.store.Personnel'
     ],
 
     title: 'Personnel',

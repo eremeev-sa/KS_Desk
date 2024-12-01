@@ -3,10 +3,10 @@
  * calls Ext.application(). This is the ideal place to handle application launch and
  * initialization details.
  */
-Ext.define('NewKanbanApp.Application', {
+Ext.define('newapp.Application', {
     extend: 'Ext.app.Application',
 
-    name: 'NewKanbanApp',
+    name: 'newapp',
 
     quickTips: false,
     platformConfig: {

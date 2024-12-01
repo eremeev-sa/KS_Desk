@@ -1,9 +1,9 @@
-Ext.define('NewKanbanApp.store.Personnel', {
+Ext.define('newapp.store.Personnel', {
     extend: 'Ext.data.Store',
 
     alias: 'store.personnel',
 
-    model: 'NewKanbanApp.model.Personnel',
+    model: 'newapp.model.Personnel',
 
     data: { items: [
         { name: 'Jean Luc', email: "jeanluc.picard@enterprise.com", phone: "555-111-1111" },

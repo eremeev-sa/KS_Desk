@@ -1,7 +1,7 @@
-Ext.define('NewKanbanApp.model.Base', {
+Ext.define('newapp.model.Base', {
     extend: 'Ext.data.Model',
 
     schema: {
-        namespace: 'NewKanbanApp.model'
+        namespace: 'newapp.model'
     }
 });

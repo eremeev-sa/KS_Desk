@@ -1,6 +1,6 @@
 {
-    "name": "NewKanbanApp",
-    "namespace": "NewKanbanApp",
+    "name": "newapp",
+    "namespace": "newapp",
     "version": "1.0.0.0",
     "framework": "ext",
 
@@ -64,13 +64,13 @@
     "sass": {
         /**
          * The root namespace to use when mapping *.scss files to classes in the
-         * sass/src and sass/var directories. For example, "NewKanbanApp.view.Foo" would
-         * map to "sass/src/view/Foo.scss". If we changed this to "NewKanbanApp.view" then
+         * sass/src and sass/var directories. For example, "newapp.view.Foo" would
+         * map to "sass/src/view/Foo.scss". If we changed this to "newapp.view" then
          * it would map to "sass/src/Foo.scss". To style classes outside the app's
          * root namespace, change this to "". Doing so would change the mapping of
-         * "NewKanbanApp.view.Foo" to "sass/src/NewKanbanApp/view/Foo.scss".
+         * "newapp.view.Foo" to "sass/src/newapp/view/Foo.scss".
          */
-        "namespace": "NewKanbanApp",
+        "namespace": "newapp",
 
         /**
          * Generated sass source settings
@@ -547,5 +547,5 @@
      * Uniquely generated id for this application, used as prefix for localStorage keys.
      * Normally you should never change this value.
      */
-    "id": "b719a293-f109-4b84-9916-79252f76e7fa"
+    "id": "df62cc3e-953f-49ba-ae05-6aa60d95c8a7"
 }
