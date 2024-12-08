@@ -20,7 +20,7 @@ public class ColumnKanbanRepository : IColumnsKanbanRepository
 			.ToListAsync();
 
 		var columns = columnsEntities
-			.Select(c => ColumnKanban.Create(c.Id, c.Name, c.Order).ColumnKanban)
+			.Select(c => ColumnKanban.Create(c.Id, c.Name, c.BoardId, c.Order).ColumnKanban)
 			.ToList();
 		return columns;
 	}
@@ -31,6 +31,7 @@ public class ColumnKanbanRepository : IColumnsKanbanRepository
 		{
 			Id = columnKanban.Id,
 			Name = columnKanban.Name,
+			BoardId = columnKanban.BoardId,
 			Order = columnKanban.Order,
 		};
 		await _context.Columns.AddAsync(columnEntity);
@@ -38,11 +39,9 @@ public class ColumnKanbanRepository : IColumnsKanbanRepository
 		return columnEntity.Id;
 	}
 
-	// Обновленный метод Update с тремя параметрами
 	public async Task<Guid> Update(Guid id, string name, int order)
 	{
-		var columnEntity = await _context.Columns
-			.FirstOrDefaultAsync(c => c.Id == id);
+		var columnEntity = await _context.Columns.FirstOrDefaultAsync(c => c.Id == id);
 
 		if (columnEntity != null)
 		{
@@ -56,8 +55,7 @@ public class ColumnKanbanRepository : IColumnsKanbanRepository
 
 	public async Task<Guid> Delete(Guid id)
 	{
-		var columnEntity = await _context.Columns
-			.FirstOrDefaultAsync(c => c.Id == id);
+		var columnEntity = await _context.Columns.FirstOrDefaultAsync(c => c.Id == id);
 
 		if (columnEntity != null)
 		{
@@ -69,9 +67,7 @@ public class ColumnKanbanRepository : IColumnsKanbanRepository
 
 	public async Task UpdateOrder(List<Guid> orderedColumnIds)
 	{
-		var columns = await _context.Columns
-			.Where(c => orderedColumnIds.Contains(c.Id))
-			.ToListAsync();
+		var columns = await _context.Columns.Where(c => orderedColumnIds.Contains(c.Id)).ToListAsync();
 
 		for (int i = 0; i < orderedColumnIds.Count; i++)
 		{
@@ -89,11 +85,12 @@ public class ColumnKanbanRepository : IColumnsKanbanRepository
 	{
 		var columnEntities = await _context.Columns
 			.Where(c => c.BoardId == boardId)
+			.OrderBy(c => c.Order)
 			.AsNoTracking()
 			.ToListAsync();
 
 		var columns = columnEntities
-			.Select(c => ColumnKanban.Create(c.Id, c.Name, c.Order).ColumnKanban)
+			.Select(c => ColumnKanban.Create(c.Id, c.Name, c.BoardId, c.Order).ColumnKanban)
 			.ToList();
 
 		return columns;

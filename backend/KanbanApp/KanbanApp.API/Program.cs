@@ -1,19 +1,35 @@
+using KanbanApp.Application.Services;
+using KanbanApp.Core.Abstractions;
 using KanbanApp.DataAccess;
+using KanbanApp.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<KanbanAppDbContext>(
+	options =>
+	{
+		options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(KanbanAppDbContext)));
+	});
+
+builder.Services.AddScoped<IBoardsKanbanService, BoardsKanbanService>();
+builder.Services.AddScoped<IColumnsKanbanService, ColumnsKanbanService>();
+builder.Services.AddScoped<ITasksKanbanService, TasksKanbanService>();
+builder.Services.AddScoped<IUsersKanbanService, UsersService>();
+
+builder.Services.AddScoped<IBoardsKanbanRepository, BoardKanbanRepository>();
+builder.Services.AddScoped<IColumnsKanbanRepository, ColumnKanbanRepository>();
+builder.Services.AddScoped<ITasksKanbanRepository, TaskKanbanRepository>();
+builder.Services.AddScoped<IUsersKanbanRepository, UserRepository>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
 	app.UseSwagger();

@@ -19,7 +19,6 @@ public class ColumnsKanbanService : IColumnsKanbanService
 		return await _columnsKanbanRepository.Create(columnKanban);
 	}
 
-	// Метод UpdateColumnKanban теперь использует три параметра
 	public async Task<Guid> UpdateColumnKanban(Guid id, string name, int order)
 	{
 		return await _columnsKanbanRepository.Update(id, name, order);
@@ -30,13 +29,11 @@ public class ColumnsKanbanService : IColumnsKanbanService
 		return await _columnsKanbanRepository.Delete(id);
 	}
 
-	// Метод для обновления порядка колонок
 	public async Task UpdateColumnsOrder(List<Guid> orderedColumnIds)
 	{
 		await _columnsKanbanRepository.UpdateOrder(orderedColumnIds);
 	}
 
-	// Метод для получения колонок по идентификатору доски с учетом их порядка
 	public async Task<List<ColumnKanban>> GetColumnsByBoardId(Guid boardId)
 	{
 		return await _columnsKanbanRepository.GetByBoardId(boardId);

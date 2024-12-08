@@ -4,5 +4,4 @@
 		string Name,
 		Guid BoardId // Привязка к доске
 	);
-
 }

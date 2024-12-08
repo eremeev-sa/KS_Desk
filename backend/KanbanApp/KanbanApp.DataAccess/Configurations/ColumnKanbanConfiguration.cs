@@ -15,13 +15,11 @@ namespace KanbanApp.DataAccess.Configurations
 				.HasMaxLength(ColumnKanban.MAX_KANBANCOLUMN_NAME_LENGTH)
 				.IsRequired();
 
-			// Добавляем поле для порядка отображения колонок
 			builder.Property(b => b.Order)
-				.IsRequired(); // Убедитесь, что поле обязательное. Можно добавить дополнительные ограничения, если нужно.
+				.IsRequired(); // Поле обязательное для порядка отображения
 
-			// Связь с задачами
-			builder.HasMany(c => c.Tasks) // Column имеет много задач
-				.WithOne(t => t.Column) // Каждая задача принадлежит колонке
+			builder.HasMany(c => c.Tasks) // Колонка имеет множество задач
+				.WithOne(t => t.Column) // Каждая задача связана с колонкой
 				.HasForeignKey(t => t.ColumnId) // Связь через ColumnId
 				.OnDelete(DeleteBehavior.Cascade); // Удаление задач при удалении колонки
 		}
