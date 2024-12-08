@@ -1,0 +1,59 @@
+﻿using KanbanApp.API.Contracts.UsersControllers;
+using KanbanApp.Application.Services;
+using KanbanApp.Core.Model;
+using Microsoft.AspNetCore.Mvc;
+
+namespace KanbanApp.API.Controllers
+{
+	[ApiController]
+	[Route("[controller]")]
+	public class UsersKanbanController : ControllerBase
+	{
+		private readonly IUsersKanbanService _usersService;
+
+		public UsersKanbanController(IUsersKanbanService usersService)
+		{
+			_usersService = usersService;
+		}
+
+		[HttpGet]
+		public async Task<ActionResult<List<UsersKanbanResponse>>> GetUsers()
+		{
+			var users = await _usersService.GetAllUsers();
+			var response = users.Select(b => new UsersKanbanResponse(b.Id, b.Name, b.Login, b.Password));
+			return Ok(response);
+		}
+
+		[HttpPost]
+		public async Task<ActionResult<Guid>> CreateUser([FromBody] UsersKanbanRequest request)
+		{
+			(UserKanban user, string error) = UserKanban.Create(
+				Guid.NewGuid(),
+				request.Name,
+				request.Login,
+				request.Password);
+
+			if (!string.IsNullOrEmpty(error))
+			{
+				return BadRequest(error);
+			}
+
+			var userId = await _usersService.CreateUser(user);
+
+			return Ok(userId);
+		}
+
+		[HttpPut("{id:guid}")]
+		public async Task<ActionResult<Guid>> UpdateUsers(Guid id, [FromBody] UsersKanbanRequest request)
+		{
+			var userId = await _usersService.UpdateUser(id, request.Name, request.Login, request.Password);
+			return Ok(userId);
+		}
+
+		[HttpDelete("{id:guid}")]
+		public async Task<ActionResult<Guid>> DeleteUser(Guid id)
+		{
+			return Ok(await _usersService.DeleteUser(id));
+		}
+	}
+}
