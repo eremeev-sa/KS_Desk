@@ -3,7 +3,11 @@
 	public class ColumnKanban
 	{
 		public const int MAX_KANBANCOLUMN_NAME_LENGTH = 30;
+
+		// Список задач, принадлежащих колонке
 		public List<TaskKanban> Tasks { get; set; }
+
+		// Порядок колонки на доске
 		public int Order { get; private set; }
 
 		private ColumnKanban(Guid id, string name, Guid boardId, int order)
@@ -16,7 +20,9 @@
 		}
 
 		public Guid Id { get; }
+
 		public string Name { get; } = string.Empty;
+
 		public Guid BoardId { get; }
 
 		public static (ColumnKanban ColumnKanban, string Error) Create(Guid id, string name, Guid boardId, int order)

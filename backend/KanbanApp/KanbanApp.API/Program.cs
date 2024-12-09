@@ -29,6 +29,12 @@ builder.Services.AddScoped<IUsersKanbanRepository, UserRepository>();
 
 var app = builder.Build();
 
+app.UseCors(x =>
+{
+	x.WithHeaders().AllowAnyHeader();
+	x.WithOrigins("http://localhost:3000");
+	x.WithMethods().AllowAnyMethod();
+});
 
 if (app.Environment.IsDevelopment())
 {

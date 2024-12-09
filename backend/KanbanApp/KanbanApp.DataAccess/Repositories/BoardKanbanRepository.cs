@@ -1,59 +1,67 @@
-﻿using KanbanApp.Core.Model;
-using Microsoft.EntityFrameworkCore;
-using KanbanApp.Core.Abstractions;
+﻿using KanbanApp.Core.Abstractions;
+using KanbanApp.Core.Model;
 using KanbanApp.DataAccess.Entites;
+using KanbanApp.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
-namespace KanbanApp.DataAccess.Repositories
+public class BoardKanbanRepository : IBoardsKanbanRepository
 {
-	public class BoardKanbanRepository : IBoardsKanbanRepository
+	private readonly KanbanAppDbContext _context;
+
+	public BoardKanbanRepository(KanbanAppDbContext context)
 	{
-		private readonly KanbanAppDbContext _context;
+		_context = context;
+	}
 
-		public BoardKanbanRepository(KanbanAppDbContext context)
+	// Получение всех досок Kanban
+	public async Task<List<BoardKanban>> Get()
+	{
+		var boardEntities = await _context.Boards
+			.AsNoTracking()  // Отключение отслеживания изменений
+			.ToListAsync();  // Асинхронная загрузка всех сущностей Board
+
+		var boards = boardEntities
+			.Select(b => BoardKanban.Create(b.Id, b.Name).BoardKanban)  // Преобразование
+			.ToList();  // Список моделей данных
+
+		return boards;  
+	}
+
+	// Создание новой доски Kanban
+	public async Task<Guid> Create(BoardKanban boardKanban)
+	{
+		// Преобразование модели BoardKanban в сущность BoardKanbanEntity
+		var boardKanbanEntity = new BoardKanbanEntity
 		{
-			_context = context;
-		}
+			Id = boardKanban.Id,  
+			Name = boardKanban.Name, 
+		};
 
-		public async Task<List<BoardKanban>> Get()
-		{
-			var boardEntities = await _context.Boards
-				.AsNoTracking()
-				.ToListAsync();
-			var boards = boardEntities
-				.Select(b => BoardKanban.Create(b.Id, b.Name).BoardKanban)
-				.ToList();
-			return boards;
-		}
-		public async Task<Guid> Create(BoardKanban boardKanban)
-		{
-			var boardKanbanEntity = new BoardKanbanEntity
-			{
-				Id = boardKanban.Id,
-				Name = boardKanban.Name,
-			};
-			await _context.Boards.AddAsync(boardKanbanEntity);
-			await _context.SaveChangesAsync();
+		// Добавление сущности Board в контекст
+		await _context.Boards.AddAsync(boardKanbanEntity); 
+		await _context.SaveChangesAsync();  
 
-			return boardKanbanEntity.Id;
+		return boardKanbanEntity.Id;  
+	}
 
-		}
+	// Обновление данных доски Kanban
+	public async Task<Guid> Update(Guid id, string name)
+	{
+		await _context.Boards
+			.Where(b => b.Id == id)  
+			.ExecuteUpdateAsync(s => s  
+				.SetProperty(b => b.Name, b => name)  
+			);
+		return id;  
+	}
 
-		public async Task<Guid> Update(Guid id, string name)
-		{
-			await _context.Boards
-				.Where(b => b.Id == id)
-				.ExecuteUpdateAsync(s => s
-					.SetProperty(b => b.Name, b => name)
-					);
-			return id;
-		}
+	// Удаление доски Kanban
+	public async Task<Guid> Delete(Guid id)
+	{
+		await _context.Boards
+			.Where(b => b.Id == id)  
+			.ExecuteDeleteAsync();  
 
-		public async Task<Guid> Delete(Guid id)
-		{
-			await _context.Boards
-				.Where(b => b.Id == id)
-				.ExecuteDeleteAsync();
-			return id;
-		}
+		return id;  
 	}
 }

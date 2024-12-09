@@ -2,11 +2,18 @@
 
 public interface ITasksKanbanService
 {
-	Task<Guid> CreateTaskKanban(TaskKanban taskKanban);  // Создание задачи
+	// Метод для создания новой задачи
+	Task<Guid> CreateTaskKanban(TaskKanban taskKanban);
 
-	Task<Guid> UpdateTaskKanban(Guid id, string name, string priority, string description, Guid? assignedUserId, Guid columnId);  // Обновление задачи с учетом assignedUserId и ColumnId
+	// Метод для обновления задачи
+	Task<Guid> UpdateTaskKanban(Guid id, string name, string priority, string description, Guid? assignedUserId, Guid columnId);
 
-	Task<Guid> DeleteTaskKanban(Guid id);  // Удаление задачи
+	// Метод для удаления задачи по
+	Task<Guid> DeleteTaskKanban(Guid id);
 
-	Task<List<TaskKanban>> GetAllTasksKanban();  // Получение всех задач
+	// Метод для получения всех задач
+	Task<List<TaskKanban>> GetAllTasksKanban();
+
+	// Метод для получения задач по колонке
+	Task<List<TaskKanban>> GetTasksByColumnId(Guid columnId);
 }

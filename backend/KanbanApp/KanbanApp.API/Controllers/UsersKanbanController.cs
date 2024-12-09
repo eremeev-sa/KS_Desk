@@ -16,6 +16,7 @@ namespace KanbanApp.API.Controllers
 			_usersService = usersService;
 		}
 
+		// Метод для получения всех пользователей
 		[HttpGet]
 		public async Task<ActionResult<List<UsersKanbanResponse>>> GetUsers()
 		{
@@ -24,6 +25,7 @@ namespace KanbanApp.API.Controllers
 			return Ok(response);
 		}
 
+		// Метод для создания нового пользователя
 		[HttpPost]
 		public async Task<ActionResult<Guid>> CreateUser([FromBody] UsersKanbanRequest request)
 		{
@@ -43,6 +45,7 @@ namespace KanbanApp.API.Controllers
 			return Ok(userId);
 		}
 
+		// Метод для обновления данных пользователя
 		[HttpPut("{id:guid}")]
 		public async Task<ActionResult<Guid>> UpdateUsers(Guid id, [FromBody] UsersKanbanRequest request)
 		{
@@ -50,6 +53,7 @@ namespace KanbanApp.API.Controllers
 			return Ok(userId);
 		}
 
+		// Метод для удаления пользователя
 		[HttpDelete("{id:guid}")]
 		public async Task<ActionResult<Guid>> DeleteUser(Guid id)
 		{

@@ -15,6 +15,7 @@ namespace KanbanApp.API.Controllers
 			_tasksService = tasksService;
 		}
 
+		// Метод для получения всех задач канбан-доски
 		[HttpGet]
 		public async Task<ActionResult<List<TasksKanbanResponse>>> GetTasks()
 		{
@@ -22,26 +23,25 @@ namespace KanbanApp.API.Controllers
 			var response = tasks.Select(b => new TasksKanbanResponse(
 				b.Id,
 				b.Name,
-				b.AssignedUserId ?? Guid.Empty, // Если AssignedUserId null, используем Guid.Empty
+				b.AssignedUserId ?? Guid.Empty, 
 				b.Priority,
 				b.Description ?? string.Empty
 			));
 			return Ok(response);
 		}
 
+		// Метод для создания новой задачи
 		[HttpPost]
 		public async Task<ActionResult<Guid>> CreateTasks([FromBody] TasksKanbanRequest request)
 		{
-			// Преобразование AssigneeId в Guid? (если пусто, то null)
 			Guid? assignedUserId = request.AssigneeId == Guid.Empty ? (Guid?)null : request.AssigneeId;
 
-			// Создание задачи с передачей всех необходимых данных
 			(TaskKanban task, string error) = TaskKanban.Create(
 				Guid.NewGuid(),
 				request.Name,
 				request.Description,
 				request.Priority,
-				request.ColumnId, // ColumnId передаем от клиента
+				request.ColumnId, 
 				assignedUserId
 			);
 
@@ -54,24 +54,24 @@ namespace KanbanApp.API.Controllers
 			return Ok(taskId);
 		}
 
+		// Метод для обновления существующей задачи
 		[HttpPut("{id:guid}")]
 		public async Task<ActionResult<Guid>> UpdateTasks(Guid id, [FromBody] TasksKanbanRequest request)
 		{
-			// Преобразование AssigneeId в Guid? (если пусто, то null)
 			Guid? assignedUserId = request.AssigneeId == Guid.Empty ? (Guid?)null : request.AssigneeId;
 
-			// Обновление задачи с новыми данными, включая ColumnId
 			var taskId = await _tasksService.UpdateTaskKanban(
 				id,
 				request.Name,
 				request.Priority,
 				request.Description,
 				assignedUserId,
-				request.ColumnId  // передаем ColumnId
+				request.ColumnId  
 			);
 			return Ok(taskId);
 		}
 
+		// Метод для удаления задачи
 		[HttpDelete("{id:guid}")]
 		public async Task<ActionResult<Guid>> DeleteTask(Guid id)
 		{

@@ -1,6 +1,5 @@
 ﻿using KanbanApp.API.Contracts.BoardsControllers;
 using KanbanApp.API.Contracts.ColumnsControllers;
-using KanbanApp.Application.Services;
 using KanbanApp.Core.Abstractions;
 using KanbanApp.Core.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +19,7 @@ namespace KanbanApp.API.Controllers
 			_columnsService = columnsService;
 		}
 
+		// Метод для получения всех канбан-досок
 		[HttpGet]
 		public async Task<ActionResult<List<BoardsKanbanResponse>>> GetBoards()
 		{
@@ -28,6 +28,7 @@ namespace KanbanApp.API.Controllers
 			return Ok(responce);
 		}
 
+		// Метод для создания новой канбан-доски
 		[HttpPost]
 		public async Task<ActionResult<Guid>> CreateBoards([FromBody] BoardsKanbanRequest request)
 		{
@@ -42,6 +43,7 @@ namespace KanbanApp.API.Controllers
 			return Ok(board);
 		}
 
+		// Метод для обновления существующей канбан-доски
 		[HttpPut("{id:guid}")]
 		public async Task<ActionResult<Guid>> UpdateBoards(Guid id, [FromBody] BoardsKanbanRequest request)
 		{
@@ -49,13 +51,14 @@ namespace KanbanApp.API.Controllers
 			return (boardId);
 		}
 
+		// Метод для удаления канбан-доски по ID
 		[HttpDelete("{id:guid}")]
 		public async Task<ActionResult<Guid>> DeleteBoards(Guid id)
 		{
 			return Ok(await _boardsService.DeleteBoardKanban(id));
 		}
 
-		// Новый метод для получения колонок по ID доски
+		// Метод для получения колонок по ID доски
 		[HttpGet("{boardId:guid}/columns")]
 		public async Task<ActionResult<List<ColumnsKanbanResponse>>> GetColumnsByBoardId(Guid boardId)
 		{
@@ -63,6 +66,5 @@ namespace KanbanApp.API.Controllers
 			var response = columns.Select(c => new ColumnsKanbanResponse(c.Id, c.Name));
 			return Ok(response);
 		}
-
 	}
 }

@@ -1,64 +1,70 @@
 ﻿using KanbanApp.Core.Model;
 using KanbanApp.DataAccess.Entites;
+using KanbanApp.DataAccess.Repositories;
+using KanbanApp.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
-namespace KanbanApp.DataAccess.Repositories
+public class UserRepository : IUsersKanbanRepository
 {
-	public class UserRepository : IUsersKanbanRepository
+	private KanbanAppDbContext _context;
+
+	public UserRepository(KanbanAppDbContext context)
 	{
-		private KanbanAppDbContext _context;
+		_context = context;
+	}
 
-		public UserRepository(KanbanAppDbContext context)
+	// Получение всех пользователей
+	public async Task<List<UserKanban>> Get()
+	{
+		var userEntities = await _context.Users
+			.AsNoTracking()  
+			.ToListAsync();  
+
+		var users = userEntities
+			.Select(b => UserKanban.Create(b.Id, b.Name, b.Login, b.Password).User) 
+			.ToList();  
+
+		return users;  
+	}
+
+	// Создание нового пользователя
+	public async Task<Guid> Create(UserKanban user)
+	{
+		var userEntity = new UserKanbanEntity
 		{
-			_context = context;
-		}
+			Id = user.Id,
+			Name = user.Name,
+			Login = user.Login,
+			Password = user.Password  
+		};
 
-		public async Task<List<UserKanban>> Get()
-		{
-			var userEntities = await _context.Users
-				.AsNoTracking()
-				.ToListAsync();
+		await _context.Users.AddAsync(userEntity); 
+		await _context.SaveChangesAsync();  
 
-			var users = userEntities
-				.Select(b => UserKanban.Create(b.Id, b.Name, b.Login, b.Password).User)
-				.ToList();
-			return users;
-		}
+		return userEntity.Id;  
+	}
 
-		public async Task<Guid> Create(UserKanban user)
-		{
-			var userEntity = new UserKanbanEntity
-			{
-				Id = user.Id,
-				Name = user.Name,
-				Login = user.Login,
-				Password = user.Password
-			};
-			await _context.Users.AddAsync(userEntity);
-			await _context.SaveChangesAsync();
+	// Обновление данных пользователя
+	public async Task<Guid> Update(Guid id, string name, string login, string password)
+	{
+		await _context.Users
+			.Where(b => b.Id == id)  
+			.ExecuteUpdateAsync(s => s 
+				.SetProperty(b => b.Name, b => name)  
+				.SetProperty(b => b.Login, b => login) 
+				.SetProperty(b => b.Password, b => password) 
+			);
 
-			return userEntity.Id;
+		return id;
+	}
 
-		}
+	// Удаление пользователя
+	public async Task<Guid> Delete(Guid id)
+	{
+		await _context.Users
+			.Where(b => b.Id == id)
+			.ExecuteDeleteAsync();
 
-		public async Task<Guid> Update(Guid id, string name, string login, string password)
-		{
-			await _context.Users
-				.Where(b => b.Id == id)
-				.ExecuteUpdateAsync(s => s
-					.SetProperty(b => b.Name, b => name)
-					.SetProperty(b => b.Login, b => login)
-					.SetProperty(b => b.Password, b => password)
-				);
-			return id;
-		}
-
-		public async Task<Guid> Delete(Guid id)
-		{
-			await _context.Users
-				.Where(b => b.Id == id)
-				.ExecuteDeleteAsync();
-			return id;
-		}
+		return id; 
 	}
 }

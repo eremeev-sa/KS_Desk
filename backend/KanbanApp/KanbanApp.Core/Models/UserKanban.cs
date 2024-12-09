@@ -6,6 +6,7 @@
 		public const int MAX_LOGIN_LENGTH = 60;
 		public const int MAX_PASSWORD_LENGTH = 20;
 		public const int MIN_PASSWORD_LENGTH = 5;
+
 		private UserKanban(Guid id, string name, string login, string password, Permissions role)
 		{
 			Id = id;
@@ -13,13 +14,16 @@
 			Login = login;
 			Password = password;
 			Role = role;
-
 		}
 
 		public Guid Id { get; }
+
 		public string Name { get; } = string.Empty;
+
 		public string Login { get; } = string.Empty;
+
 		public string Password { get; } = string.Empty;
+
 		public Permissions Role { get; }
 
 		public static (UserKanban User, string Error) Create(Guid id, string name, string login, string password)
@@ -30,19 +34,22 @@
 			{
 				error = "Поле не должно быть пустым или не должно превышать 250 символов";
 			}
-			if (string.IsNullOrEmpty(login) || name.Length > MAX_LOGIN_LENGTH)
+			else if (string.IsNullOrEmpty(login) || login.Length > MAX_LOGIN_LENGTH)
 			{
 				error = "Поле не должно быть пустым или не должно превышать 60 символов";
 			}
-			if (string.IsNullOrEmpty(password) || name.Length > MAX_PASSWORD_LENGTH)
+			else if (string.IsNullOrEmpty(password) || password.Length > MAX_PASSWORD_LENGTH || password.Length < MIN_PASSWORD_LENGTH)
 			{
-				error = "Поле не должно быть пустым или не должно превышать 20 символов";
+				error = "Поле не должно быть пустым или не должно превышать 20 символов и быть не короче 5 символов";
 			}
 
-			var user = new UserKanban(id, name, login, password, Permissions.Read);
-			return (user, error);
+			if (string.IsNullOrEmpty(error))
+			{
+				var user = new UserKanban(id, name, login, password, Permissions.Read);
+				return (user, error); 
+			}
 
+			return (null, error);
 		}
-
 	}
 }

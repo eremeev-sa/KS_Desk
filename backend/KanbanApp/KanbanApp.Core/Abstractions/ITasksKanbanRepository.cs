@@ -13,4 +13,7 @@ public interface ITasksKanbanRepository
 
 	// Удаление задачи
 	Task<Guid> Delete(Guid id);
+
+	// Получение задач по ColumnId
+	Task<List<TaskKanban>> GetByColumnId(Guid columnId); 
 }
