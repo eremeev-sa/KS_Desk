@@ -8,12 +8,12 @@ namespace KanbanApp.API.Controllers
 {
     [ApiController]
 	[Route("[controller]")]
-	public class BoardsKanabanController : ControllerBase
+	public class BoardsKanbanController : ControllerBase
 	{
 		private readonly IBoardsKanbanService _boardsService;
 		private readonly IColumnsKanbanService _columnsService;
 
-		public BoardsKanabanController(IBoardsKanbanService boardsService, IColumnsKanbanService columnsService)
+		public BoardsKanbanController(IBoardsKanbanService boardsService, IColumnsKanbanService columnsService)
 		{
 			_boardsService = boardsService;
 			_columnsService = columnsService;

@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{4DB68292-7CAF-41B3-BCB3-D0AFCD1E7346}|KanbanApp.API\\KanbanApp.API.csproj|d:\\projects\\kanban_app\\backend\\kanbanapp\\kanbanapp.api\\controllers\\boardskanbancontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4DB68292-7CAF-41B3-BCB3-D0AFCD1E7346}|KanbanApp.API\\KanbanApp.API.csproj|solutionrelative:kanbanapp.api\\controllers\\boardskanbancontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{3C04C731-DFB9-4BB1-B523-58B1768C781A}|KannbanApp.Application\\KanbanApp.Application.csproj|d:\\projects\\kanban_app\\backend\\kanbanapp\\kannbanapp.application\\services\\subtaskskanbanservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3C04C731-DFB9-4BB1-B523-58B1768C781A}|KannbanApp.Application\\KanbanApp.Application.csproj|solutionrelative:kannbanapp.application\\services\\subtaskskanbanservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -47,6 +51,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "BoardsKanbanController.cs",
+              "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\Controllers\\BoardsKanbanController.cs",
+              "RelativeDocumentMoniker": "KanbanApp.API\\Controllers\\BoardsKanbanController.cs",
+              "ToolTip": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\Controllers\\BoardsKanbanController.cs",
+              "RelativeToolTip": "KanbanApp.API\\Controllers\\BoardsKanbanController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-10T12:51:12.08Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "SubtasksKanbanService.cs",
               "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KannbanApp.Application\\Services\\SubtasksKanbanService.cs",
               "RelativeDocumentMoniker": "KannbanApp.Application\\Services\\SubtasksKanbanService.cs",
@@ -59,7 +76,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "TasksKanbanController.cs",
               "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\Controllers\\TasksKanbanController.cs",
               "RelativeDocumentMoniker": "KanbanApp.API\\Controllers\\TasksKanbanController.cs",
@@ -67,12 +84,11 @@
               "RelativeToolTip": "KanbanApp.API\\Controllers\\TasksKanbanController.cs",
               "ViewState": "AgIAAD0AAAAAAAAAAAA5wFAAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-10T10:34:12.694Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-10T10:34:12.694Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "SubtasksKanbanController.cs",
               "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\Controllers\\SubtasksKanbanController.cs",
               "RelativeDocumentMoniker": "KanbanApp.API\\Controllers\\SubtasksKanbanController.cs",
@@ -80,12 +96,11 @@
               "RelativeToolTip": "KanbanApp.API\\Controllers\\SubtasksKanbanController.cs",
               "ViewState": "AgIAACYAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-10T10:34:07.027Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-10T10:34:07.027Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "SubtasksKanbanRequest.cs",
               "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\Contracts\\SubtasksControllers\\SubtasksKanbanRequest.cs",
               "RelativeDocumentMoniker": "KanbanApp.API\\Contracts\\SubtasksControllers\\SubtasksKanbanRequest.cs",
@@ -93,12 +108,11 @@
               "RelativeToolTip": "KanbanApp.API\\Contracts\\SubtasksControllers\\SubtasksKanbanRequest.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-10T10:34:01.022Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-10T10:34:01.022Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "SubtasksKanbanResponce.cs",
               "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\Contracts\\SubtasksControllers\\SubtasksKanbanResponce.cs",
               "RelativeDocumentMoniker": "KanbanApp.API\\Contracts\\SubtasksControllers\\SubtasksKanbanResponce.cs",
@@ -106,12 +120,11 @@
               "RelativeToolTip": "KanbanApp.API\\Contracts\\SubtasksControllers\\SubtasksKanbanResponce.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-10T10:33:59.214Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-10T10:33:59.214Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "TasksKanbanResponce.cs",
               "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\Contracts\\TasksControllers\\TasksKanbanResponce.cs",
               "RelativeDocumentMoniker": "KanbanApp.API\\Contracts\\TasksControllers\\TasksKanbanResponce.cs",
@@ -119,8 +132,7 @@
               "RelativeToolTip": "KanbanApp.API\\Contracts\\TasksControllers\\TasksKanbanResponce.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-10T10:33:55.708Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-10T10:33:55.708Z"
             }
           ]
         }
