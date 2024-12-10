@@ -22,11 +22,14 @@ builder.Services.AddScoped<IBoardsKanbanService, BoardsKanbanService>();
 builder.Services.AddScoped<IColumnsKanbanService, ColumnsKanbanService>();
 builder.Services.AddScoped<ITasksKanbanService, TasksKanbanService>();
 builder.Services.AddScoped<IUsersKanbanService, UsersService>();
+builder.Services.AddScoped<ISubtasksKanbanService, SubtasksKanbanService>();
+
 
 builder.Services.AddScoped<IBoardsKanbanRepository, BoardKanbanRepository>();
 builder.Services.AddScoped<IColumnsKanbanRepository, ColumnKanbanRepository>();
 builder.Services.AddScoped<ITasksKanbanRepository, TaskKanbanRepository>();
 builder.Services.AddScoped<IUsersKanbanRepository, UserRepository>();
+builder.Services.AddScoped<ISubtasksKanbanRepository, SubtaskKanbanRepository>();
 
 var app = builder.Build();
 

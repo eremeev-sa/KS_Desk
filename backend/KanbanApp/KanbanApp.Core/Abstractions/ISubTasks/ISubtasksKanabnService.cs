@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KanbanApp.Core.Models;
 
-namespace KanbanApp.Core.Abstractions.ISubTasks
+public interface ISubtasksKanbanService
 {
-    internal interface ISubtasksKanabnService
-    {
-    }
+	// Метод для создания новой задачи
+	Task<Guid> CreateSubtaskKanban(SubtaskKanban subtaskKanban);
+
+	// Метод для обновления задачи
+	Task<Guid> UpdateSubtaskKanban(Guid id, string name);
+
+	// Метод для удаления задачи по
+	Task<Guid> DeleteSubtaskKanban(Guid id);
+
+	// Метод для получения всех задач
+	Task<List<SubtaskKanban>> GetAllSubtasksKanban();
+
+	// Метод для получения задач по колонке
+	Task<List<SubtaskKanban>> GetSubtasksByTaskId(Guid taskId);
 }

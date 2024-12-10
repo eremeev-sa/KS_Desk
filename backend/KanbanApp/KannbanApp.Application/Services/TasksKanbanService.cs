@@ -38,7 +38,7 @@ namespace KanbanApp.Application.Services
 		// Получение задач по колонке
 		public async Task<List<TaskKanban>> GetTasksByColumnId(Guid columnId)
 		{
-			return await _tasksKanbanRepository.GetByColumnId(columnId);  // Вызов метода репозитория
+			return await _tasksKanbanRepository.GetByColumnId(columnId);
 		}
 	}
 }

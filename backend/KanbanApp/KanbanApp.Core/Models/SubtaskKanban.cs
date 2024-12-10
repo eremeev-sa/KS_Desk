@@ -14,7 +14,6 @@ namespace KanbanApp.Core.Models
 		public Guid Id { get; }
 		public string Name { get; } = string.Empty;
 		public Guid TaskId { get; }
-		public TaskKanban Task { get; } = null!;
 		public static (SubtaskKanban SubtaskKanban, string Error) Create(Guid id, string name, Guid taskId)
 		{
 			var error = string.Empty;
