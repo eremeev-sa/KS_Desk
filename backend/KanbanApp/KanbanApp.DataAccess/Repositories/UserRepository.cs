@@ -1,8 +1,8 @@
 ﻿using KanbanApp.Core.Model;
 using KanbanApp.DataAccess.Entites;
-using KanbanApp.DataAccess.Repositories;
 using KanbanApp.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using KanbanApp.Core.Abstractions.IUsers;
 
 public class UserRepository : IUsersKanbanRepository
 {

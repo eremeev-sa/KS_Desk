@@ -11,4 +11,5 @@ public class TaskKanbanEntity
 	public ColumnKanbanEntity? Column { get; set; }
 	public Guid? AssignedUserId { get; set; }  // Это поле хранит идентификатор пользователя
 	public UserKanbanEntity? AssignedUser { get; set; }  // Связь с пользователем
+	public List<SubtaskKanbanEntity>? Subtasks { get; set; } = new List<SubtaskKanbanEntity>();
 }

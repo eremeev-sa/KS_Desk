@@ -1,9 +1,9 @@
-﻿using KanbanApp.Core.Model;
-using KanbanApp.DataAccess.Repositories;
+﻿using KanbanApp.Core.Abstractions.IUsers;
+using KanbanApp.Core.Model;
 
 namespace KanbanApp.Application.Services
 {
-	public class UsersService : IUsersKanbanService
+    public class UsersService : IUsersKanbanService
 	{
 		private readonly IUsersKanbanRepository _usersRepository;
 

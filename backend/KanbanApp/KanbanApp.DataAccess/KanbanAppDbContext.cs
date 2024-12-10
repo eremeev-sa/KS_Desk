@@ -14,6 +14,7 @@ namespace KanbanApp.DataAccess
 		public DbSet<TaskKanbanEntity> Tasks { get; set; }
 		public DbSet<BoardKanbanEntity> Boards { get; set; }
 		public DbSet<ColumnKanbanEntity> Columns { get; set; }
+		public DbSet<SubtaskKanbanEntity> Subtasks { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -39,6 +40,13 @@ namespace KanbanApp.DataAccess
 				.WithMany(u => u.AssignedTasks)
 				.HasForeignKey(t => t.AssignedUserId)
 				.OnDelete(DeleteBehavior.SetNull);
+
+			// При удалении задачи все связанные подзадачи удаляются
+			modelBuilder.Entity<SubtaskKanbanEntity>()
+				.HasOne(t => t.Task)
+				.WithMany(c => c.Subtasks)
+				.HasForeignKey(t => t.TaskId)
+				.OnDelete(DeleteBehavior.Cascade);
 		}
 	}
 }

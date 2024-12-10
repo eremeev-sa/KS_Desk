@@ -23,17 +23,5 @@ public class TaskKanbanConfiguration : IEntityTypeConfiguration<TaskKanbanEntity
 
 		// Свойство Description (описание задачи)
 		builder.Property(b => b.Description);
-
-		// Настройка связи с пользователем
-		builder.HasOne(t => t.AssignedUser)
-			.WithMany(u => u.AssignedTasks) // Пользователь может иметь несколько назначенных задач
-			.HasForeignKey(t => t.AssignedUserId) // Связь через внешний ключ AssignedUserId
-			.OnDelete(DeleteBehavior.SetNull); // Если пользователь удален, назначение задачи остается (ставится в null)
-
-		// Настройка связи с колонкой
-		builder.HasOne(t => t.Column) 
-			.WithMany(c => c.Tasks) // Одна колонка может содержать несколько задач
-			.HasForeignKey(t => t.ColumnId) // Связь через внешний ключ ColumnId
-			.OnDelete(DeleteBehavior.Cascade); // Если колонка удалена, удаляются все задачи в этой колонке
 	}
 }

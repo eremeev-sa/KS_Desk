@@ -3,8 +3,20 @@
   "WorkspaceRootPath": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4DB68292-7CAF-41B3-BCB3-D0AFCD1E7346}|KanbanApp.API\\KanbanApp.API.csproj|d:\\projects\\kanban_app\\backend\\kanbanapp\\kanbanapp.api\\controllers\\boardskanbancontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4DB68292-7CAF-41B3-BCB3-D0AFCD1E7346}|KanbanApp.API\\KanbanApp.API.csproj|solutionrelative:kanbanapp.api\\controllers\\boardskanbancontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|d:\\projects\\kanban_app\\backend\\kanbanapp\\kanbanapp.dataaccess\\configurations\\boardkanbanconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|solutionrelative:kanbanapp.dataaccess\\configurations\\boardkanbanconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|d:\\projects\\kanban_app\\backend\\kanbanapp\\kanbanapp.dataaccess\\configurations\\subtaskkanbanconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|solutionrelative:kanbanapp.dataaccess\\configurations\\subtaskkanbanconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|d:\\projects\\kanban_app\\backend\\kanbanapp\\kanbanapp.dataaccess\\kanbanappdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|solutionrelative:kanbanapp.dataaccess\\kanbanappdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|d:\\projects\\kanban_app\\backend\\kanbanapp\\kanbanapp.dataaccess\\configurations\\columnkanbanconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|solutionrelative:kanbanapp.dataaccess\\configurations\\columnkanbanconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -13,7 +25,7 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 333,
+          "DockedWidth": 425,
           "SelectedChildIndex": 2,
           "Children": [
             {
@@ -27,14 +39,53 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "BoardsKanbanController.cs",
-              "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\Controllers\\BoardsKanbanController.cs",
-              "RelativeDocumentMoniker": "KanbanApp.API\\Controllers\\BoardsKanbanController.cs",
-              "ToolTip": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\Controllers\\BoardsKanbanController.cs",
-              "RelativeToolTip": "KanbanApp.API\\Controllers\\BoardsKanbanController.cs",
-              "ViewState": "AgIAADIAAAAAAAAAAAAswEMAAAADAAAAAAAAAA==",
+              "Title": "BoardKanbanConfiguration.cs",
+              "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\Configurations\\BoardKanbanConfiguration.cs",
+              "RelativeDocumentMoniker": "KanbanApp.DataAccess\\Configurations\\BoardKanbanConfiguration.cs",
+              "ToolTip": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\Configurations\\BoardKanbanConfiguration.cs",
+              "RelativeToolTip": "KanbanApp.DataAccess\\Configurations\\BoardKanbanConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-09T16:51:24.401Z",
+              "WhenOpened": "2024-12-10T07:18:49.179Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ColumnKanbanConfiguration.cs",
+              "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\Configurations\\ColumnKanbanConfiguration.cs",
+              "RelativeDocumentMoniker": "KanbanApp.DataAccess\\Configurations\\ColumnKanbanConfiguration.cs",
+              "ToolTip": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\Configurations\\ColumnKanbanConfiguration.cs",
+              "RelativeToolTip": "KanbanApp.DataAccess\\Configurations\\ColumnKanbanConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-10T07:18:14.945Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SubtaskKanbanConfiguration.cs",
+              "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\Configurations\\SubtaskKanbanConfiguration.cs",
+              "RelativeDocumentMoniker": "KanbanApp.DataAccess\\Configurations\\SubtaskKanbanConfiguration.cs",
+              "ToolTip": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\Configurations\\SubtaskKanbanConfiguration.cs*",
+              "RelativeToolTip": "KanbanApp.DataAccess\\Configurations\\SubtaskKanbanConfiguration.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-10T07:16:51.782Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "KanbanAppDbContext.cs",
+              "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\KanbanAppDbContext.cs",
+              "RelativeDocumentMoniker": "KanbanApp.DataAccess\\KanbanAppDbContext.cs",
+              "ToolTip": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\KanbanAppDbContext.cs",
+              "RelativeToolTip": "KanbanApp.DataAccess\\KanbanAppDbContext.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAswB8AAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-10T07:13:53.411Z",
               "EditorCaption": ""
             }
           ]

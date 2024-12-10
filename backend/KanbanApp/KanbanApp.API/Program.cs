@@ -1,5 +1,6 @@
 using KanbanApp.Application.Services;
-using KanbanApp.Core.Abstractions;
+using KanbanApp.Core.Abstractions.IBoards;
+using KanbanApp.Core.Abstractions.IUsers;
 using KanbanApp.DataAccess;
 using KanbanApp.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
