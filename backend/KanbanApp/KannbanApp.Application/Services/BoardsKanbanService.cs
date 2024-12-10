@@ -1,9 +1,9 @@
-﻿using KanbanApp.Core.Abstractions;
+﻿using KanbanApp.Core.Abstractions.IBoards;
 using KanbanApp.Core.Model;
 
 namespace KanbanApp.Application.Services
 {
-	public class BoardsKanbanService : IBoardsKanbanService
+    public class BoardsKanbanService : IBoardsKanbanService
 	{
 		private readonly IBoardsKanbanRepository _boardsKanbanRepository;
 

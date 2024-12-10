@@ -1,4 +1,5 @@
 ﻿using KanbanApp.API.Contracts.TasksControllers;
+using KanbanApp.Application.Services;
 using KanbanApp.Core.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +10,12 @@ namespace KanbanApp.API.Controllers
 	public class TasksKanbanController : ControllerBase
 	{
 		private readonly ITasksKanbanService _tasksService;
+		private readonly ISubtasksKanbanService _subtasksService;
 
-		public TasksKanbanController(ITasksKanbanService tasksService)
+		public TasksKanbanController(ITasksKanbanService tasksService, ISubtasksKanbanService subtasksService)
 		{
 			_tasksService = tasksService;
+			_subtasksService = subtasksService;
 		}
 
 		// Метод для получения всех задач канбан-доски
@@ -76,6 +79,14 @@ namespace KanbanApp.API.Controllers
 		public async Task<ActionResult<Guid>> DeleteTask(Guid id)
 		{
 			return Ok(await _tasksService.DeleteTaskKanban(id));
+		}
+
+		[HttpGet("{taskId}/subtasks")]
+		public async Task<ActionResult<List<TaskKanban>>> GetTasksByColumnId(Guid taskId)
+		{
+			var subtasks = await _subtasksService.GetSubtasksByTaskId(taskId);
+
+			return Ok(subtasks);
 		}
 	}
 }

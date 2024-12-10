@@ -1,11 +1,11 @@
 ﻿using KanbanApp.API.Contracts.UsersControllers;
-using KanbanApp.Application.Services;
+using KanbanApp.Core.Abstractions.IUsers;
 using KanbanApp.Core.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanApp.API.Controllers
 {
-	[ApiController]
+    [ApiController]
 	[Route("[controller]")]
 	public class UsersKanbanController : ControllerBase
 	{

@@ -1,12 +1,12 @@
 ﻿using KanbanApp.API.Contracts.ColumnsControllers;
 using KanbanApp.Application.Services;
-using KanbanApp.Core.Abstractions;
+using KanbanApp.Core.Abstractions.IBoards;
 using KanbanApp.Core.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanApp.API.Controllers
 {
-	[ApiController]
+    [ApiController]
 	[Route("[controller]")]
 	public class ColumnsKanbanController : ControllerBase
 	{
@@ -34,12 +34,16 @@ namespace KanbanApp.API.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Guid>> CreateColumns([FromBody] ColumnsKanbanRequest request)
 		{
-			int defaultOrder = 0; // Пример, порядок по умолчанию
+			var columns = await _columnsService.GetColumnsByBoardId(request.BoardId);
+			int maxOrder = columns.Any() ? columns.Max(c => c.Order) : 0;
+
+			int newOrder = maxOrder + 1;
+
 			(ColumnKanban column, string error) = ColumnKanban.Create(
 				Guid.NewGuid(),
 				request.Name,
-				request.BoardId, // Передаем BoardId
-				defaultOrder
+				request.BoardId,
+				newOrder 
 			);
 
 			if (!string.IsNullOrEmpty(error))
@@ -55,8 +59,8 @@ namespace KanbanApp.API.Controllers
 		[HttpPut("{id:guid}")]
 		public async Task<ActionResult<Guid>> UpdateColumns(Guid id, [FromBody] ColumnsKanbanRequest request)
 		{
-			int order = 0; // Пример, порядок по умолчанию
-			var columnId = await _columnsService.UpdateColumnKanban(id, request.Name, order); // Передаем порядок
+			int order = 0; 
+			var columnId = await _columnsService.UpdateColumnKanban(id, request.Name, order);
 			return Ok(columnId);
 		}
 
@@ -78,10 +82,8 @@ namespace KanbanApp.API.Controllers
 		[HttpGet("{columnId}/tasks")]
 		public async Task<ActionResult<List<TaskKanban>>> GetTasksByColumnId(Guid columnId)
 		{
-			// Получаем все задачи, привязанные к колонке
 			var tasks = await _tasksKanbanService.GetTasksByColumnId(columnId);
 
-			// Возвращаем результат в формате Ok (успешный ответ с данными)
 			return Ok(tasks);
 		}
 	}

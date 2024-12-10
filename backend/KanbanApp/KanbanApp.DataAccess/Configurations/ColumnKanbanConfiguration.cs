@@ -17,11 +17,6 @@ namespace KanbanApp.DataAccess.Configurations
 
 			builder.Property(b => b.Order)
 				.IsRequired(); // Поле обязательное для порядка отображения
-
-			builder.HasMany(c => c.Tasks) // Колонка имеет множество задач
-				.WithOne(t => t.Column) // Каждая задача связана с колонкой
-				.HasForeignKey(t => t.ColumnId) // Связь через ColumnId
-				.OnDelete(DeleteBehavior.Cascade); // Удаление задач при удалении колонки
 		}
 	}
 }

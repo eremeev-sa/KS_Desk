@@ -16,12 +16,6 @@ namespace KanbanApp.DataAccess.Configurations
 			builder.Property(b => b.Name)
 				.HasMaxLength(BoardKanban.MAX_KANBANBOARD_NAME_LENGTH) // Максимальная длина													  
 				.IsRequired();  // Имя обязательно для заполнения
-
-			// Настройка связи с колонками
-			builder.HasMany(b => b.Columns) // Доска может иметь много колонок
-				.WithOne(c => c.Board) // Каждая колонка принадлежит одной доске
-				.HasForeignKey(c => c.BoardId) // Связь через поле BoardId в колонках
-				.OnDelete(DeleteBehavior.Cascade); // При удалении доски, автоматически удаляются все связанные с ней колонки
 		}
 	}
 }

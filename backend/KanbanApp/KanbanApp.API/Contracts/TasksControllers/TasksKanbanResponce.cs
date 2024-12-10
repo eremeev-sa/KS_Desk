@@ -4,7 +4,7 @@
 	public record TasksKanbanResponse(
 		Guid Id,
 		string Name,
-		Guid AssigneeId,  // Используем Guid для идентификатора пользователя
+		Guid AssigneeId,
 		string Priority,
 		string Description
 	);

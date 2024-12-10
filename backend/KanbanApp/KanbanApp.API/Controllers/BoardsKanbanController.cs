@@ -1,19 +1,19 @@
 ﻿using KanbanApp.API.Contracts.BoardsControllers;
 using KanbanApp.API.Contracts.ColumnsControllers;
-using KanbanApp.Core.Abstractions;
+using KanbanApp.Core.Abstractions.IBoards;
 using KanbanApp.Core.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanApp.API.Controllers
 {
-	[ApiController]
+    [ApiController]
 	[Route("[controller]")]
-	public class BoardsKanabanController : ControllerBase
+	public class BoardsKanbanController : ControllerBase
 	{
 		private readonly IBoardsKanbanService _boardsService;
 		private readonly IColumnsKanbanService _columnsService;
 
-		public BoardsKanabanController(IBoardsKanbanService boardsService, IColumnsKanbanService columnsService)
+		public BoardsKanbanController(IBoardsKanbanService boardsService, IColumnsKanbanService columnsService)
 		{
 			_boardsService = boardsService;
 			_columnsService = columnsService;
