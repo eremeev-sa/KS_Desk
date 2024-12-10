@@ -1,0 +1,110 @@
+body,
+html {
+    overflow-x: hidden;
+    height: 100%;
+    margin: 0;
+}
+
+.center {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.bg-custom {
+    background-color: #ffcc00;
+}
+
+.custom-gradient {
+    background: linear-gradient(45deg, #ff7e5f, #feb47b);
+}
+
+.h-100 {
+    min-height: 100vh;
+}
+
+.h-100p {
+    min-height: 100%;
+}
+
+.w-100p {
+    min-width: 100%;
+    padding: 0;
+    margin: 0;
+    left: 0;
+}
+
+.kanban-columns-container {
+    margin-left: 250px;
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    white-space: nowrap;
+    min-height: 100vh;
+}
+
+.kanban-column {
+    min-width: 250px;
+    max-width: 250px;
+    flex: 0 0 auto;
+}
+
+.kanban-board {
+    min-width: 250px;
+    max-width: 250px;
+    height: 100%;
+    flex: 0 0 auto;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    padding: 1rem;
+}
+
+.list-group-item {
+    cursor: pointer;
+}
+
+.list-group-item:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Стили для кнопки выхода */
+.btn-danger {
+    margin-top: 1rem;
+}
+
+.list-group-item {
+    align-items: center;
+}
+
+.form-control {
+    flex: 1;
+    /* Поле ввода растягивается на доступную ширину */
+}
+
+.text-truncate {
+    white-space: normal;
+    /* Разрешает перенос текста */
+    overflow: visible;
+    /* Отображает текст полностью */
+    text-overflow: unset;
+    /* Отключает многоточие */
+}
+
+.text-container {
+    flex-grow: 1;
+    white-space: normal;
+    word-break: break-word;
+  }
+  
+  .button-container {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    float: right;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 0em;
+    flex-shrink: 0;
+  }

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import Login from './components/Login';
+import Login from './containers/Login';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import KanbanWindow from './components/KanbanWindow';
+import KanbanWindow from './containers/KanbanWindow';
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
