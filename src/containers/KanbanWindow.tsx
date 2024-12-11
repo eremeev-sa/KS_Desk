@@ -18,8 +18,8 @@ const KanbanWindow: React.FC<KanbanWindowProps> = ({ onLogout }) => {
     const [userName] = useState("Иван Иванов");
     const [currentBoardId, setCurrentBoardId] = useState<string>("");
     return (
-        <div className="d-flex">
-            <div className="position-fixed kanban-board custom-gradient h-100 border-end">
+        <div className="d-flex custom-gradient">
+            <div className=" custom-gradient position-fixed kanban-board h-100 sidebar-content">
                 <Sidebar userName={userName} onLogout={onLogout} onBoardClick={(id) => setCurrentBoardId(id)} />
             </div>
 

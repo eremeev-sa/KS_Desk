@@ -60,15 +60,6 @@ html {
     padding: 1rem;
 }
 
-.list-group-item {
-    cursor: pointer;
-}
-
-.list-group-item:hover {
-    background-color: #007bff;
-    color: white;
-}
-
 /* Стили для кнопки выхода */
 .btn-danger {
     margin-top: 1rem;
@@ -96,9 +87,9 @@ html {
     flex-grow: 1;
     white-space: normal;
     word-break: break-word;
-  }
-  
-  .button-container {
+}
+
+.button-container {
     margin-left: auto;
     display: flex;
     align-items: center;
@@ -107,4 +98,4 @@ html {
     justify-content: flex-end;
     margin-right: 0em;
     flex-shrink: 0;
-  }
+}

@@ -10,6 +10,10 @@ export interface CreateColumnRequest {
     boardId: string;
 };
 
+export interface UpdateColumnOrderRequest {
+    orderedColumnIds: string[]
+};
+
 const CURRENT_URL = `${BASE_URL}/ColumnsKanban`;
 
 // Функция для получения списка колонок
@@ -48,6 +52,19 @@ export const updateColumn = async (id: string, columnRequest: ColumnRequest) => 
         body: JSON.stringify(columnRequest),
     });
 };
+
+// Функция для изменения последовательностей колонок
+export const updateColumnOrder = async (columnRequest: UpdateColumnOrderRequest) => {
+    await fetch(`${CURRENT_URL}/order`, {
+        method: "PUT",
+        headers: {
+            "content-type": "application/json",
+        },
+        body: JSON.stringify(columnRequest),
+    });
+};
+
+
 
 // Функция для удаления колонки
 export const deleteColumn = async (id: string) => {

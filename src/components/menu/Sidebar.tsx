@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick }) =
   };
 
   return (
-    <div className="sidebar-content">
+    <div className="">
       <UserInfo userName={userName} onLogout={onLogout} />
       {loading ? <h2>Загрузка...</h2> : <BoardList data={data} onUpdate={handleUpdate} onDelete={handleDelete} onBoardClick={onBoardClick} />}
     </div>

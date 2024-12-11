@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Column from './Column';
-import { ColumnRequest, createColumn, deleteColumn, getColumns, updateColumn } from '../../services/Column';
+import { ColumnRequest, createColumn, deleteColumn, getColumns, updateColumn, updateColumnOrder } from '../../services/Column';
+import styled from 'styled-components';
 
 type ColumnsProps = {
     currentBoardId: string;
 };
+
+const Container = styled.div`
+  background-color: white;
+  min-height: 100vh;
+  /* like display:flex but will allow bleeding over the window width */
+  min-width: 100vw;
+  display: inline-flex;
+`;
 
 const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
 
@@ -80,6 +90,28 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
         }
     };
 
+    // Функция для обработки завершения перетаскивания
+    const handleOnDragEnd = async (result: any) => {
+        const { source, destination } = result;
+
+        // Если задача не была перемещена (находится в том же месте)
+        if (!destination) return;
+
+        // Получаем новый порядок колонок
+        const reorderedColumns = Array.from(data);
+        const [movedColumn] = reorderedColumns.splice(source.index, 1);
+        reorderedColumns.splice(destination.index, 0, movedColumn);
+
+        // Отправляем новый порядок на сервер
+        const orderedColumnIds = reorderedColumns.map((column) => column.id);
+        try {
+            await updateColumnOrder({ orderedColumnIds });
+            setData(reorderedColumns); // Обновляем данные в состоянии
+        } catch (error) {
+            console.error('Ошибка при обновлении порядка колонок:', error);
+        }
+    };
+
     return (
         <div>
             <div className='mt-4'>
@@ -88,9 +120,38 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                         <p>Загрузка...</p>
                     ) : (
                         <>
-                            {data.map((column) => (
-                                <Column key={column.id} {...column} onUpdate={handleUpdate} onDelete={handleDelete} />
-                            ))}
+                            <DragDropContext onDragEnd={handleOnDragEnd}>
+                                <Droppable
+                                    droppableId={`board`}
+                                    type="COLUMN"
+                                    direction="horizontal"
+                                    ignoreContainerClipping={Boolean(400)}
+                                    isCombineEnabled={false}
+                                >
+                                    {(provided) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.droppableProps}
+                                            style={{
+                                                display: 'flex', // Устанавливаем flex-контейнер
+                                                flexDirection: 'row', // Горизонтальное направление
+                                                gap: '16px', // Расстояние между колонками (опционально)
+                                            }}
+                                        >
+                                            {data.map((column, index) => (
+                                                <Column
+                                                    key={column.id}
+                                                    {...column}
+                                                    index={index}
+                                                    onUpdate={handleUpdate}
+                                                    onDelete={handleDelete} />
+                                            ))}
+                                            {provided.placeholder}
+                                        </div>
+                                    )}
+
+                                </Droppable>
+                            </DragDropContext>
                             {addNewColumn ? <>
                                 <div className="">
 
