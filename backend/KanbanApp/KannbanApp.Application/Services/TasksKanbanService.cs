@@ -24,9 +24,20 @@ namespace KanbanApp.Application.Services
 		}
 
 		// Обновление задачи
-		public async Task<Guid> UpdateTaskKanban(Guid id, string name, string priority, string description, Guid? assignedUserId, Guid columnId)
+		public async Task<Guid> UpdateTaskKanban(Guid id, string? name, string? priority, string? description, Guid? assignedUserId)
 		{
-			return await _tasksKanbanRepository.Update(id, name, priority, description, assignedUserId, columnId);
+			var upTask = await _tasksKanbanRepository.GetByIdTask(id); // Получаем текущую задачу
+
+			if (upTask == null)
+			{
+				throw new KeyNotFoundException($"Задача с ID {id} не найдена.");
+			}
+			var upName = name ?? upTask.Name;
+			var upPriority = priority ?? upTask.Priority;
+			var upDescription = description ?? upTask.Description;
+			var upAssigneeId = assignedUserId.HasValue ? assignedUserId : upTask.AssignedUserId;
+			
+			return await _tasksKanbanRepository.Update(id, upName, upPriority, upDescription, upAssigneeId);
 		}
 
 		// Удаление задачи
@@ -39,6 +50,11 @@ namespace KanbanApp.Application.Services
 		public async Task<List<TaskKanban>> GetTasksByColumnId(Guid columnId)
 		{
 			return await _tasksKanbanRepository.GetByColumnId(columnId);
+		}
+
+		public async Task<Guid> UpdateTaskColumn(Guid id, Guid columnId)
+		{
+			return await _tasksKanbanRepository.UpdateTaskColumn(id, columnId);
 		}
 	}
 }

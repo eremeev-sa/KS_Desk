@@ -21,6 +21,8 @@ namespace KanbanApp.DataAccess.Repositories
 
 			var tasks = taskEntities
 				.Select(b => TaskKanban.Create(b.Id, b.Name, b.Description ?? string.Empty, b.Priority, b.ColumnId, b.AssignedUserId).TaskKanban)
+				.Where(t => t != null)
+				.Select(t => t!)
 				.ToList();
 
 			return tasks;
@@ -31,11 +33,13 @@ namespace KanbanApp.DataAccess.Repositories
 		{
 			var taskEntities = await _context.Tasks
 				.AsNoTracking()
-				.Where(b => b.ColumnId == columnId)  // Фильтруем задачи по ColumnId
-				.ToListAsync();  // Получаем задачи
+				.Where(b => b.ColumnId == columnId)
+				.ToListAsync();  
 
 			var tasks = taskEntities
 				.Select(b => TaskKanban.Create(b.Id, b.Name, b.Description ?? string.Empty, b.Priority, b.ColumnId, b.AssignedUserId).TaskKanban)
+				.Where(t => t != null)
+				.Select(t => t!)
 				.ToList();
 
 			return tasks;
@@ -61,7 +65,7 @@ namespace KanbanApp.DataAccess.Repositories
 		}
 
 		// Обновление задачи
-		public async Task<Guid> Update(Guid id, string name, string priority, string description, Guid? assignedUserId, Guid columnId)
+		public async Task<Guid> Update(Guid id, string name, string priority, string description, Guid? assignedUserId)
 		{
 			await _context.Tasks
 				.Where(b => b.Id == id)
@@ -70,7 +74,6 @@ namespace KanbanApp.DataAccess.Repositories
 					.SetProperty(b => b.AssignedUserId, b => assignedUserId)
 					.SetProperty(b => b.Priority, b => priority)
 					.SetProperty(b => b.Description, b => description)
-					.SetProperty(b => b.ColumnId, b => columnId)
 				);
 			return id;
 		}
@@ -84,5 +87,38 @@ namespace KanbanApp.DataAccess.Repositories
 
 			return id;
 		}
+
+		public async Task<Guid> UpdateTaskColumn(Guid id, Guid columnId)
+		{
+			await _context.Tasks
+				.Where(b => b.Id == id)
+				.ExecuteUpdateAsync(s => s
+				.SetProperty(b => b.ColumnId, b => columnId)
+			);
+			return id;
+		}
+
+		public async Task<TaskKanban?> GetByIdTask(Guid id)
+		{
+			var taskEntity = await _context.Tasks
+				.AsNoTracking()
+				.FirstOrDefaultAsync(t => t.Id == id);
+
+			if (taskEntity == null)
+			{
+				return null;
+			}
+
+			var (taskKanban, error) = TaskKanban.Create(
+				taskEntity.Id,
+				taskEntity.Name,
+				taskEntity.Description ?? string.Empty,
+				taskEntity.Priority,
+				taskEntity.ColumnId,
+				taskEntity.AssignedUserId);
+
+			return taskKanban;
+		}
+
 	}
 }

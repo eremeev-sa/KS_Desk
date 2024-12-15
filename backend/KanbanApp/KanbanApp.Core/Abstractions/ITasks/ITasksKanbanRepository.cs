@@ -9,11 +9,15 @@ public interface ITasksKanbanRepository
 	Task<Guid> Create(TaskKanban taskKanban);
 
 	// Обновление задачи
-	Task<Guid> Update(Guid id, string name, string priority, string description, Guid? assignedUserId, Guid columnId);
+	Task<Guid> Update(Guid id, string name, string priority, string description, Guid? assignedUserId);
 
 	// Удаление задачи
 	Task<Guid> Delete(Guid id);
 
 	// Получение задач по ColumnId
-	Task<List<TaskKanban>> GetByColumnId(Guid columnId); 
+	Task<List<TaskKanban>> GetByColumnId(Guid columnId);
+
+	Task<Guid> UpdateTaskColumn(Guid id, Guid columnId);
+
+	Task<TaskKanban?> GetByIdTask(Guid id);
 }

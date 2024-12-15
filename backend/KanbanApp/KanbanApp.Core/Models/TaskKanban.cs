@@ -26,13 +26,19 @@
 
 		public Guid? AssignedUserId { get; }
 
-		public static (TaskKanban TaskKanban, string Error) Create(Guid id, string name, string description, string priority, Guid columnId, Guid? assignedUserId)
+		public static (TaskKanban? TaskKanban, string Error) Create(Guid id, string name, string description, string priority, Guid columnId, Guid? assignedUserId)
 		{
 			var error = string.Empty;
 
 			if (string.IsNullOrEmpty(name) || name.Length > MAX_TASK_NAME_LENGTH)
 			{
 				error = $"Поле не должно быть пустым или не должно превышать {MAX_TASK_NAME_LENGTH} символов";
+			}
+
+			if (columnId == Guid.Empty)
+			{
+				error = "ColumnId является обязательным и не может быть пустым.";
+				return (null, error);
 			}
 
 			var task = new TaskKanban(id, name, description, priority, columnId, assignedUserId);

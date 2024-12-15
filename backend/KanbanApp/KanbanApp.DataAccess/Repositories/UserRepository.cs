@@ -22,6 +22,7 @@ public class UserRepository : IUsersKanbanRepository
 
 		var users = userEntities
 			.Select(b => UserKanban.Create(b.Id, b.Name, b.Login, b.Password).User) 
+			.Where(user => user != null)
 			.ToList();  
 
 		return users;  

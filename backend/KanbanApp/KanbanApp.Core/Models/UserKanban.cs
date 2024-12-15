@@ -26,7 +26,7 @@
 
 		public Permissions Role { get; }
 
-		public static (UserKanban User, string Error) Create(Guid id, string name, string login, string password)
+		public static (UserKanban? User, string Error) Create(Guid id, string name, string login, string password)
 		{
 			var error = string.Empty;
 
@@ -46,7 +46,7 @@
 			if (string.IsNullOrEmpty(error))
 			{
 				var user = new UserKanban(id, name, login, password, Permissions.Read);
-				return (user, error); 
+				return (user, error);
 			}
 
 			return (null, error);

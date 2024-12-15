@@ -23,6 +23,10 @@ namespace KanbanApp.API.Controllers
 		public async Task<ActionResult<List<TasksKanbanResponse>>> GetTasks()
 		{
 			var tasks = await _tasksService.GetAllTasksKanban();
+			if(tasks == null || !tasks.Any())
+			{
+				return NotFound("Задачи не найдены");
+			}
 			var response = tasks.Select(b => new TasksKanbanResponse(
 				b.Id,
 				b.Name,
@@ -39,7 +43,7 @@ namespace KanbanApp.API.Controllers
 		{
 			Guid? assignedUserId = request.AssigneeId == Guid.Empty ? (Guid?)null : request.AssigneeId;
 
-			(TaskKanban task, string error) = TaskKanban.Create(
+			var (task, error) = TaskKanban.Create(
 				Guid.NewGuid(),
 				request.Name,
 				request.Description,
@@ -53,23 +57,30 @@ namespace KanbanApp.API.Controllers
 				return BadRequest(error);
 			}
 
+			if(task == null)
+			{
+				return BadRequest("Ошибка при создании задачи");
+			}
+
 			var taskId = await _tasksService.CreateTaskKanban(task);
 			return Ok(taskId);
 		}
 
 		// Метод для обновления существующей задачи
 		[HttpPut("{id:guid}")]
-		public async Task<ActionResult<Guid>> UpdateTasks(Guid id, [FromBody] TasksKanbanRequest request)
+		public async Task<ActionResult<Guid>> UpdateTasks(Guid id, [FromBody] TasksUpdateRequest request)
 		{
-			Guid? assignedUserId = request.AssigneeId == Guid.Empty ? (Guid?)null : request.AssigneeId;
+			var name = request.Name ?? null; 
+			var priority = request.Priority ?? null; 
+			var description = request.Description ?? null; 
+			var assignedUserId = request.AssigneeId ?? null;
 
 			var taskId = await _tasksService.UpdateTaskKanban(
 				id,
-				request.Name,
-				request.Priority,
-				request.Description,
-				assignedUserId,
-				request.ColumnId  
+				name,
+				priority,
+				description,
+				assignedUserId
 			);
 			return Ok(taskId);
 		}
@@ -87,6 +98,19 @@ namespace KanbanApp.API.Controllers
 			var subtasks = await _subtasksService.GetSubtasksByTaskId(taskId);
 
 			return Ok(subtasks);
+		}
+		
+		[HttpPatch("{id:guid}/column")]
+		public async Task<ActionResult<Guid>> UpdateTaskColumn(Guid id, [FromBody] Guid columnId)
+		{
+			if (columnId == Guid.Empty)
+			{
+				return BadRequest("ColumnId не может быть пустым.");
+			}
+
+			var updatedTaskId = await _tasksService.UpdateTaskColumn(id, columnId);
+
+			return Ok(updatedTaskId);
 		}
 	}
 }

@@ -29,13 +29,13 @@ namespace KanbanApp.API.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Guid>> CreateUser([FromBody] UsersKanbanRequest request)
 		{
-			(UserKanban user, string error) = UserKanban.Create(
+			(UserKanban? user, string error) = UserKanban.Create(
 				Guid.NewGuid(),
 				request.Name,
 				request.Login,
 				request.Password);
 
-			if (!string.IsNullOrEmpty(error))
+			if (user == null)
 			{
 				return BadRequest(error);
 			}
@@ -49,6 +49,12 @@ namespace KanbanApp.API.Controllers
 		[HttpPut("{id:guid}")]
 		public async Task<ActionResult<Guid>> UpdateUsers(Guid id, [FromBody] UsersKanbanRequest request)
 		{
+			
+			if(string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.Login) || string.IsNullOrEmpty(request.Password))
+			{
+				return BadRequest("Имя, ЛОгин, Пароль обязательны для заполнения");	
+			}
+			
 			var userId = await _usersService.UpdateUser(id, request.Name, request.Login, request.Password);
 			return Ok(userId);
 		}

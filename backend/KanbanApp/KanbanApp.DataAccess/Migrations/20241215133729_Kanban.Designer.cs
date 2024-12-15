@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KanbanApp.DataAccess.Migrations
 {
     [DbContext(typeof(KanbanAppDbContext))]
-    [Migration("20241208183712_init")]
-    partial class init
+    [Migration("20241215133729_Kanban")]
+    partial class Kanban
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,6 +89,26 @@ namespace KanbanApp.DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("SubtaskKanbanEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("Subtasks");
+                });
+
             modelBuilder.Entity("TaskKanbanEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -135,6 +155,17 @@ namespace KanbanApp.DataAccess.Migrations
                     b.Navigation("Board");
                 });
 
+            modelBuilder.Entity("SubtaskKanbanEntity", b =>
+                {
+                    b.HasOne("TaskKanbanEntity", "Task")
+                        .WithMany("Subtasks")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Task");
+                });
+
             modelBuilder.Entity("TaskKanbanEntity", b =>
                 {
                     b.HasOne("KanbanApp.DataAccess.Entites.UserKanbanEntity", "AssignedUser")
@@ -166,6 +197,11 @@ namespace KanbanApp.DataAccess.Migrations
             modelBuilder.Entity("KanbanApp.DataAccess.Entites.UserKanbanEntity", b =>
                 {
                     b.Navigation("AssignedTasks");
+                });
+
+            modelBuilder.Entity("TaskKanbanEntity", b =>
+                {
+                    b.Navigation("Subtasks");
                 });
 #pragma warning restore 612, 618
         }

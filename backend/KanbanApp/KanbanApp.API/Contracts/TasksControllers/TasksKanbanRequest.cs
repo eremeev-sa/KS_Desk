@@ -5,7 +5,7 @@
 		string Name, 
 		string Description, 
 		string Priority, // Приоритет задачи (например, "High", "Medium", "Low")
-		Guid ColumnId, 
-		Guid AssigneeId 
+		Guid AssigneeId,
+		Guid ColumnId
 	);
 }
