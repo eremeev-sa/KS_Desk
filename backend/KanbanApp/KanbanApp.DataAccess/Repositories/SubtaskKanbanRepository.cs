@@ -39,17 +39,21 @@ namespace KanbanApp.DataAccess.Repositories
 
 			return subtaskKanbanEntity.Id;
 		}
-		
+
 		public async Task<Guid> Update(Guid id, string name)
 		{
-			await _context.Subtasks
-				.Where(b => b.Id == id)
-				.ExecuteUpdateAsync(s => s
-					.SetProperty(b => name, b => name)
-				);
-			return id;
+			// Находим подзадачу по id
+			var subtaskEntity = await _context.Subtasks.FindAsync(id);
+			if (subtaskEntity == null)
+			{
+				throw new InvalidOperationException($"Подзадача не найдена");
+			}
+			subtaskEntity.Name = name;
+			await _context.SaveChangesAsync();
 
+			return subtaskEntity.Id;
 		}
+
 
 		public async Task<Guid> Delete(Guid id)
 		{

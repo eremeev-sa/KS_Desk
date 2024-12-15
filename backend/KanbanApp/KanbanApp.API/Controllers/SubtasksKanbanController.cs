@@ -48,7 +48,7 @@ namespace KanbanApp.API.Controllers
 
 		//Метод для обновления подзадачи
 		[HttpPut("{id:guid}")]
-		public async Task<ActionResult<Guid>> UpdateSubtask(Guid id, [FromBody] SubtasksKanbanRequest request)
+		public async Task<ActionResult<Guid>> UpdateSubtask(Guid id, [FromBody] SubtasksUpdateRequest request)
 		{
 			var subtaskId = await _subatasksService.UpdateSubtaskKanban(
 				id,
