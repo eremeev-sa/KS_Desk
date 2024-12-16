@@ -65,13 +65,13 @@ namespace KanbanApp.DataAccess.Repositories
 		}
 
 		// Обновление задачи
-		public async Task<Guid> Update(Guid id, string name, string priority, string description, Guid? assignedUserId)
+		public async Task<Guid> Update(Guid id, string name, string priority, string description, Guid? assignedId)
 		{
 			await _context.Tasks
 				.Where(b => b.Id == id)
 				.ExecuteUpdateAsync(s => s
 					.SetProperty(b => b.Name, b => name)
-					.SetProperty(b => b.AssignedId, b => assignedUserId)
+					.SetProperty(b => b.AssignedId, b => assignedId)
 					.SetProperty(b => b.Priority, b => priority)
 					.SetProperty(b => b.Description, b => description)
 				);
