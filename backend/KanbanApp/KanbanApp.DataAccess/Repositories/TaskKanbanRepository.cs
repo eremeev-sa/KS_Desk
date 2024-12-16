@@ -20,7 +20,7 @@ namespace KanbanApp.DataAccess.Repositories
 				.ToListAsync();
 
 			var tasks = taskEntities
-				.Select(b => TaskKanban.Create(b.Id, b.Name, b.Description ?? string.Empty, b.Priority, b.ColumnId, b.AssignedUserId).TaskKanban)
+				.Select(b => TaskKanban.Create(b.Id, b.Name, b.Description ?? string.Empty, b.Priority, b.ColumnId, b.AssignedId).TaskKanban)
 				.Where(t => t != null)
 				.Select(t => t!)
 				.ToList();
@@ -37,7 +37,7 @@ namespace KanbanApp.DataAccess.Repositories
 				.ToListAsync();  
 
 			var tasks = taskEntities
-				.Select(b => TaskKanban.Create(b.Id, b.Name, b.Description ?? string.Empty, b.Priority, b.ColumnId, b.AssignedUserId).TaskKanban)
+				.Select(b => TaskKanban.Create(b.Id, b.Name, b.Description ?? string.Empty, b.Priority, b.ColumnId, b.AssignedId).TaskKanban)
 				.Where(t => t != null)
 				.Select(t => t!)
 				.ToList();
@@ -55,7 +55,7 @@ namespace KanbanApp.DataAccess.Repositories
 				Priority = taskKanban.Priority,
 				Description = taskKanban.Description,
 				ColumnId = taskKanban.ColumnId,
-				AssignedUserId = taskKanban.AssignedUserId
+				AssignedId = taskKanban.AssignedId
 			};
 
 			await _context.Tasks.AddAsync(taskKanbanEntity);
@@ -71,7 +71,7 @@ namespace KanbanApp.DataAccess.Repositories
 				.Where(b => b.Id == id)
 				.ExecuteUpdateAsync(s => s
 					.SetProperty(b => b.Name, b => name)
-					.SetProperty(b => b.AssignedUserId, b => assignedUserId)
+					.SetProperty(b => b.AssignedId, b => assignedUserId)
 					.SetProperty(b => b.Priority, b => priority)
 					.SetProperty(b => b.Description, b => description)
 				);
@@ -115,7 +115,7 @@ namespace KanbanApp.DataAccess.Repositories
 				taskEntity.Description ?? string.Empty,
 				taskEntity.Priority,
 				taskEntity.ColumnId,
-				taskEntity.AssignedUserId);
+				taskEntity.AssignedId);
 
 			return taskKanban;
 		}

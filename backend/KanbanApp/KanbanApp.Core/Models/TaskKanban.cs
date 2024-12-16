@@ -4,14 +4,14 @@
 	{
 		public const int MAX_TASK_NAME_LENGTH = 50;
 
-		private TaskKanban(Guid id, string name, string description, string priority, Guid columnId, Guid? assignedUserId)
+		private TaskKanban(Guid id, string name, string description, string priority, Guid columnId, Guid? assignedId)
 		{
 			Id = id;
 			Name = name;
 			Priority = priority;
 			Description = description;
 			ColumnId = columnId;
-			AssignedUserId = assignedUserId;
+			AssignedId = assignedId;
 		}
 
 		public Guid Id { get; }
@@ -24,9 +24,9 @@
 
 		public Guid ColumnId { get; }
 
-		public Guid? AssignedUserId { get; }
+		public Guid? AssignedId { get; }
 
-		public static (TaskKanban? TaskKanban, string Error) Create(Guid id, string name, string description, string priority, Guid columnId, Guid? assignedUserId)
+		public static (TaskKanban? TaskKanban, string Error) Create(Guid id, string name, string description, string priority, Guid columnId, Guid? assignedId)
 		{
 			var error = string.Empty;
 
@@ -41,7 +41,7 @@
 				return (null, error);
 			}
 
-			var task = new TaskKanban(id, name, description, priority, columnId, assignedUserId);
+			var task = new TaskKanban(id, name, description, priority, columnId, assignedId);
 			return (task, error);
 		}
 	}
