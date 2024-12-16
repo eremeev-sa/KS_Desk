@@ -36,9 +36,9 @@ namespace KanbanApp.DataAccess
 
 			// При удалении пользователя задачи остаются, но поле AssignedUserId становится null
 			modelBuilder.Entity<TaskKanbanEntity>()
-				.HasOne(t => t.AssignedUser)
+				.HasOne(t => t.Assigned)
 				.WithMany(u => u.AssignedTasks)
-				.HasForeignKey(t => t.AssignedUserId)
+				.HasForeignKey(t => t.AssignedId)
 				.OnDelete(DeleteBehavior.SetNull);
 
 			// При удалении задачи все связанные подзадачи удаляются

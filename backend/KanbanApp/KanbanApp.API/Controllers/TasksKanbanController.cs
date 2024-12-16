@@ -30,7 +30,7 @@ namespace KanbanApp.API.Controllers
 			var response = tasks.Select(b => new TasksKanbanResponse(
 				b.Id,
 				b.Name,
-				b.AssignedUserId ?? Guid.Empty, 
+				b.AssignedId ?? Guid.Empty, 
 				b.Priority,
 				b.Description ?? string.Empty
 			));

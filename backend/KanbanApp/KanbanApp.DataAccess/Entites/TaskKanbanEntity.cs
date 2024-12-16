@@ -9,7 +9,7 @@ public class TaskKanbanEntity
 	public string Priority { get; set; } = string.Empty;
 	public Guid ColumnId { get; set; }
 	public ColumnKanbanEntity? Column { get; set; }
-	public Guid? AssignedUserId { get; set; }  
-	public UserKanbanEntity? AssignedUser { get; set; }  
+	public Guid? AssignedId { get; set; }  
+	public UserKanbanEntity? Assigned { get; set; }  
 	public List<SubtaskKanbanEntity>? Subtasks { get; set; } = new List<SubtaskKanbanEntity>();
 }

@@ -9,7 +9,7 @@ public interface ITasksKanbanRepository
 	Task<Guid> Create(TaskKanban taskKanban);
 
 	// Обновление задачи
-	Task<Guid> Update(Guid id, string name, string priority, string description, Guid? assignedUserId);
+	Task<Guid> Update(Guid id, string name, string priority, string description, Guid? assignedId);
 
 	// Удаление задачи
 	Task<Guid> Delete(Guid id);

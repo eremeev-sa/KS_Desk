@@ -24,7 +24,7 @@ namespace KanbanApp.Application.Services
 		}
 
 		// Обновление задачи
-		public async Task<Guid> UpdateTaskKanban(Guid id, string? name, string? priority, string? description, Guid? assignedUserId)
+		public async Task<Guid> UpdateTaskKanban(Guid id, string? name, string? priority, string? description, Guid? assignedId)
 		{
 			var upTask = await _tasksKanbanRepository.GetByIdTask(id); // Получаем текущую задачу
 
@@ -35,7 +35,7 @@ namespace KanbanApp.Application.Services
 			var upName = name ?? upTask.Name;
 			var upPriority = priority ?? upTask.Priority;
 			var upDescription = description ?? upTask.Description;
-			var upAssigneeId = assignedUserId.HasValue ? assignedUserId : upTask.AssignedUserId;
+			var upAssigneeId = assignedId.HasValue ? assignedId : upTask.AssignedId;
 			
 			return await _tasksKanbanRepository.Update(id, upName, upPriority, upDescription, upAssigneeId);
 		}

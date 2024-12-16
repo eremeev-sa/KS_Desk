@@ -3,8 +3,12 @@
   "WorkspaceRootPath": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|d:\\projects\\kanban_app\\backend\\kanbanapp\\kanbanapp.dataaccess\\repositories\\subtaskkanbanrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|solutionrelative:kanbanapp.dataaccess\\repositories\\subtaskkanbanrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|d:\\projects\\kanban_app\\backend\\kanbanapp\\kanbanapp.dataaccess\\repositories\\taskkanbanrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AAD244A9-81A0-4ECA-9437-18EE8541B315}|KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj|solutionrelative:kanbanapp.dataaccess\\repositories\\taskkanbanrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A96CA621-E29F-47E8-8505-DE3E50FCA663}|KanbanApp.Core\\KanbanApp.Core.csproj|d:\\projects\\kanban_app\\backend\\kanbanapp\\kanbanapp.core\\models\\taskkanban.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A96CA621-E29F-47E8-8505-DE3E50FCA663}|KanbanApp.Core\\KanbanApp.Core.csproj|solutionrelative:kanbanapp.core\\models\\taskkanban.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -27,14 +31,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "SubtaskKanbanRepository.cs",
-              "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\Repositories\\SubtaskKanbanRepository.cs",
-              "RelativeDocumentMoniker": "KanbanApp.DataAccess\\Repositories\\SubtaskKanbanRepository.cs",
-              "ToolTip": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\Repositories\\SubtaskKanbanRepository.cs",
-              "RelativeToolTip": "KanbanApp.DataAccess\\Repositories\\SubtaskKanbanRepository.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAA5wCkAAAAAAAAAAAAAAA==",
+              "Title": "TaskKanbanRepository.cs",
+              "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\Repositories\\TaskKanbanRepository.cs",
+              "RelativeDocumentMoniker": "KanbanApp.DataAccess\\Repositories\\TaskKanbanRepository.cs",
+              "ToolTip": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\Repositories\\TaskKanbanRepository.cs",
+              "RelativeToolTip": "KanbanApp.DataAccess\\Repositories\\TaskKanbanRepository.cs",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAMwDIAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-15T23:39:57.334Z",
+              "WhenOpened": "2024-12-16T14:18:51.081Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TaskKanban.cs",
+              "DocumentMoniker": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.Core\\Models\\TaskKanban.cs",
+              "RelativeDocumentMoniker": "KanbanApp.Core\\Models\\TaskKanban.cs",
+              "ToolTip": "D:\\Projects\\Kanban_App\\backend\\KanbanApp\\KanbanApp.Core\\Models\\TaskKanban.cs",
+              "RelativeToolTip": "KanbanApp.Core\\Models\\TaskKanban.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAkwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-16T14:18:35.387Z",
               "EditorCaption": ""
             }
           ]

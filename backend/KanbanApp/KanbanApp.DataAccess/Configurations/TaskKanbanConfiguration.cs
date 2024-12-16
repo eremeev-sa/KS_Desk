@@ -14,9 +14,6 @@ public class TaskKanbanConfiguration : IEntityTypeConfiguration<TaskKanbanEntity
 			.HasMaxLength(TaskKanban.MAX_TASK_NAME_LENGTH) // Ограничение длины имени задачи
 			.IsRequired(); // Задача обязательно должна иметь имя
 
-		// Свойство Assignee (назначенный пользователь)
-		builder.Property(b => b.Assignee); 
-
 		// Свойство Priority (приоритет)
 		builder.Property(b => b.Priority)
 			.IsRequired(); 

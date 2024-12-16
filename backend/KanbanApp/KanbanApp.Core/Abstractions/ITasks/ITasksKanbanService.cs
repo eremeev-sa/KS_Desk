@@ -6,7 +6,7 @@ public interface ITasksKanbanService
 	Task<Guid> CreateTaskKanban(TaskKanban taskKanban);
 
 	// Метод для обновления задачи
-	Task<Guid> UpdateTaskKanban(Guid id, string name, string priority, string description, Guid? assignedUserId);
+	Task<Guid> UpdateTaskKanban(Guid id, string name, string priority, string description, Guid? assignedId);
 
 	// Метод для удаления задачи по
 	Task<Guid> DeleteTaskKanban(Guid id);
