@@ -4,10 +4,10 @@ export interface TaskRequest {
     name: string;
     description: string;
     priority: string;
-    assignedUserId: string;
+    columnId: string;
 };
 
-export interface TaskRequestThis {
+export interface TaskUpdateRequest {
     name: string;
     description: string;
     priority: string;
@@ -60,7 +60,7 @@ export const createTask = async (taskRequest: TaskRequest) => {
 };
 
 // Функция для изменения задачи
-export const updateTask = async (id: string, taskRequest: TaskRequest) => {
+export const updateTask = async (id: string, taskRequest: TaskUpdateRequest) => {
     await fetch(`${CURRENT_URL}/${id}`, {
         method: "PUT",
         headers: {

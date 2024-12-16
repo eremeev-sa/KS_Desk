@@ -3,7 +3,7 @@ import Subtasks from './Subtasks';
 import { Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { colors } from '@atlaskit/theme';
-import { TaskRequest } from '../../services/Task';
+import { TaskRequest, TaskUpdateRequest } from '../../services/Task';
 import { SubtaskType, TaskType } from '../../models/models';
 import Select from "react-select";
 import { getSubtasks } from '../../services/Subtask';
@@ -19,11 +19,11 @@ type TaskProps = {
         description: string;
         priority: string;
         columnId: string;
-        assignedUserId: string;
+        assigneeId: string;
     };
     index: number;
     onDelete: (id: string) => void;
-    handleTaskUpdate: (id: string, taskRequest: TaskRequest) => void;
+    handleTaskUpdate: (id: string, taskRequest: TaskUpdateRequest) => void;
     usersData: {
         id: string,
         name: string,
@@ -73,7 +73,7 @@ const Header = styled.div<HeaderProps>`
 const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, usersData }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [tempName, setTempName] = useState(task.name);
-    const [tempUser, setTempUser] = useState(task.assignedUserId);
+    const [tempUser, setTempUser] = useState(task.assigneeId);
     const [tempDescription, setDescription] = useState(task.description);
     const [tempPriority, setPriority] = useState(task.priority);
     const [subtaskData, setSubtaskData] = useState<SubtaskType[]>([]);
@@ -105,7 +105,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
     };
 
     const handleSaveClick = () => {
-        const taskRequest = { name: tempName, description: tempDescription, priority: tempPriority, assignedUserId: tempUser };
+        const taskRequest = { name: tempName, description: tempDescription, priority: tempPriority, assigneeId: tempUser };
         handleTaskUpdate(task.id, taskRequest);
         setIsEditing(false);
     };
@@ -228,7 +228,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
                                                     {task.priority}
                                                 </div>
                                                 <div className='user-style'>
-                                                    <span>{usersData.find((user) => user.id === task.assignedUserId)?.name || "Не назначен"}</span>
+                                                    <span>{usersData.find((user) => user.id === task.assigneeId)?.name || "Не назначен"}</span>
                                                 </div>
                                             </span>
                                         </div>

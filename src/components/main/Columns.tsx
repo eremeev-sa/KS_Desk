@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import Column from './Column';
 import { ColumnRequest, createColumn, deleteColumn, getColumns, updateColumn, updateColumnOrder } from '../../services/Column';
-import { getAllTasks, TaskRequest, updateTask, updateTaskColumn } from '../../services/Task';
+import { getAllTasks, TaskRequest, TaskUpdateRequest, updateTask, updateTaskColumn } from '../../services/Task';
 import styled from 'styled-components';
 import { TaskType } from '../../models/models';
 
@@ -115,7 +115,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
         }
     };
 
-    const handleTaskUpdate = async (id: string, taskRequest: TaskRequest) => {
+    const handleTaskUpdate = async (id: string, taskRequest: TaskUpdateRequest) => {
         try {
             await updateTask(id, taskRequest);
             handleTaskLocalUpdate();

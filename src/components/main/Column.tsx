@@ -4,7 +4,7 @@ import { ColumnRequest, getColumns, updateColumn } from '../../services/Column';
 import { Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { colors } from '@atlaskit/theme';
-import { getTasks, TaskRequest } from '../../services/Task';
+import { getTasks, TaskRequest, TaskUpdateRequest } from '../../services/Task';
 import { TaskType } from '../../models/models';
 
 interface HeaderProps {
@@ -41,10 +41,10 @@ type ColumnProps = {
         description: string;
         priority: string;
         columnId: string;
-        assignedUserId: string;
+        assigneeId: string;
     }[];
 
-    handleTaskUpdate: (id: string, taskRequest: TaskRequest) => void;
+    handleTaskUpdate: (id: string, taskRequest: TaskUpdateRequest) => void;
     handleTaskLocalUpdate: () => void;
     onDelete: (id: string) => void;
     onUpdate: (id: string, columnRequest: ColumnRequest) => void;

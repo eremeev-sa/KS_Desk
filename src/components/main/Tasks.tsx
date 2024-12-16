@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Task from './Task';
 import { Droppable } from 'react-beautiful-dnd';
-import { createTask, deleteTask, getTasks, TaskRequest, updateTask, updateTaskColumn } from '../../services/Task';
+import { createTask, deleteTask, getTasks, TaskRequest, TaskUpdateRequest, updateTask, updateTaskColumn } from '../../services/Task';
 import { TaskType, UserType } from '../../models/models';
 import { getUsers } from '../../services/User';
 
@@ -12,11 +12,11 @@ type TasksProps = {
         description: string;
         priority: string;
         columnId: string;
-        assignedUserId: string;
+        assigneeId: string;
     }[];
     columnId: string;
 
-    handleTaskUpdate: (id: string, taskRequest: TaskRequest) => void;
+    handleTaskUpdate: (id: string, taskRequest: TaskUpdateRequest) => void;
     handleTaskLocalUpdate: () => void;
 };
 
@@ -48,7 +48,6 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                 description: "",
                 priority: "",
                 columnId: columnId,
-                assignedUserId: ""
             };
             // Создаем новую задачу
             await createTask(newTask);
