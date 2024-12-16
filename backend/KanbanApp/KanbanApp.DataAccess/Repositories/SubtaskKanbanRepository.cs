@@ -42,7 +42,6 @@ namespace KanbanApp.DataAccess.Repositories
 
 		public async Task<Guid> Update(Guid id, string name)
 		{
-			// Находим подзадачу по id
 			var subtaskEntity = await _context.Subtasks.FindAsync(id);
 			if (subtaskEntity == null)
 			{
