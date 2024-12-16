@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tasks from './Tasks';
 import { ColumnRequest, getColumns, updateColumn } from '../../services/Column';
 import { Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { colors } from '@atlaskit/theme';
+import { getTasks, TaskRequest } from '../../services/Task';
+import { TaskType } from '../../models/models';
 
 interface HeaderProps {
     isDragging: boolean;
 }
 
 const Container = styled.div`
-  margin: ${8}px;
+  margin: ${0}px;
   display: flex;
   flex-direction: column;
 `;
@@ -33,22 +35,22 @@ type ColumnProps = {
     id: string;
     name: string;
     index: number;
-    
+    tasks: {
+        id: string;
+        name: string;
+        description: string;
+        priority: string;
+        columnId: string;
+        assignedUserId: string;
+    }[];
+
+    handleTaskUpdate: (id: string, taskRequest: TaskRequest) => void;
+    handleTaskLocalUpdate: () => void;
     onDelete: (id: string) => void;
     onUpdate: (id: string, columnRequest: ColumnRequest) => void;
 };
 
-const TaskData = [
-    { Id: "1", Name: "Task1", Assignee: "1", Priority: 1, Description: "Description", ColumnId: 1 },
-    { Id: "2", Name: "Task2", Assignee: "1", Priority: 1, Description: "Description", ColumnId: 1 },
-    { Id: "3", Name: "Task3", Assignee: "1", Priority: 1, Description: "Description", ColumnId: 2 },
-    { Id: "4", Name: "Task1", Assignee: "1", Priority: 1, Description: "Description", ColumnId: 4 },
-    { Id: "5", Name: "Task2", Assignee: "1", Priority: 1, Description: "Description", ColumnId: 2 },
-    { Id: "6", Name: "Task3", Assignee: "1", Priority: 1, Description: "Description", ColumnId: 3 },
-    { Id: "7", Name: "Task4", Assignee: "1", Priority: 1, Description: "Description", ColumnId: 3 }
-];
-
-const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate }) => {
+const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, tasks, handleTaskUpdate, handleTaskLocalUpdate }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [tempName, setTempName] = useState(name);
 
@@ -68,7 +70,7 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate }) 
     };
 
     return (
-        <Draggable draggableId={id} index={index}>
+        <Draggable draggableId={id} index={index} key={id}>
             {(provided, snapshot) => (
                 <Container ref={provided.innerRef} {...provided.draggableProps}>
                     <div className="kanban-column ms-4">
@@ -105,18 +107,23 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate }) 
                                     <div className="d-flex w-100 align-items-center justify-content-between">
 
                                         <Header isDragging={snapshot.isDragging}>
+                                            {/* Область для перетаскивания */}
                                             <div
                                                 {...provided.dragHandleProps}
-                                                style={{
-                                                    fontWeight: 'bold',
-                                                    cursor: 'grab',
-                                                    margin: '8px',
-                                                    userSelect: 'none',  // Запрещает выделение текста
-                                                }}
+                                                className="drag-handle center"
                                             >
-                                                {name}
+                                                ✥
                                             </div>
                                         </Header>
+
+                                        <div
+                                            style={{
+                                                fontWeight: 'bold',
+                                                margin: '8px',
+                                            }}
+                                        >
+                                            <span className="text-container">{name}</span>
+                                        </div>
 
                                         <div className="button-container d-flex align-items-center">
                                             <button
@@ -136,7 +143,7 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate }) 
                                 )}
                             </div>
                             <div className="card-body">
-                                <Tasks data={TaskData} columnId={id} />
+                                <Tasks tasks={tasks} handleTaskUpdate={handleTaskUpdate} handleTaskLocalUpdate={handleTaskLocalUpdate} columnId={id} />
                             </div>
                         </div>
                     </div>

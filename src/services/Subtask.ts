@@ -1,15 +1,15 @@
 import { BASE_URL } from './config';
 
 export interface SubtaskRequest {
-    Name: string;
+    name: string;
 };
 
 const CURRENT_URL = `${BASE_URL}/SubtasksKanban`;
 
 // Функция для получения списка подзадач
-export const getSubtasks = async () => {
+export const getSubtasks = async (taskId: string) => {
     try {
-        const response = await fetch(`${CURRENT_URL}`);
+        const response = await fetch(`${BASE_URL}/TasksKanban/${taskId}/subtasks`);
         if (!response.ok) {
             throw new Error("Не удалось получить данные с бэкенда");
         }

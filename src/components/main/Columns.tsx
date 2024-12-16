@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import Column from './Column';
 import { ColumnRequest, createColumn, deleteColumn, getColumns, updateColumn, updateColumnOrder } from '../../services/Column';
+import { getAllTasks, TaskRequest, updateTask, updateTaskColumn } from '../../services/Task';
 import styled from 'styled-components';
+import { TaskType } from '../../models/models';
 
 type ColumnsProps = {
     currentBoardId: string;
@@ -17,7 +19,7 @@ const Container = styled.div`
 `;
 
 const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
-
+    const [tasks, setTasks] = useState<TaskType[]>([]); // Хранение задач
     const [data, setData] = useState<{ id: string; name: string }[]>([]);
     const [loading, setLoading] = useState(true);
     const [tempName, setTempName] = useState("");
@@ -45,6 +47,19 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
         fetchColumns();
     }, [currentBoardId]); // Зависимость — currentBoardId
 
+    useEffect(() => {
+        // Получаем задачи для всех колонок после того, как получили их список
+        const loadAllTasks = async () => {
+            if (data.length > 0) {
+                const columnIds = data.map(column => column.id);  // Получаем список всех columnId
+                const allTasks = await getAllTasks(columnIds);  // Загружаем все задачи
+                setTasks(allTasks);  // Обновляем состояние с задачами
+            }
+        };
+
+        loadAllTasks();
+    }, [data]);
+
     // Функция для добавления новой доски
     const handleAddClick = async () => {
         try {
@@ -53,6 +68,8 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
             const updatedBoards = await getColumns(currentBoardId); // Обновляем список досок с сервера
             setData(updatedBoards); // Устанавливаем новые данные в состояние
             setAddNewColumn(false);
+            // Очищаем поле ввода
+            setTempName("");
             console.log(data);
         } catch (error) {
             console.error("Ошибка при добавлении доски:", error); // Логируем ошибки
@@ -90,27 +107,73 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
         }
     };
 
+    const handleTaskLocalUpdate = async () => {
+        if (data.length > 0) {
+            const columnIds = data.map(column => column.id);  // Получаем список всех columnId
+            const allTasks = await getAllTasks(columnIds);  // Загружаем все задачи
+            setTasks(allTasks);  // Обновляем состояние с задачами
+        }
+    };
+
+    const handleTaskUpdate = async (id: string, taskRequest: TaskRequest) => {
+        try {
+            await updateTask(id, taskRequest);
+            handleTaskLocalUpdate();
+        } catch (error) {
+            console.error("Ошибка при обновлении задачи:", error);
+        }
+    };
+
     // Функция для обработки завершения перетаскивания
     const handleOnDragEnd = async (result: any) => {
-        const { source, destination } = result;
-
+        const { source, destination, type } = result;
         // Если задача не была перемещена (находится в том же месте)
         if (!destination) return;
 
-        // Получаем новый порядок колонок
-        const reorderedColumns = Array.from(data);
-        const [movedColumn] = reorderedColumns.splice(source.index, 1);
-        reorderedColumns.splice(destination.index, 0, movedColumn);
+        // Получаем ID задачи (source.draggableId)
+        const taskId = result.draggableId;
+        console.log("Задача с ID", taskId, "перемещена");
 
-        // Отправляем новый порядок на сервер
-        const orderedColumnIds = reorderedColumns.map((column) => column.id);
-        try {
-            await updateColumnOrder({ orderedColumnIds });
-            setData(reorderedColumns); // Обновляем данные в состоянии
-        } catch (error) {
-            console.error('Ошибка при обновлении порядка колонок:', error);
+        // Получаем ID колонки, в которую была перемещена задача
+        const targetColumnId = result.destination.droppableId;
+        console.log("Задача перемещена в колонку с ID:", targetColumnId);
+        // Логика для перемещения колонок
+        if (type === "COLUMN") {
+            // Получаем новый порядок колонок
+            const reorderedColumns = Array.from(data);
+            const [movedColumn] = reorderedColumns.splice(source.index, 1);
+            reorderedColumns.splice(destination.index, 0, movedColumn);
+
+            // Отправляем новый порядок на сервер
+            const orderedColumnIds = reorderedColumns.map((column) => column.id);
+            try {
+                await updateColumnOrder({ orderedColumnIds });
+                setData(reorderedColumns); // Обновляем данные в состоянии
+            } catch (error) {
+                console.error('Ошибка при обновлении порядка колонок:', error);
+            }
+
+            return;
         }
+
+        else if (type === "TASK") {
+            try {
+                // Отправляем обновление на сервер с полным объектом задачи
+                await updateTaskColumn(taskId, targetColumnId);
+
+                handleTaskLocalUpdate();
+            } catch (error) {
+                console.error("Ошибка при обновлении порядка задач:", error);
+            }
+
+            return;
+        }
+
+
+
+        // Можно добавить дополнительные проверки или другие типы для других объектов
     };
+
 
     return (
         <div>
@@ -122,10 +185,9 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                         <>
                             <DragDropContext onDragEnd={handleOnDragEnd}>
                                 <Droppable
-                                    droppableId={`board`}
+                                    droppableId={currentBoardId}
                                     type="COLUMN"
                                     direction="horizontal"
-                                    ignoreContainerClipping={Boolean(400)}
                                     isCombineEnabled={false}
                                 >
                                     {(provided) => (
@@ -135,7 +197,6 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                                             style={{
                                                 display: 'flex', // Устанавливаем flex-контейнер
                                                 flexDirection: 'row', // Горизонтальное направление
-                                                gap: '16px', // Расстояние между колонками (опционально)
                                             }}
                                         >
                                             {data.map((column, index) => (
@@ -144,7 +205,11 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                                                     {...column}
                                                     index={index}
                                                     onUpdate={handleUpdate}
-                                                    onDelete={handleDelete} />
+                                                    onDelete={handleDelete}
+                                                    tasks={tasks.filter(task => task.columnId === column.id)}  // Фильтруем задачи для каждой колонки
+                                                    handleTaskUpdate={handleTaskUpdate}
+                                                    handleTaskLocalUpdate={handleTaskLocalUpdate}
+                                                />
                                             ))}
                                             {provided.placeholder}
                                         </div>

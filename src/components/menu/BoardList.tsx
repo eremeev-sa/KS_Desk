@@ -7,9 +7,10 @@ type BoardListProps = {
   onDelete: (id: string) => void;
   onUpdate: (id: string, boardRequest: BoardRequest) => void;
   onBoardClick: (id: string) => void;
+  currentBoardId: string;
 };
 
-const BoardList: React.FC<BoardListProps> = ({ data, onDelete, onUpdate, onBoardClick }) => {
+const BoardList: React.FC<BoardListProps> = ({ data, onDelete, onUpdate, onBoardClick, currentBoardId }) => {
   const [addNewBoard, setAddNewBoard] = useState(false);
   const [tempName, setTempName] = useState("");
   const [boardsData, setBoardsData] = useState(data);
@@ -42,14 +43,19 @@ const BoardList: React.FC<BoardListProps> = ({ data, onDelete, onUpdate, onBoard
     <div className="list-group mt-4">
       {boardsData.length === 0 ? <a className="center">Нет досок</a> : <div></div>}
       {boardsData.map(board => (
-        <Board
+        <div
           key={board.id}
-          Id={board.id}
-          Name={board.name}
-          onDelete={onDelete}
-          onUpdate={onUpdate}
-          onBoardClick={onBoardClick}
-        />
+          className={`custom-button ${currentBoardId === board.id ? "selected" : ""}`} // Добавляем класс, если доска выбрана
+        >
+          <Board
+            key={board.id}
+            Id={board.id}
+            Name={board.name}
+            onDelete={onDelete}
+            onUpdate={onUpdate}
+            onBoardClick={onBoardClick}
+          />
+        </div>
       ))}
       {addNewBoard ? <>
         <div className="list-group-item d-flex align-items-center justify-content-between custom-gradient">

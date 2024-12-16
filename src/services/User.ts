@@ -1,9 +1,9 @@
 import { BASE_URL } from './config';
 
 export interface UserRequest {
-    Name: string;
-    Login: string;
-    Password: string;
+    name: string;
+    login: string;
+    password: string;
 };
 
 const CURRENT_URL = `${BASE_URL}/UsersKanban`;

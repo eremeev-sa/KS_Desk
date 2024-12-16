@@ -45,7 +45,6 @@ const Board: React.FC<BoardProps> = ({ Id, Name, onDelete, onUpdate, onBoardClic
                         className="form-control me-2"
                         value={tempName}
                         onChange={(e) => setTempName(e.target.value)}
-                        style={{ flex: "1" }}
                     />
                     <div className="button-container d-flex align-items-center">
                         <button

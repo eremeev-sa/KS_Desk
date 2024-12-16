@@ -43,8 +43,8 @@ html {
 }
 
 .kanban-column {
-    min-width: 250px;
-    max-width: 250px;
+    min-width: 300px;
+    max-width: 300px;
     flex: 0 0 auto;
 }
 
@@ -58,6 +58,7 @@ html {
     left: 0;
     top: 0;
     padding: 1rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Легкая тень при наведении */
 }
 
 /* Стили для кнопки выхода */
@@ -98,4 +99,61 @@ html {
     justify-content: flex-end;
     margin-right: 0em;
     flex-shrink: 0;
+}
+
+.btn-danger {
+    margin: 2px 2px 2px 2px;
+}
+
+.selected {
+    border: 2px solid #007bff;
+    border-radius: "4px";
+    margin: 0;
+    padding: 0;
+}
+
+.custom-button {
+    cursor: pointer;
+}
+
+.drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    cursor: grab;
+    font-size: 18px;
+    padding: 20px;-webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.accordion-header {
+    display: flex;
+    align-items: center;
+}
+
+.priority-low {
+    color: green;
+}
+
+.priority-medium {
+    color: blue;
+}
+
+.priority-high {
+    color: red;
+}
+
+.description-style {
+    color: gray;
+}
+
+.user-style {
+    color:deepskyblue;
 }

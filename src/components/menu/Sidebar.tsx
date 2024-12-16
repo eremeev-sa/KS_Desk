@@ -7,9 +7,10 @@ type SidebarProps = {
   userName: string;
   onLogout: () => void;
   onBoardClick: (id: string) => void;
+  currentBoardId: string;
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick }) => {
+const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick, currentBoardId }) => {
   const [data, setData] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -56,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick }) =
   return (
     <div className="">
       <UserInfo userName={userName} onLogout={onLogout} />
-      {loading ? <h2>Загрузка...</h2> : <BoardList data={data} onUpdate={handleUpdate} onDelete={handleDelete} onBoardClick={onBoardClick} />}
+      {loading ? <h2>Загрузка...</h2> : <BoardList currentBoardId={currentBoardId} data={data} onUpdate={handleUpdate} onDelete={handleDelete} onBoardClick={onBoardClick} />}
     </div>
   );
 };

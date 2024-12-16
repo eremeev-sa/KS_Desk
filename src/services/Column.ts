@@ -2,7 +2,6 @@ import { BASE_URL } from './config';
 
 export interface ColumnRequest {
     name: string;
-    //Order: number;
 };
 
 export interface CreateColumnRequest {
@@ -19,7 +18,7 @@ const CURRENT_URL = `${BASE_URL}/ColumnsKanban`;
 // Функция для получения списка колонок
 export const getColumns = async (boardid: string) => {
     try {
-        const response = await fetch(`${BASE_URL}/BoardsKanaban/${boardid}/columns`);
+        const response = await fetch(`${BASE_URL}/BoardsKanban/${boardid}/columns`);
         if (!response.ok) {
             throw new Error("Не удалось получить данные с бэкенда");
         }

@@ -2,10 +2,9 @@ import { BASE_URL } from './config';
 
 export interface BoardRequest {
     Name: string;
-    //Columns: string[];
 };
 
-const CURRENT_URL = `${BASE_URL}/BoardsKanaban`;
+const CURRENT_URL = `${BASE_URL}/BoardsKanban`;
 
 // Функция для получения списка досок
 export const getBoards = async () => {
