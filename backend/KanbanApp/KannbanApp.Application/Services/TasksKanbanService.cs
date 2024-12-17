@@ -35,9 +35,9 @@ namespace KanbanApp.Application.Services
 			var upName = name ?? upTask.Name;
 			var upPriority = priority ?? upTask.Priority;
 			var upDescription = description ?? upTask.Description;
-			var upAssigneeId = assignedId.HasValue ? assignedId : upTask.AssignedId;
+			var upAssignedId = assignedId.HasValue ? assignedId : upTask.AssignedId;
 			
-			return await _tasksKanbanRepository.Update(id, upName, upPriority, upDescription, upAssigneeId);
+			return await _tasksKanbanRepository.Update(id, upName, upPriority, upDescription, upAssignedId);
 		}
 
 		// Удаление задачи

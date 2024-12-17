@@ -41,7 +41,7 @@ namespace KanbanApp.API.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Guid>> CreateTasks([FromBody] TasksKanbanRequest request)
 		{
-			Guid? assignedUserId = request.AssigneeId == Guid.Empty ? (Guid?)null : request.AssigneeId;
+			Guid? assignedId = request.AssignedId == Guid.Empty ? (Guid?)null : request.AssignedId;
 
 			var (task, error) = TaskKanban.Create(
 				Guid.NewGuid(),
@@ -49,7 +49,7 @@ namespace KanbanApp.API.Controllers
 				request.Description,
 				request.Priority,
 				request.ColumnId, 
-				assignedUserId
+				assignedId
 			);
 
 			if (!string.IsNullOrEmpty(error))
@@ -73,14 +73,14 @@ namespace KanbanApp.API.Controllers
 			var name = request.Name ?? null; 
 			var priority = request.Priority ?? null; 
 			var description = request.Description ?? null; 
-			var assignedUserId = request.AssigneeId ?? null;
+			var assignedId = request.AssignedId ?? null;
 
 			var taskId = await _tasksService.UpdateTaskKanban(
 				id,
 				name,
 				priority,
 				description,
-				assignedUserId
+				assignedId
 			);
 			return Ok(taskId);
 		}

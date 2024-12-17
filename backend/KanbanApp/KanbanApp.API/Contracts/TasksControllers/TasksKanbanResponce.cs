@@ -4,7 +4,7 @@
 	public record TasksKanbanResponse(
 		Guid Id,
 		string Name,
-		Guid AssigneeId,
+		Guid AssignedId,
 		string Priority,
 		string Description
 	);
