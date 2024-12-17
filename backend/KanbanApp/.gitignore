@@ -8,6 +8,7 @@
 
 *.json
 .vs/
+.idea/
 # User-specific files
 *.rsuser
 *.suo
