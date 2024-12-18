@@ -40,53 +40,65 @@ const BoardList: React.FC<BoardListProps> = ({ data, onDelete, onUpdate, onBoard
   };
 
   return (
-    <div className="list-group mt-4">
-      {boardsData.length === 0 ? <a className="center">Нет досок</a> : <div></div>}
-      {boardsData.map(board => (
-        <div
-          key={board.id}
-          className={`custom-button ${currentBoardId === board.id ? "selected" : ""}`} // Добавляем класс, если доска выбрана
-        >
-          <Board
+    <div className="">
+      <div className="sidebar-title">
+        <h3 className="board-info">Доски</h3>
+        {addNewBoard ? <>
+        </> :
+          <button
+            className="btn btn-add"
+            onClick={() => setAddNewBoard(true)}>
+            +
+          </button>}
+      </div>
+      <div className="boards-list">
+        {boardsData.length === 0 ? <a className="center">Нет досок</a> : <div></div>}
+        {boardsData.map(board => (
+          <div
             key={board.id}
-            Id={board.id}
-            Name={board.name}
-            onDelete={onDelete}
-            onUpdate={onUpdate}
-            onBoardClick={onBoardClick}
-          />
-        </div>
-      ))}
-      {addNewBoard ? <>
-        <div className="list-group-item d-flex align-items-center justify-content-between custom-gradient">
-          <input
-            title="Название доски"
-            placeholder="Название доски"
-            type="text"
-            className="form-control me-2"
-            value={tempName} // Используем состояние для ввода
-            onChange={(e) => setTempName(e.target.value)} // Обновляем tempName при вводе
-          />
-          <div className="button-container">
-            <button
-              className="btn btn-success btn-sm"
-              onClick={handleAddClick} // Добавление новой записи
-            >
-              ✔
-            </button>
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={handleCancelClick} // Отмена
-            >
-              ✖
-            </button>
+            className={`kanban-boards custom-button ${currentBoardId === board.id ? "selected" : "custom-color"}`} // Добавляем класс, если доска выбрана
+          >
+            <Board
+              key={board.id}
+              Id={board.id}
+              Name={board.name}
+              onDelete={onDelete}
+              onUpdate={onUpdate}
+              onBoardClick={onBoardClick}
+            />
           </div>
-        </div>
+        ))}
+        {addNewBoard ? <>
+          <div className="list-group-item new-board d-flex align-items-center justify-content-between">
+            <input
+              title="Название доски"
+              placeholder="Название доски"
+              type="text"
+              className="form-control board me-2"
+              value={tempName} // Используем состояние для ввода
+              onChange={(e) => setTempName(e.target.value)} // Обновляем tempName при вводе
+            />
+            <div className="button-container">
+              <button
+                className="btn btn-accept btn-sm"
+                onClick={handleAddClick} // Добавление новой записи
+              >
+                ✔
+              </button>
+              <button
+                className="btn btn-cance btn-sm"
+                onClick={handleCancelClick} // Отмена
+              >
+                ✖
+              </button>
+            </div>
+          </div>
+        </> :
+          <div>
 
-      </> :
-        <div className="row w-100p mt-2">
-          <button className="btn btn-primary w-100" onClick={() => setAddNewBoard(true)}>Добавить</button>
-        </div>}
+          </div>}
+      </div>
+
     </div>
   );
 };

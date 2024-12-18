@@ -106,12 +106,14 @@ const Subtasks: React.FC<SubtaskProps> = ({ data, taskId }) => {
                     </div>
                 </div>
             ) : (
-                <div className="row w-100p mt-2">
+                <div className="row w-100 mt-2 center">
                     <button
-                        className="btn btn-secondary w-100"
-                        onClick={() => setAddNewSubtask(true)}
-                    >
-                        Добавить
+                        className="btn btn-add w-100 me-2 bth-add-subtask center"
+                        onClick={() => setAddNewSubtask(true)}>
+                        +
+                        <div className='text-on-bth'>
+                            Добавить подзадачу
+                        </div>
                     </button>
                 </div>
             )}

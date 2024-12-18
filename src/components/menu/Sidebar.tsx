@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import BoardList from "./BoardList";
 import UserInfo from "./UserInfo";
 import { getBoards, updateBoard, BoardRequest, deleteBoard } from "../../services/Board";
+import "@fontsource/ibm-plex-sans";
 
 type SidebarProps = {
   userName: string;
@@ -55,9 +56,27 @@ const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick, cur
   };
 
   return (
-    <div className="">
-      <UserInfo userName={userName} onLogout={onLogout} />
-      {loading ? <h2>Загрузка...</h2> : <BoardList currentBoardId={currentBoardId} data={data} onUpdate={handleUpdate} onDelete={handleDelete} onBoardClick={onBoardClick} />}
+    <div className="sidebar">
+      <div className="sidebar-header-text">
+        <div className="sidebar-header-ico"></div>
+        <div>КС Деск</div>
+      </div>
+      <div className="boards">
+        {loading ?
+          <h2>Загрузка...</h2>
+          :
+          <BoardList
+            currentBoardId={currentBoardId}
+            data={data}
+            onUpdate={handleUpdate}
+            onDelete={handleDelete}
+            onBoardClick={onBoardClick}
+          />
+        }
+      </div>
+      <div className="user">
+        <UserInfo userName={userName} onLogout={onLogout} />
+      </div>
     </div>
   );
 };

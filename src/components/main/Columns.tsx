@@ -176,88 +176,91 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
 
 
     return (
-        <div>
-            <div className='mt-4'>
-                <div className="kanban-columns-container custom-scrollbar">
-                    {loading ? (
-                        <p>Загрузка...</p>
-                    ) : (
-                        <>
-                            <DragDropContext onDragEnd={handleOnDragEnd}>
-                                <Droppable
-                                    droppableId={currentBoardId}
-                                    type="COLUMN"
-                                    direction="horizontal"
-                                    isCombineEnabled={false}
+        <div className="kanban-columns-container mt-4">
+            {loading ? (
+                <p className='ms-2'>Загрузка...</p>
+            ) : (
+                <>
+                    <DragDropContext onDragEnd={handleOnDragEnd}>
+                        <Droppable
+                            droppableId={currentBoardId}
+                            type="COLUMN"
+                            direction="horizontal"
+                            isCombineEnabled={false}
+                        >
+                            {(provided) => (
+                                <div
+                                    ref={provided.innerRef}
+                                    {...provided.droppableProps}
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                    }}
                                 >
-                                    {(provided) => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.droppableProps}
-                                            style={{
-                                                display: 'flex', // Устанавливаем flex-контейнер
-                                                flexDirection: 'row', // Горизонтальное направление
-                                            }}
-                                        >
-                                            {data.map((column, index) => (
-                                                <Column
-                                                    key={column.id}
-                                                    {...column}
-                                                    index={index}
-                                                    onUpdate={handleUpdate}
-                                                    onDelete={handleDelete}
-                                                    tasks={tasks.filter(task => task.columnId === column.id)}  // Фильтруем задачи для каждой колонки
-                                                    handleTaskUpdate={handleTaskUpdate}
-                                                    handleTaskLocalUpdate={handleTaskLocalUpdate}
-                                                />
-                                            ))}
-                                            {provided.placeholder}
-                                        </div>
-                                    )}
+                                    {data.map((column, index) => (
+                                        <Column
+                                            key={column.id}
+                                            {...column}
+                                            index={index}
+                                            onUpdate={handleUpdate}
+                                            onDelete={handleDelete}
+                                            tasks={tasks.filter(task => task.columnId === column.id)}
+                                            handleTaskUpdate={handleTaskUpdate}
+                                            handleTaskLocalUpdate={handleTaskLocalUpdate}
+                                        />
+                                    ))}
+                                    {provided.placeholder}
+                                </div>
+                            )}
 
-                                </Droppable>
-                            </DragDropContext>
-                            {addNewColumn ? <>
-                                <div className="">
-
-                                    <div className="kanban-column ms-4">
-                                        <div className="card">
-                                            <input
-                                                title="Название доски"
-                                                placeholder="Название доски"
-                                                type="text"
-                                                className="form-control me-2"
-                                                value={tempName} // Используем состояние для ввода
-                                                onChange={(e) => setTempName(e.target.value)} // Обновляем tempName при вводе
-                                            />
-                                            <div className="card-body">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="button-container">
-                                        <button
-                                            className="btn btn-success btn-sm"
-                                            onClick={handleAddClick} // Добавление новой записи
-                                        >
-                                            ✔
-                                        </button>
-                                        <button
-                                            className="btn btn-danger btn-sm"
-                                            onClick={handleCancelClick} // Отмена
-                                        >
-                                            ✖
-                                        </button>
+                        </Droppable>
+                    </DragDropContext>
+                    {addNewColumn ? <>
+                        <div className="new-column">
+                            <div className="ms-4">
+                                <div className="card">
+                                    <input
+                                        title="Название доски"
+                                        placeholder="Название доски"
+                                        type="text"
+                                        className="form-control me-2"
+                                        value={tempName} // Используем состояние для ввода
+                                        onChange={(e) => setTempName(e.target.value)} // Обновляем tempName при вводе
+                                    />
+                                    <div className="card-body">
                                     </div>
                                 </div>
+                            </div>
+                            <div className="button-container ms-4">
+                                <button
+                                    className="btn btn-accept btn-sm"
+                                    onClick={handleAddClick} // Добавление новой записи
+                                >
+                                    ✔
+                                </button>
+                                <button
+                                    className="btn btn-cancel btn-sm"
+                                    onClick={handleCancelClick} // Отмена
+                                >
+                                    ✖
+                                </button>
+                            </div>
+                        </div>
 
-                            </> :
-                                <div className="mb-4 ms-4">
-                                    <button className="btn btn-success w-100 me-2" onClick={() => setAddNewColumn(true)}>+</button>
-                                </div>}
-                        </>
-                    )}
-                </div>
-            </div>
+                    </> :
+                        <div className="mb-4 ms-4 new-column">
+                            <button
+                                className="btn btn-add w-100 bth-add-task center"
+                                onClick={() => setAddNewColumn(true)}>
+                                +
+                                <div className='text-on-bth'>
+                                    Добавить колонку
+                                </div>
+                            </button>
+                        </div>
+                    }
+                </>
+            )}
         </div>
     );
 };

@@ -1,41 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { getUsers, UserRequest } from '../services/User';
-import { useUser } from '../context/UserContext'; // Импортируем хук для глобального состояния
+import { useUser } from '../context/UserContext';
 
 type LoginProps = {
   onLogin: () => void;
 };
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  const { setCurrentUser } = useUser(); // Получаем функцию для обновления глобального состояния
+  const { setCurrentUser } = useUser(); // Функция для обновления глобального состояния пользователя
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [usersData, setUsersData] = useState<UserRequest[]>([]); // Сохраняем список пользователей
+  const [usersData, setUsersData] = useState<UserRequest[]>([]);
 
-  // Обновление локального состояния
   useEffect(() => {
     const fetchUsers = async () => {
       const users = await getUsers();
-      setUsersData(users); // Сохраняем данные пользователей
+      setUsersData(users);
     };
     fetchUsers();
   }, []);
 
   const handleLogin = () => {
-    // Находим пользователя с введённым логином и паролем
     const user = usersData.find(
       (u) => u.login === username && u.password === password
     );
 
-    console.log(usersData);
-    console.log(username);
-    console.log(password);
-    console.log(user);
-
     if (user) {
-      // Сохраняем ID пользователя в глобальное состояние
-      setCurrentUser(user.name); // Или другой уникальный идентификатор, например user.ID
-      onLogin(); // Вызываем функцию успешного входа
+      setCurrentUser(user.name);
+      onLogin();
     } else {
       alert('Неверный логин или пароль');
     }
@@ -54,7 +46,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               type="text"
               className="form-control"
               id="username"
-              value={username}  
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>

@@ -12,7 +12,7 @@ interface HeaderProps {
 }
 
 const Container = styled.div`
-  margin: ${0}px;
+  margin: 0px;
   display: flex;
   flex-direction: column;
 `;
@@ -21,13 +21,12 @@ const Header = styled.div<HeaderProps>`
     display: flex;
     align-items: center;
     justify-content: center;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
+    border-radius: 20px;
     background-color: ${({ isDragging }) =>
-        isDragging ? colors.G50 : colors.N30};
+        isDragging ? colors.Y75 : '#f4f5f6'};
     transition: background-color 0.2s ease;
     &:hover {
-      background-color: ${colors.G50};
+      background-color: #ffffff;
     }
   `;
 
@@ -73,77 +72,78 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
         <Draggable draggableId={id} index={index} key={id}>
             {(provided, snapshot) => (
                 <Container ref={provided.innerRef} {...provided.draggableProps}>
-                    <div className="kanban-column ms-4">
+                    <div className="ms-4">
                         <div className="card">
-                            <div className="card-header text-center d-flex">
-                                {isEditing ? (
-                                    <>
-                                        <input
-                                            title="Название колонки"
-                                            type="text"
-                                            className="form-control me-2"
-                                            value={tempName}
-                                            onChange={(e) => setTempName(e.target.value)}
-                                            style={{ flex: "1" }}
-                                        />
-                                        <div className="button-container d-flex align-items-center">
-                                            <button
-                                                className="btn btn-success btn-sm me-2"
-                                                style={{ flexShrink: 0 }}
-                                                onClick={handleSaveClick}
-                                            >
-                                                ✔
-                                            </button>
-                                            <button
-                                                className="btn btn-danger btn-sm"
-                                                style={{ flexShrink: 0 }}
-                                                onClick={handleCancelClick}
-                                            >
-                                                ✖
-                                            </button>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <div className="d-flex w-100 align-items-center justify-content-between">
-
-                                        <Header isDragging={snapshot.isDragging}>
-                                            {/* Область для перетаскивания */}
-                                            <div
-                                                {...provided.dragHandleProps}
-                                                className="drag-handle center"
-                                            >
-                                                ✥
+                            <div className='kanban-column'>
+                                <div className="custom-card-header text-center d-flex">
+                                    {isEditing ? (
+                                        <>
+                                            <input
+                                                title="Название колонки"
+                                                type="text"
+                                                className="form-control column me-2"
+                                                value={tempName}
+                                                onChange={(e) => setTempName(e.target.value)}
+                                            />
+                                            <div className="button-container d-flex align-items-center">
+                                                <button
+                                                    className="btn btn-accept btn-sm me-2"
+                                                    style={{ flexShrink: 0 }}
+                                                    onClick={handleSaveClick}
+                                                >
+                                                    ✔
+                                                </button>
+                                                <button
+                                                    className="btn btn-cancel btn-sm"
+                                                    style={{ flexShrink: 0 }}
+                                                    onClick={handleCancelClick}
+                                                >
+                                                    ✖
+                                                </button>
                                             </div>
-                                        </Header>
+                                        </>
+                                    ) : (
+                                        <div className="d-flex w-100">
+                                            <Header isDragging={snapshot.isDragging}>
+                                                {/* Область для перетаскивания */}
+                                                <div
+                                                    {...provided.dragHandleProps}
+                                                    className="drag-handle center"
+                                                >
+                                                    ✥
+                                                </div>
+                                            </Header>
 
-                                        <div
-                                            style={{
-                                                fontWeight: 'bold',
-                                                margin: '8px',
-                                            }}
-                                        >
-                                            <span className="text-container">{name}</span>
+                                            <div
+                                                style={{
+                                                    fontWeight: 'bold',
+                                                    margin: '8px',
+                                                }}
+                                            >
+                                                <span
+                                                    className="text-container noselect"
+                                                    onDoubleClick={handleEditClick}
+                                                >
+                                                    {name}
+                                                </span>
+                                            </div>
+
+                                            {/* Перемещаем кнопки вправо */}
+                                            <div className="button-container d-flex align-items-center ms-auto">
+                                                <button
+                                                    className="btn btn-delete btn-sm"
+                                                    onClick={() => onDelete(id)}
+                                                >
+                                                    🗑
+                                                </button>
+                                            </div>
                                         </div>
 
-                                        <div className="button-container d-flex align-items-center">
-                                            <button
-                                                className="btn btn-warning btn-sm me-2"
-                                                onClick={handleEditClick}
-                                            >
-                                                ✎
-                                            </button>
-                                            <button
-                                                className="btn btn-danger btn-sm"
-                                                onClick={() => onDelete(id)}
-                                            >
-                                                🗑
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="card-body">
-                                <Tasks tasks={tasks} handleTaskUpdate={handleTaskUpdate} handleTaskLocalUpdate={handleTaskLocalUpdate} columnId={id} />
+                                    )}
+                                </div>
+                                <div className="card-body">
+                                    <Tasks tasks={tasks} handleTaskUpdate={handleTaskUpdate} handleTaskLocalUpdate={handleTaskLocalUpdate} columnId={id} />
+                                </div>
                             </div>
                         </div>
                     </div>

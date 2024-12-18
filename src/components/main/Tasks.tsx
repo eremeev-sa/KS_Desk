@@ -82,7 +82,7 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
     };
 
     return (
-        <div className="row">
+        <div className="row task">
             <div className="accordion accordion-flush" id="accordion">
                 <Droppable
                     droppableId={columnId}
@@ -137,13 +137,13 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                     />
                     <div className="d-flex justify-content-between">
                         <button
-                            className="btn btn-success"
+                            className="btn btn-accept"
                             onClick={handleAddClick}
                         >
                             ✔
                         </button>
                         <button
-                            className="btn btn-danger"
+                            className="btn btn-cancel"
                             onClick={handleCancelClick}
                         >
                             ✖
@@ -153,10 +153,12 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
             ) : (
                 <div className="row w-100 mt-2 center">
                     <button
-                        className="btn btn-warning w-100"
-                        onClick={() => setAddNewTask(true)}
-                    >
-                        Добавить
+                        className="btn btn-add w-100 me-2 bth-add-task center"
+                        onClick={() => setAddNewTask(true)}>
+                        +
+                        <div className='text-on-bth'>
+                            Добавить задачу
+                        </div>
                     </button>
                 </div>
             )}

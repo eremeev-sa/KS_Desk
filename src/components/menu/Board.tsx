@@ -35,27 +35,27 @@ const Board: React.FC<BoardProps> = ({ Id, Name, onDelete, onUpdate, onBoardClic
     return (
         <div
             onClick={() => onBoardClick(Id)}
-            className="list-group-item d-flex align-items-center justify-content-between custom-gradient"
+            className="list-group-item d-flex align-items-center justify-content-between"
         >
             {isEditing ? (
                 <>
                     <input
                         title="Название доски"
                         type="text"
-                        className="form-control me-2"
+                        className="form-control board me-2"
                         value={tempName}
                         onChange={(e) => setTempName(e.target.value)}
                     />
                     <div className="button-container d-flex align-items-center">
                         <button
-                            className="btn btn-success btn-sm me-2"
+                            className="btn btn-accept btn-sm me-2"
                             style={{ flexShrink: 0 }}
                             onClick={handleSaveClick}
                         >
                             ✔
                         </button>
                         <button
-                            className="btn btn-danger btn-sm"
+                            className="btn btn-cancel btn-sm"
                             style={{ flexShrink: 0 }}
                             onClick={handleCancelClick}
                         >
@@ -65,16 +65,10 @@ const Board: React.FC<BoardProps> = ({ Id, Name, onDelete, onUpdate, onBoardClic
                 </>
             ) : (
                 <div className="d-flex w-100 align-items-center justify-content-between">
-                    <span className="text-container">{Name}</span>
+                    <span className="text-container noselect" onDoubleClick={handleEditClick}>{Name}</span>
                     <div className="button-container d-flex align-items-center">
                         <button
-                            className="btn btn-warning btn-sm me-2"
-                            onClick={handleEditClick}
-                        >
-                            ✎
-                        </button>
-                        <button
-                            className="btn btn-danger btn-sm"
+                            className="btn btn-delete btn-sm"
                             onClick={() => onDelete(Id)}
                         >
                             🗑
