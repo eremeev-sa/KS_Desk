@@ -10,10 +10,18 @@ type BoardListProps = {
   currentBoardId: string;
 };
 
-const BoardList: React.FC<BoardListProps> = ({ data, onDelete, onUpdate, onBoardClick, currentBoardId }) => {
-  const [addNewBoard, setAddNewBoard] = useState(false);
-  const [tempName, setTempName] = useState("");
-  const [boardsData, setBoardsData] = useState(data);
+const BoardList: React.FC<BoardListProps> = ({
+  data,
+  onDelete,
+  onUpdate,
+  onBoardClick,
+  currentBoardId,
+}) => {
+  const [addNewBoard, setAddNewBoard] = useState(false); // Состояние для добавления новой доски
+  const [tempName, setTempName] = useState(""); // Временное название для новой доски
+  const [boardsData, setBoardsData] = useState(data); // Локальное состояние данных о досках
+
+  // Обновление локального состояния при изменении данных из props
   useEffect(() => {
     setBoardsData(data);
     console.log("Полученные данные в BoardList:", data);
@@ -24,16 +32,16 @@ const BoardList: React.FC<BoardListProps> = ({ data, onDelete, onUpdate, onBoard
     try {
       const boardRequest = { Name: tempName }; // Формируем объект для API
       await createBoard(boardRequest); // Отправляем запрос на создание доски
-      const updatedBoards = await getBoards(); // Обновляем список досок с сервера
-      setBoardsData(updatedBoards); // Устанавливаем новые данные в состояние
-      setAddNewBoard(false); // Закрываем форму
-      console.log(boardsData);
+      const updatedBoards = await getBoards(); // Получаем обновленный список досок с сервера
+      setBoardsData(updatedBoards); // Обновляем локальное состояние
+      setAddNewBoard(false); // Закрываем форму добавления
       setTempName(""); // Очищаем временное название
     } catch (error) {
-      console.error("Ошибка при добавлении доски:", error); // Логируем ошибки
+      console.error("Ошибка при добавлении доски:", error);
     }
   };
 
+  // Функция для отмены добавления новой доски
   const handleCancelClick = () => {
     setTempName("");
     setAddNewBoard(false);
@@ -41,64 +49,71 @@ const BoardList: React.FC<BoardListProps> = ({ data, onDelete, onUpdate, onBoard
 
   return (
     <div className="">
+      {/* Заголовок секции с досками */}
       <div className="sidebar-title">
         <h3 className="board-info">Доски</h3>
-        {addNewBoard ? <>
-        </> :
+        {!addNewBoard && (
           <button
             className="btn btn-add"
-            onClick={() => setAddNewBoard(true)}>
-            +
-          </button>}
-      </div>
-      <div className="boards-list">
-        {boardsData.length === 0 ? <a className="center">Нет досок</a> : <div></div>}
-        {boardsData.map(board => (
-          <div
-            key={board.id}
-            className={`kanban-boards custom-button ${currentBoardId === board.id ? "selected" : "custom-color"}`} // Добавляем класс, если доска выбрана
+            onClick={() => setAddNewBoard(true)}
           >
-            <Board
+            +
+          </button>
+        )}
+      </div>
+
+      {/* Список досок */}
+      <div className="boards-list">
+        {boardsData.length === 0 ? (
+          <a className="center">Нет досок</a>
+        ) : (
+          boardsData.map((board) => (
+            <div
               key={board.id}
-              Id={board.id}
-              Name={board.name}
-              onDelete={onDelete}
-              onUpdate={onUpdate}
-              onBoardClick={onBoardClick}
-            />
-          </div>
-        ))}
-        {addNewBoard ? <>
+              className={`kanban-boards custom-button ${
+                currentBoardId === board.id ? "selected" : "custom-color"
+              }`} // Добавляем класс, если доска выбрана
+            >
+              <Board
+                key={board.id}
+                Id={board.id}
+                Name={board.name}
+                onDelete={onDelete}
+                onUpdate={onUpdate}
+                onBoardClick={onBoardClick}
+              />
+            </div>
+          ))
+        )}
+
+        {/* Форма для добавления новой доски */}
+        {addNewBoard && (
           <div className="list-group-item new-board d-flex align-items-center justify-content-between">
             <input
               title="Название доски"
               placeholder="Название доски"
               type="text"
               className="form-control board me-2"
-              value={tempName} // Используем состояние для ввода
-              onChange={(e) => setTempName(e.target.value)} // Обновляем tempName при вводе
+              value={tempName}
+              onChange={(e) => setTempName(e.target.value)}
             />
             <div className="button-container">
               <button
                 className="btn btn-accept btn-sm"
-                onClick={handleAddClick} // Добавление новой записи
+                onClick={handleAddClick}
               >
                 ✔
               </button>
               <button
                 className="btn btn-cance btn-sm"
-                onClick={handleCancelClick} // Отмена
+                onClick={handleCancelClick}
               >
                 ✖
               </button>
             </div>
           </div>
-        </> :
-          <div>
-
-          </div>}
+        )}
       </div>
-
     </div>
   );
 };

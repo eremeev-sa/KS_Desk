@@ -1,15 +1,20 @@
-import React from 'react';
+import React from "react";
 
 type UserInfoProps = {
-  userName: string;
-  onLogout: () => void;
+  userName: string; // Имя пользователя
+  onLogout: () => void; // Функция для выхода из системы
 };
 
 const UserInfo: React.FC<UserInfoProps> = ({ userName, onLogout }) => {
   return (
     <div className="user-info">
+      {/* Отображение имени пользователя */}
       <h2 className="user-name">{userName}</h2>
-      <button className="btn btn-exit" onClick={onLogout}>Выйти</button>
+
+      {/* Кнопка выхода */}
+      <button className="btn btn-exit" onClick={onLogout}>
+        Выйти
+      </button>
     </div>
   );
 };

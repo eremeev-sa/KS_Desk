@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Task from './Task';
 import { Droppable } from 'react-beautiful-dnd';
-import { createTask, deleteTask, getTasks, TaskRequest, TaskUpdateRequest, updateTask, updateTaskColumn } from '../../services/Task';
+import { createTask, deleteTask, TaskUpdateRequest } from '../../services/Task';
 import { TaskType, UserType } from '../../models/models';
 import { getUsers } from '../../services/User';
 
@@ -21,17 +21,17 @@ type TasksProps = {
 };
 
 const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handleTaskLocalUpdate }) => {
-    const [addNewTask, setAddNewTask] = useState(false);
-    const [tempTaskName, setTempTaskName] = useState("");
-    const [localTasks, setLocalTasks] = useState<TaskType[]>(tasks);
-    const [usersData, setUsersData] = useState<UserType[]>([]);
+    const [addNewTask, setAddNewTask] = useState(false); // Флаг для отображения формы добавления задачи
+    const [tempTaskName, setTempTaskName] = useState(''); // Временное название задачи
+    const [localTasks, setLocalTasks] = useState<TaskType[]>(tasks); // Локальное состояние задач
+    const [usersData, setUsersData] = useState<UserType[]>([]); // Данные о пользователях для назначений задач
 
-    // Слежение за изменениями в tasks и обновление локального состояния
+    // Обновление локального состояния задач при изменении props.tasks
     useEffect(() => {
         setLocalTasks(tasks);
     }, [tasks]); // Обновляется каждый раз, когда tasks изменяется
 
-    // Обновление локального состояния
+    // Получение данных пользователей из API
     useEffect(() => {
         const fetchColumns = async () => {
             const users = await getUsers();
@@ -40,7 +40,7 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
         fetchColumns();
     }, []);
 
-    // Функция для добавления новой задачи
+    // Добавление новой задачи
     const handleAddClick = async () => {
         try {
             const newTask = {
@@ -49,40 +49,34 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                 priority: "",
                 columnId: columnId,
             };
-            // Создаем новую задачу
-            await createTask(newTask);
-
-            handleTaskLocalUpdate();
-
-            // Очищаем поле ввода
-            setTempTaskName("");
-
-            // Закрываем форму добавления
-            setAddNewTask(false);
+            await createTask(newTask); // Отправляем запрос на создание задачи
+            handleTaskLocalUpdate(); // Уведомляем родительский компонент об обновлении задач
+            setTempTaskName(''); // Очищаем поле ввода
+            setAddNewTask(false); // Скрываем форму добавления
         } catch (error) {
             console.error("Ошибка при добавлении задачи:", error);
         }
     };
 
+    // Удаление задачи
     const handleDelete = async (id: string) => {
-        console.log("Удаление доски с id:", id);
         try {
             await deleteTask(id);
-
-            handleTaskLocalUpdate();
-
+            handleTaskLocalUpdate(); // Уведомляем родительский компонент об обновлении задач
         } catch (error) {
-            console.error("Ошибка при удалении доски:", error);
+            console.error("Ошибка при удалении задачи:", error);
         }
     };
 
+    // Отмена добавления задачи
     const handleCancelClick = () => {
-        setTempTaskName("");
-        setAddNewTask(false);
+        setTempTaskName(""); // Очищаем временное название
+        setAddNewTask(false); // Скрываем форму добавления
     };
 
     return (
         <div className="row task">
+            {/* Обертка для работы с перетаскиванием задач */}
             <div className="accordion accordion-flush" id="accordion">
                 <Droppable
                     droppableId={columnId}
@@ -119,13 +113,13 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                                     </div>
                                 ))
                             )}
-                            {provided.placeholder} {/* Добавляем пустое место для перетаскивания */}
+                            {provided.placeholder} {/* Место для визуализации перетаскивания */}
                         </div>
                     )}
                 </Droppable>
-
             </div>
 
+            {/* Форма для добавления новой задачи */}
             {addNewTask ? (
                 <div className="row mt-2">
                     <input
@@ -151,6 +145,7 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                     </div>
                 </div>
             ) : (
+                // Кнопка для отображения формы добавления
                 <div className="row w-100 mt-2 center">
                     <button
                         className="btn btn-add w-100 me-2 bth-add-task center"

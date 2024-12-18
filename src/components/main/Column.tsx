@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import Tasks from './Tasks';
-import { ColumnRequest, getColumns, updateColumn } from '../../services/Column';
-import { Draggable } from 'react-beautiful-dnd';
-import styled from 'styled-components';
-import { colors } from '@atlaskit/theme';
-import { getTasks, TaskRequest, TaskUpdateRequest } from '../../services/Task';
-import { TaskType } from '../../models/models';
+import React, { useState } from 'react';
+import Tasks from './Tasks'; // Компонент для отображения задач
+import { ColumnRequest } from '../../services/Column'; // Интерфейсы и функции для работы с колонками
+import { Draggable } from 'react-beautiful-dnd'; // Библиотека для Drag-and-Drop
+import styled from 'styled-components'; // Для стилизации компонентов
+import { colors } from '@atlaskit/theme'; // Цветовые палитры
+import { TaskUpdateRequest } from '../../services/Task'; // Интерфейсы и функции для работы с задачами
 
 interface HeaderProps {
-    isDragging: boolean;
+    isDragging: boolean; // Флаг, обозначающий, перетаскивается ли элемент
 }
 
 const Container = styled.div`
@@ -23,7 +22,7 @@ const Header = styled.div<HeaderProps>`
     justify-content: center;
     border-radius: 20px;
     background-color: ${({ isDragging }) =>
-        isDragging ? colors.Y75 : '#f4f5f6'};
+        isDragging ? colors.Y75 : '#f4f5f6'}; // Изменение цвета при перетаскивании
     transition: background-color 0.2s ease;
     &:hover {
       background-color: #ffffff;
@@ -31,10 +30,10 @@ const Header = styled.div<HeaderProps>`
   `;
 
 type ColumnProps = {
-    id: string;
-    name: string;
-    index: number;
-    tasks: {
+    id: string; // Идентификатор колонки
+    name: string; // Название колонки
+    index: number; // Порядковый номер колонки
+    tasks: { // Список задач
         id: string;
         name: string;
         description: string;
@@ -43,29 +42,32 @@ type ColumnProps = {
         assigneeId: string;
     }[];
 
-    handleTaskUpdate: (id: string, taskRequest: TaskUpdateRequest) => void;
-    handleTaskLocalUpdate: () => void;
-    onDelete: (id: string) => void;
-    onUpdate: (id: string, columnRequest: ColumnRequest) => void;
+    handleTaskUpdate: (id: string, taskRequest: TaskUpdateRequest) => void; // Обновление задачи
+    handleTaskLocalUpdate: () => void; // Локальное обновление задач
+    onDelete: (id: string) => void; // Удаление колонки
+    onUpdate: (id: string, columnRequest: ColumnRequest) => void; // Обновление колонки
 };
 
 const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, tasks, handleTaskUpdate, handleTaskLocalUpdate }) => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [tempName, setTempName] = useState(name);
+    const [isEditing, setIsEditing] = useState(false); // Флаг режима редактирования
+    const [tempName, setTempName] = useState(name); // Временное имя для редактирования
 
+    // Обработка клика для перехода в режим редактирования
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
+    // Сохранение изменений названия колонки
     const handleSaveClick = () => {
         const columnRequest = { id: id, name: tempName };
         onUpdate(id, columnRequest);
-        setIsEditing(false);
+        setIsEditing(false); // Выход из режима редактирования
     };
-
+    
+    // Отмена изменений названия колонки
     const handleCancelClick = () => {
-        setTempName(name);
-        setIsEditing(false);
+        setTempName(name); // Сбрасываем временное имя
+        setIsEditing(false); // Выход из режима редактирования
     };
 
     return (
@@ -77,6 +79,7 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
                             <div className='kanban-column'>
                                 <div className="custom-card-header text-center d-flex">
                                     {isEditing ? (
+                                        // Отображение поля ввода и кнопок в режиме редактирования
                                         <>
                                             <input
                                                 title="Название колонки"
@@ -103,9 +106,10 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
                                             </div>
                                         </>
                                     ) : (
+                                        // Отображение названия и кнопки удаления в обычном режиме
                                         <div className="d-flex w-100">
                                             <Header isDragging={snapshot.isDragging}>
-                                                {/* Область для перетаскивания */}
+                                                {/* Область для захвата при перетаскивании */}
                                                 <div
                                                     {...provided.dragHandleProps}
                                                     className="drag-handle center"
@@ -122,13 +126,12 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
                                             >
                                                 <span
                                                     className="text-container noselect"
-                                                    onDoubleClick={handleEditClick}
+                                                    onDoubleClick={handleEditClick} // Двойной клик для редактирования
                                                 >
                                                     {name}
                                                 </span>
                                             </div>
 
-                                            {/* Перемещаем кнопки вправо */}
                                             <div className="button-container d-flex align-items-center ms-auto">
                                                 <button
                                                     className="btn btn-delete btn-sm"
@@ -141,6 +144,7 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
 
                                     )}
                                 </div>
+                                {/* Отображение списка задач */}
                                 <div className="card-body">
                                     <Tasks tasks={tasks} handleTaskUpdate={handleTaskUpdate} handleTaskLocalUpdate={handleTaskLocalUpdate} columnId={id} />
                                 </div>

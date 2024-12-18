@@ -5,67 +5,55 @@ import Subtask from './Subtask';
 
 type SubtaskProps = {
     data: { id: string; name: string }[];
-    taskId: string;
+    taskId: string; // ID основной задачи, к которой подзадачи привязаны
 };
 
 const Subtasks: React.FC<SubtaskProps> = ({ data, taskId }) => {
-    const [addNewSubtask, setAddNewSubtask] = useState(false);
-    const [tempSubtaskName, setTempSubtaskName] = useState("");
-    const [localSubtasks, setLocalSubtasks] = useState<SubtaskType[]>(data);
+    const [addNewSubtask, setAddNewSubtask] = useState(false); // Флаг для отображения формы добавления подзадачи
+    const [tempSubtaskName, setTempSubtaskName] = useState(""); // Временное значение для ввода имени подзадачи
+    const [localSubtasks, setLocalSubtasks] = useState<SubtaskType[]>(data); // Локальное состояние подзадач
 
-    // Слежение за изменениями в tasks и обновление локального состояния
     useEffect(() => {
-        setLocalSubtasks(data);
-    }, [data]); // Обновляется каждый раз, когда tasks изменяется
+        setLocalSubtasks(data); // Обновление локальных подзадач при изменении входных данных
+    }, [data]);
 
-    const handleTaskLocalUpdate = async () => {
-        // Получаем обновленные подзадачи
-        const updatedSubasks = await getSubtasks(taskId);
-
-        // Обновляем локальные данные подзадач
-        setLocalSubtasks(updatedSubasks);
+    // Функция для получения актуальных подзадач после обновления
+    const handleSubtaskLocalUpdate = async () => {
+        const updatedSubasks = await getSubtasks(taskId); // Получаем обновленные подзадачи с сервера
+        setLocalSubtasks(updatedSubasks);  // Обновляем локальное состояние подзадач
     };
 
-    // Функция для добавления новой задачи
+    // Функция для добавления новой подзадачи
     const handleAddClick = async () => {
         try {
-            const newTask = {
-                name: tempSubtaskName,
-                taskId: taskId
-            };
-            // Создаем новую подзадачу
+            const newTask = { name: tempSubtaskName, taskId: taskId }; // Данные для новой подзадачи
             await createSubtask(newTask);
 
-            handleTaskLocalUpdate();
-            // Очищаем поле ввода
-            setTempSubtaskName("");
-
-            // Закрываем форму добавления
-            setAddNewSubtask(false);
+            handleSubtaskLocalUpdate(); // Обновляем список подзадач
+            setTempSubtaskName(""); // Очищаем поле ввода
+            setAddNewSubtask(false); // Закрываем форму добавления подзадачи
         } catch (error) {
             console.error("Ошибка при добавлении подзадачи:", error);
         }
     };
 
+    // Функция для удаления подзадачи
     const handleDelete = async (id: string) => {
         console.log("Удаление доски с id:", id);
         try {
             await deleteSubtask(id);
-
-            // Получаем обновленные подзадачи
             const updatedSubasks = await getSubtasks(taskId);
-
-            // Обновляем локальные данные подзадач
-            setLocalSubtasks(updatedSubasks);
+            setLocalSubtasks(updatedSubasks); // Обновляем локальные данные подзадач после удаления
 
         } catch (error) {
-            console.error("Ошибка при удалении доски:", error);
+            console.error("Ошибка при удалении подзадачи:", error);
         }
     };
 
+    // Функция для отмены добавления подзадачи
     const handleCancelClick = () => {
-        setTempSubtaskName("");
-        setAddNewSubtask(false);
+        setTempSubtaskName(""); // Очищаем поле ввода
+        setAddNewSubtask(false); // Закрываем форму добавления
     };
     return (
         <div className="row">
@@ -75,41 +63,44 @@ const Subtasks: React.FC<SubtaskProps> = ({ data, taskId }) => {
                         <Subtask
                             id={subtask.id}
                             name={subtask.name}
-                            onDelete={handleDelete}
-                            onUpdate={handleTaskLocalUpdate}
+                            onDelete={handleDelete} // Функция для удаления подзадачи
+                            onUpdate={handleSubtaskLocalUpdate} // Функция для обновления списка подзадач
                         />
                     </li>
                 ))}
             </ul>
+            {/* Форма добавления подзадачи */}
             {addNewSubtask ? (
                 <div className="row mt-2">
                     <input
                         type="text"
                         className="form-control mb-2"
                         placeholder="Название подзадачи"
-                        value={tempSubtaskName}
-                        onChange={(e) => setTempSubtaskName(e.target.value)}
+                        value={tempSubtaskName} // Текущее значение ввода
+                        onChange={(e) => setTempSubtaskName(e.target.value)} // Обновление значения
                     />
                     <div className="d-flex justify-content-between">
                         <button
                             className="btn btn-success"
-                            onClick={handleAddClick}
+                            onClick={handleAddClick} // Добавление подзадачи
                         >
                             ✔
                         </button>
                         <button
                             className="btn btn-danger"
-                            onClick={handleCancelClick}
+                            onClick={handleCancelClick} // Отмена добавления подзадачи
                         >
                             ✖
                         </button>
                     </div>
                 </div>
             ) : (
+                // Кнопка для добавления подзадачи
                 <div className="row w-100 mt-2 center">
                     <button
                         className="btn btn-add w-100 me-2 bth-add-subtask center"
-                        onClick={() => setAddNewSubtask(true)}>
+                        onClick={() => setAddNewSubtask(true)} // Отображение формы добавления
+                    >
                         +
                         <div className='text-on-bth'>
                             Добавить подзадачу

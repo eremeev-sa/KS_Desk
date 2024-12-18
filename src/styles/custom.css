@@ -1,4 +1,5 @@
 :root {
+    /* Определение переменной для ширины боковой панели */
     --sidebar-size: 250px;
 }
 
@@ -14,6 +15,7 @@ html {
 }
 
 .center {
+    /* Центрирование текста */
     text-align: center;
     margin: 0 auto;
 }
@@ -45,12 +47,14 @@ html {
 /* Кнопки */
 
 .btn-exit {
+    /* Стиль для кнопки выхода */
     color: #333333;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
 }
 
 .btn-accept {
+    /* Стиль для кнопки принятия */
     color: #cccccc;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
@@ -59,6 +63,7 @@ html {
 }
 
 .btn-cancel {
+    /* Стиль для кнопки отмены */
     color: #333333;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
@@ -66,6 +71,7 @@ html {
 }
 
 .btn-add {
+    /* Стиль для кнопки добавления */
     font-size: 25px;
     font-family: 'Inter', sans-serif;
     font-weight: 200;
@@ -73,6 +79,7 @@ html {
 }
 
 .btn-delete {
+    /* Стиль для кнопки удаления */
     color: #333333;
     font-weight: bold;
     font-size: 14px;
@@ -83,6 +90,7 @@ html {
 .bth-add:hover,
 .btn-accept:hover,
 .btn-delete:hover {
+    /* Эффект при наведении на кнопки */
     color: #ffffff;
     background-color: #000000;
     cursor: pointer;
@@ -90,6 +98,7 @@ html {
 }
 
 .btn-edit {
+    /* Стиль для кнопки редактирования */
     font-family: 'Inter', sans-serif;
     color: #777777;
     font-style: italic;
@@ -102,31 +111,19 @@ html {
 }
 
 .btn-edit:hover {
+    /* Эффект при наведении на кнопку редактирования */
     cursor: pointer;
     border: none;
 }
 
 .button-container {
+    /* Контейнер для кнопок */
     display: flex;
 }
 
+.bth-add-subtask,
 .bth-add-task {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
-}
-
-.bth-add-subtask {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
-}
-
-.bth-add-subtask .text-on-bth {
+    /* Выравнивание кнопок добавления задач и подзадач */
     align-items: center;
     display: flex;
     flex-direction: row;
@@ -135,16 +132,22 @@ html {
 }
 
 .custom-button {
+    /* Кастомизация кнопок с курсором "pointer" */
     cursor: pointer;
 }
 
 .text-on-bth {
+    /* Стиль текста на кнопке */
     font-family: 'Open Sans', Helvetica, Arial, sans-serif;
     font-size: 14px;
     margin-top: 2px;
 }
 
+
+/* Боковая панель */
+
 .sidebar {
+    /* Стили боковой панели */
     margin: auto;
     min-width: var(--sidebar-size);
     max-width: var(--sidebar-size);
@@ -160,12 +163,8 @@ html {
     margin-right: 0;
 }
 
-.mt-4.columns {
-    margin: 0;
-
-}
-
 .sidebar-header-ico {
+    /* Иконка в шапке боковой панели */
     width: 25px;
     height: 25px;
     background-size: contain;
@@ -175,6 +174,7 @@ html {
 }
 
 .sidebar-header-text {
+    /* Текст в шапке боковой панели */
     gap: 14px;
     margin: 20px;
     margin-left: 10px;
@@ -185,11 +185,11 @@ html {
     font-family: "IBM Plex Sans";
     font-weight: bolder;
     text-shadow: 0.4px 0px 0px black;
-
     font-size: 22px;
 }
 
 .sidebar-title {
+    /* Стили для заголовка боковой панели */
     margin-top: 56px;
     display: flex;
     justify-content: space-between;
@@ -199,11 +199,13 @@ html {
 }
 
 .user {
+    /* Стиль блока пользователя */
     flex: 0 0 auto;
     margin-top: auto;
 }
 
 .user-info {
+    /* Стили для информации о пользователе */
     margin: 10px;
     bottom: 0;
     position: absolute;
@@ -214,12 +216,14 @@ html {
 }
 
 .user-name {
+    /* Стили для имени пользователя */
     margin-top: 10px;
     font-family: 'Inter', sans-serif;
     font-size: 14px;
 }
 
 .board-info {
+    /* Стили для информации о доске */
     margin-top: 10px;
     margin-left: 10px;
     font-size: 14px;
@@ -229,6 +233,7 @@ html {
 }
 
 .boards-list {
+    /* Стили для списка досок */
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     top: 0;
@@ -237,18 +242,21 @@ html {
 }
 
 .boards {
+    /* Стили для контейнера досок */
     height: calc(100vh - 20px - 25px - 22px - 50px);
     margin-top: 25px;
     overflow-y: auto;
 }
 
 .kanban-boards {
+    /* Стили для области канбан-досок */
     padding-left: 10px;
     border: 0;
     border-radius: 10px;
 }
 
 .new-board {
+    /* Стили для вывода формы добавления новой доски */
     top: 0;
     margin: 0;
 }
@@ -257,6 +265,7 @@ html {
 /* Колонки */
 
 .kanban-columns-container {
+    /* Стили для контейнера колонок канбан-доски */
     margin-left: var(--sidebar-size);
     display: flex;
     overflow-x: auto;
@@ -266,6 +275,7 @@ html {
 }
 
 .kanban-column {
+    /* Стили для отдельных колонок канбан-доски */
     min-width: 330px;
     max-width: 330px;
     width: 330px;
@@ -276,11 +286,13 @@ html {
 }
 
 .form-control.board {
+    /* Стили для поля ввода доски */
     font-size: 12px;
     padding: 4px;
 }
 
 .form-control.column {
+    /* Стили для поля ввода колонки */
     font-size: 16px;
     padding: 4px;
     margin-left: 8px;
@@ -288,18 +300,21 @@ html {
 }
 
 .form-control.card {
+    /* Стили для поля ввода карточки */
     min-width: 320px;
     max-width: 320px;
     width: 320px;
 }
 
 .new-column {
+    /* Стили для вывода формы добавления новой колонки */
     min-width: 320px;
     max-width: 320px;
     width: 320px;
 }
 
 .noselect {
+    /* Убираем возможность выделения текста */
     cursor: text;
     -webkit-touch-callout: none;
     /* iOS Safari */
@@ -316,18 +331,21 @@ html {
 }
 
 .kanban-column .card-body {
+    /* Стили для содержимого карточки */
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .custom-card-header {
+    /* Стили для заголовка карточки */
     margin-top: 5px;
     margin-left: 5px;
     margin-right: 10px;
 }
 
 .card {
+    /* Стили для карточек */
     border: 0;
     background: #f4f5f6;
     border-radius: 20px;
@@ -337,6 +355,7 @@ html {
 }
 
 .row.task {
+    /* Стили для задач в ряду */
     justify-content: center;
     padding: 0;
     border-radius: 10px;
@@ -347,45 +366,50 @@ html {
 }
 
 .accordion-button:not(.collapsed) {
+    /* Изменение фона для активной кнопки аккордеона */
     background-color: #ffffff;
     outline: none;
+    /* Убираем контур вокруг кнопки */
 }
 
 .accordion-button:focus {
+    /* Стиль для кнопки аккордеона при фокусе */
     background-color: #ffffff;
     border: none;
     outline: none;
     box-shadow: 0 0 0px rgba(0, 0, 0, 0.2);
+    /* Убираем контур вокруг кнопки */
 }
 
 
 .accordion-item {
+    /* Стили для элементов аккордеона */
     background-color: #f4f5f6;
     border: none;
+    /* Убираем границу */
     outline: none;
+    /* Убираем контур */
 }
 
 .list-group-item {
+    /* Выравнивание элементов списка по центру */
     align-items: center;
 }
 
-.text-truncate {
-    white-space: normal;
-    overflow: visible;
-    text-overflow: unset;
-}
-
 .text-container {
+    /* Стиль для контейнера текста */
     flex-grow: 1;
     white-space: normal;
     word-break: break-word;
 }
 
 .selected {
+    /* Стили для выбранного элемента */
     background: #eaeced;
 }
 
 .drag-handle {
+    /* Стиль для области перетаскивания (общий для элементов) */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -411,6 +435,7 @@ html {
 }
 
 .drag-handle-task {
+    /* Стиль для области перетаскивания (специально для задач) */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -437,27 +462,39 @@ html {
 }
 
 .accordion-header {
+    /* Стили для шапки аккордеона */
     display: flex;
     align-items: center;
 }
 
 .priority-low {
+    /* Стили для низкого приоритета */
     color: green;
+    /* Зеленый цвет */
 }
 
 .priority-medium {
+    /* Стили для среднего приоритета */
     color: blue;
+    /* Синий цвет */
 }
 
 .priority-high {
+    /* Стили для высокого приоритета */
     color: red;
+    /* Красный цвет */
 }
 
 .description-style {
+    /* Стили для описания задачи */
     color: gray;
+    /* Серый цвет текста */
     margin-bottom: 5px;
+    /* Нижний отступ */
 }
 
 .user-style {
+    /* Стили для имени пользователя */
     color: deepskyblue;
+    /* Голубой цвет */
 }

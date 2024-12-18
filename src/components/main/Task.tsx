@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Subtasks from './Subtasks';
 import { Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
-import { colors } from '@atlaskit/theme';
-import { TaskRequest, TaskUpdateRequest } from '../../services/Task';
-import { SubtaskType, TaskType } from '../../models/models';
+import { TaskUpdateRequest } from '../../services/Task';
+import { SubtaskType } from '../../models/models';
 import Select from "react-select";
 import { getSubtasks } from '../../services/Subtask';
 
@@ -31,6 +30,8 @@ type TaskProps = {
         password: string
     }[]
 };
+
+// Стили контейнера задачи
 const Container = styled.div`
     margin: auto;
     display: flex;
@@ -45,7 +46,7 @@ const Container = styled.div`
     border: none;
 `;
 
-
+// Стили для заголовка задачи с поддержкой перетаскивания
 const Header = styled.div<HeaderProps>`
     display: flex;
     align-items: center;
@@ -64,50 +65,53 @@ const Header = styled.div<HeaderProps>`
 
 
 const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, usersData }) => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [tempName, setTempName] = useState(task.name);
-    const [tempUser, setTempUser] = useState(task.assigneeId);
-    const [tempDescription, setDescription] = useState(task.description);
-    const [tempPriority, setPriority] = useState(task.priority);
-    const [subtaskData, setSubtaskData] = useState<SubtaskType[]>([]);
+    const [isEditing, setIsEditing] = useState(false); // Состояние для редактирования
+    const [tempName, setTempName] = useState(task.name); // Временное название задачи
+    const [tempUser, setTempUser] = useState(task.assigneeId); // Временный пользователь
+    const [tempDescription, setDescription] = useState(task.description); // Временное описание задачи
+    const [tempPriority, setPriority] = useState(task.priority); // Временный приоритет
+    const [subtaskData, setSubtaskData] = useState<SubtaskType[]>([]); // Данные подзадач
 
-    // Подготовка данных для react-select
+    // Подготовка данных для выпадающего списка пользователей
     const userOptions = usersData.map((user) => ({
         value: user.id,
         label: user.name,
     }));
 
-    // Слежение за изменениями в tasks и обновление локального состояния
     useEffect(() => {
         const fetchColumns = async () => {
             const subtasks = await getSubtasks(task.id);
             setSubtaskData(subtasks);
         }
         fetchColumns();
-    }, []); // Обновляется каждый раз, когда tasks изменяется
+    }, []);
 
-    // Опции для выбора приоритета
+    // Опции для выбора приоритета задачи
     const priorityOptions = [
         { value: 'Низкий', label: 'Низкий' },
         { value: 'Средний', label: 'Средний' },
         { value: 'Высокий', label: 'Высокий' },
     ];
 
+    // Функция для начала редактирования задачи
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
+    // Функция для сохранения изменений
     const handleSaveClick = () => {
         const taskRequest = { name: tempName, description: tempDescription, priority: tempPriority, assigneeId: tempUser };
         handleTaskUpdate(task.id, taskRequest);
         setIsEditing(false);
     };
 
+    // Функция для отмены редактирования
     const handleCancelClick = () => {
         setTempName(task.name);
         setIsEditing(false);
     };
 
+    // Функция для получения CSS класса в зависимости от приоритета
     const getPriorityClass = (priority: string) => {
         switch (priority) {
             case 'Низкий':
@@ -121,14 +125,13 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
         }
     };
 
-
-
     return (
         <Draggable draggableId={task.id} index={index} key={task.id}>
             {(provided, snapshot) => (
                 <Container ref={provided.innerRef} {...provided.draggableProps}>
                     <div className='task'>
                         <div className="accordion-header accordion-header">
+                            {/* Заголовок формы задачи */}
                             <span className="text-container">
                                 <div className="button-container">
                                     <div {...provided.dragHandleProps} className="drag-handle-task">
@@ -198,7 +201,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
                                                     value={priorityOptions.find(option => option.value === tempPriority)} // Текущий выбранный приоритет
                                                     onChange={(selectedOption) => setPriority(selectedOption?.value || '')} // Устанавливаем новый приоритет
                                                     placeholder="Выберите приоритет"
-                                                    isSearchable={false} // Убираем поиск, так как список короткий
+                                                    isSearchable={false} // Убираем поиск
                                                 />
                                                 <label htmlFor="user-select">Пользователь</label>
                                                 <Select
@@ -231,6 +234,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
                                 </button>
                             </span>
                         </div>
+                        {/* Тело формы задачи */}
                         <div
                             id={`collapse-${task.id}`}
                             className="accordion-collapse collapse"

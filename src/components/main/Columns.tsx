@@ -7,72 +7,71 @@ import styled from 'styled-components';
 import { TaskType } from '../../models/models';
 
 type ColumnsProps = {
-    currentBoardId: string;
-};
+    currentBoardId: string; // Текущий идентификатор доски
+  };
 
-const Container = styled.div`
+  const Container = styled.div`
   background-color: white;
   min-height: 100vh;
-  /* like display:flex but will allow bleeding over the window width */
-  min-width: 100vw;
-  display: inline-flex;
+  min-width: 100vw; /* Минимальная ширина контейнера */
+  display: inline-flex; /* Для горизонтального расположения */
 `;
 
 const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
-    const [tasks, setTasks] = useState<TaskType[]>([]); // Хранение задач
-    const [data, setData] = useState<{ id: string; name: string }[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [tempName, setTempName] = useState("");
-    const [addNewColumn, setAddNewColumn] = useState(false);
+    const [tasks, setTasks] = useState<TaskType[]>([]); // Состояние задач
+    const [data, setData] = useState<{ id: string; name: string }[]>([]); // Состояние колонок
+    const [loading, setLoading] = useState(true); // Состояние загрузки
+    const [tempName, setTempName] = useState(""); // Название новой колонки
+    const [addNewColumn, setAddNewColumn] = useState(false); // Флаг добавления новой колонки
 
 
-    // Получение данных при изменении currentBoardId
+     // Загрузка колонок при изменении текущей доски
     useEffect(() => {
         const fetchColumns = async () => {
             if (currentBoardId !== "") {
                 try {
-                    setLoading(true); // Начинаем загрузку
-                    const columns = await getColumns(currentBoardId); // Запрос к API
-                    setData(columns); // Обновляем состояние
+                    setLoading(true);
+                    const columns = await getColumns(currentBoardId);
+                    setData(columns);
                 } catch (error) {
                     console.error("Ошибка при загрузке колонок:", error);
                 } finally {
-                    setLoading(false); // Завершаем загрузку
+                    setLoading(false);
                 }
             } else {
-                setData([]); // Сбрасываем данные, если currentBoardId пустой
+                setData([]); // Сбрасываем данные, если доска не выбрана
             }
         };
 
         fetchColumns();
     }, [currentBoardId]); // Зависимость — currentBoardId
 
+    // Загрузка задач после получения колонок
     useEffect(() => {
-        // Получаем задачи для всех колонок после того, как получили их список
         const loadAllTasks = async () => {
             if (data.length > 0) {
                 const columnIds = data.map(column => column.id);  // Получаем список всех columnId
-                const allTasks = await getAllTasks(columnIds);  // Загружаем все задачи
-                setTasks(allTasks);  // Обновляем состояние с задачами
+                const allTasks = await getAllTasks(columnIds);  // Загружаем все задачи для этой доски
+                setTasks(allTasks);
             }
         };
 
         loadAllTasks();
     }, [data]);
 
-    // Функция для добавления новой доски
+    // Добавление новой колонки
     const handleAddClick = async () => {
         try {
-            const columnRequest = { name: tempName, boardId: currentBoardId }; // Формируем объект для API
-            await createColumn(columnRequest); // Отправляем запрос на создание доски
-            const updatedBoards = await getColumns(currentBoardId); // Обновляем список досок с сервера
-            setData(updatedBoards); // Устанавливаем новые данные в состояние
+            const columnRequest = { name: tempName, boardId: currentBoardId };
+            await createColumn(columnRequest);
+            const updatedBoards = await getColumns(currentBoardId);
+            setData(updatedBoards);
             setAddNewColumn(false);
             // Очищаем поле ввода
             setTempName("");
             console.log(data);
         } catch (error) {
-            console.error("Ошибка при добавлении доски:", error); // Логируем ошибки
+            console.error("Ошибка при добавлении доски:", error);
         }
     };
 
@@ -81,40 +80,40 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
         setAddNewColumn(false);
     };
 
-
+    // Обновление колонки
     const handleUpdate = async (id: string, columnRequest: ColumnRequest) => {
         const name = columnRequest.name
         try {
             await updateColumn(id, columnRequest);
 
-            const updatedBoards = await getColumns(currentBoardId); // Обновляем список досок с сервера
-            setData(updatedBoards); // Устанавливаем новые данные в состояние
+            const updatedBoards = await getColumns(currentBoardId);
+            setData(updatedBoards);
         } catch (error) {
             console.error("Ошибка при обновлении доски:", error);
         }
     };
 
+    // Удаление колонки
     const handleDelete = async (id: string) => {
-        console.log("Удаление доски с id:", id);
         try {
             await deleteColumn(id);
-
-
             const updatedBoards = await getColumns(currentBoardId); // Обновляем список досок с сервера
             setData(updatedBoards); // Устанавливаем новые данные в состояние
         } catch (error) {
-            console.error("Ошибка при удалении доски:", error);
+            console.error("Ошибка при удалении колонки:", error);
         }
     };
 
+    // Обновление задач в текущей доске для локального хранения
     const handleTaskLocalUpdate = async () => {
         if (data.length > 0) {
-            const columnIds = data.map(column => column.id);  // Получаем список всех columnId
-            const allTasks = await getAllTasks(columnIds);  // Загружаем все задачи
-            setTasks(allTasks);  // Обновляем состояние с задачами
+            const columnIds = data.map(column => column.id); 
+            const allTasks = await getAllTasks(columnIds);
+            setTasks(allTasks);
         }
     };
 
+    // Обновление задачи
     const handleTaskUpdate = async (id: string, taskRequest: TaskUpdateRequest) => {
         try {
             await updateTask(id, taskRequest);
@@ -124,31 +123,31 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
         }
     };
 
-    // Функция для обработки завершения перетаскивания
+    // Обработка завершения перетаскивания
     const handleOnDragEnd = async (result: any) => {
         const { source, destination, type } = result;
         // Если задача не была перемещена (находится в том же месте)
         if (!destination) return;
 
-        // Получаем ID задачи (source.draggableId)
+        // Получение ID задачи
         const taskId = result.draggableId;
         console.log("Задача с ID", taskId, "перемещена");
 
-        // Получаем ID колонки, в которую была перемещена задача
+        // Получение ID колонки, в которую была перемещена задача
         const targetColumnId = result.destination.droppableId;
         console.log("Задача перемещена в колонку с ID:", targetColumnId);
         // Логика для перемещения колонок
         if (type === "COLUMN") {
-            // Получаем новый порядок колонок
+            // Получение новый порядок колонок
             const reorderedColumns = Array.from(data);
             const [movedColumn] = reorderedColumns.splice(source.index, 1);
             reorderedColumns.splice(destination.index, 0, movedColumn);
 
-            // Отправляем новый порядок на сервер
+            // Отправление нового поряка на сервер
             const orderedColumnIds = reorderedColumns.map((column) => column.id);
             try {
                 await updateColumnOrder({ orderedColumnIds });
-                setData(reorderedColumns); // Обновляем данные в состоянии
+                setData(reorderedColumns); // Обновление локальных данных
             } catch (error) {
                 console.error('Ошибка при обновлении порядка колонок:', error);
             }
@@ -156,9 +155,9 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
             return;
         }
 
+        // Логика для перемещения задач
         else if (type === "TASK") {
             try {
-                // Отправляем обновление на сервер с полным объектом задачи
                 await updateTaskColumn(taskId, targetColumnId);
 
                 handleTaskLocalUpdate();
@@ -168,10 +167,6 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
 
             return;
         }
-
-
-
-        // Можно добавить дополнительные проверки или другие типы для других объектов
     };
 
 
@@ -224,8 +219,8 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                                         placeholder="Название доски"
                                         type="text"
                                         className="form-control me-2"
-                                        value={tempName} // Используем состояние для ввода
-                                        onChange={(e) => setTempName(e.target.value)} // Обновляем tempName при вводе
+                                        value={tempName}
+                                        onChange={(e) => setTempName(e.target.value)}
                                     />
                                     <div className="card-body">
                                     </div>
