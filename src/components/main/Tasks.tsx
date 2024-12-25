@@ -77,7 +77,7 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
     return (
         <div className="row task">
             {/* Обертка для работы с перетаскиванием задач */}
-            <div className="accordion accordion-flush" id="accordion">
+            <div className="accordion accordion-flush overflow-y-on" id="accordion">
                 <Droppable
                     droppableId={columnId}
                     type="TASK"
@@ -129,7 +129,7 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                         value={tempTaskName}
                         onChange={(e) => setTempTaskName(e.target.value)}
                     />
-                    <div className="d-flex justify-content-between">
+                    <div className="button-container">
                         <button
                             className="btn btn-accept"
                             onClick={handleAddClick}

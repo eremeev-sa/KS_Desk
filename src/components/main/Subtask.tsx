@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SubtaskRequest, updateSubtask } from '../../services/Subtask';
+import { updateSubtask } from '../../services/Subtask';
 
 type SubtaskProps = {
     id: string; // ID подзадачи
@@ -43,11 +43,11 @@ const Subtask: React.FC<SubtaskProps> = ({ id, name, onDelete, onUpdate }) => {
     };
 
     return (
-        <div className=''>
+        <div className='subtask'>
             <div className="d-flex w-100 align-items-center justify-content-between">
                 {/* Если подзадача в режиме редактирования, показываем поле ввода */}
                 {isEditing ? (
-                    <div>
+                    <div className='input'>
                         <input
                             id="name-input"
                             title="Название задачи"
@@ -55,7 +55,7 @@ const Subtask: React.FC<SubtaskProps> = ({ id, name, onDelete, onUpdate }) => {
                             className="form-control me-2"
                             value={tempName}
                             onChange={(e) => setTempName(e.target.value)} // Обновление значения
-                            style={{ flex: "1" }}
+                            style={{ width: "100%" }}
                         />
                     </div>
                 ) : (

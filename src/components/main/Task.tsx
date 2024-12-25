@@ -246,7 +246,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
                                     <div>
                                         <span>
                                             {isEditing ? (
-                                                <div>
+                                                <div className='textarea'>
                                                     <label htmlFor="description-textarea">Описание</label>
                                                     <textarea
                                                         id="description-textarea"

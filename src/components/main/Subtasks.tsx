@@ -57,9 +57,9 @@ const Subtasks: React.FC<SubtaskProps> = ({ data, taskId }) => {
     };
     return (
         <div className="row">
-            <ul className="list-group h-100p">
+            <ul className="list-group h-100p subtasks">
                 {localSubtasks.map((subtask) => (
-                    <li className="list-group-item" key={subtask.id}>
+                    <li className="list-group-item subtask" key={subtask.id}>
                         <Subtask
                             id={subtask.id}
                             name={subtask.name}
@@ -71,23 +71,23 @@ const Subtasks: React.FC<SubtaskProps> = ({ data, taskId }) => {
             </ul>
             {/* Форма добавления подзадачи */}
             {addNewSubtask ? (
-                <div className="row mt-2">
+                <div className="row mt-2 input">
                     <input
                         type="text"
-                        className="form-control mb-2"
+                        className="form-control mb-2 w-100"
                         placeholder="Название подзадачи"
                         value={tempSubtaskName} // Текущее значение ввода
                         onChange={(e) => setTempSubtaskName(e.target.value)} // Обновление значения
                     />
-                    <div className="d-flex justify-content-between">
+                    <div className="button-container">
                         <button
-                            className="btn btn-success"
+                            className="btn btn-accept"
                             onClick={handleAddClick} // Добавление подзадачи
                         >
                             ✔
                         </button>
                         <button
-                            className="btn btn-danger"
+                            className="btn btn-cancel"
                             onClick={handleCancelClick} // Отмена добавления подзадачи
                         >
                             ✖

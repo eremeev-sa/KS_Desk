@@ -8,9 +8,9 @@ import { TaskType } from '../../models/models';
 
 type ColumnsProps = {
     currentBoardId: string; // Текущий идентификатор доски
-  };
+};
 
-  const Container = styled.div`
+const Container = styled.div`
   background-color: white;
   min-height: 100vh;
   min-width: 100vw; /* Минимальная ширина контейнера */
@@ -25,7 +25,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
     const [addNewColumn, setAddNewColumn] = useState(false); // Флаг добавления новой колонки
 
 
-     // Загрузка колонок при изменении текущей доски
+    // Загрузка колонок при изменении текущей доски
     useEffect(() => {
         const fetchColumns = async () => {
             if (currentBoardId !== "") {
@@ -107,7 +107,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
     // Обновление задач в текущей доске для локального хранения
     const handleTaskLocalUpdate = async () => {
         if (data.length > 0) {
-            const columnIds = data.map(column => column.id); 
+            const columnIds = data.map(column => column.id);
             const allTasks = await getAllTasks(columnIds);
             setTasks(allTasks);
         }
@@ -129,9 +129,6 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
         // Если задача не была перемещена (находится в том же месте)
         if (!destination) return;
 
-        // Получение ID задачи
-        const taskId = result.draggableId;
-        console.log("Задача с ID", taskId, "перемещена");
 
         // Получение ID колонки, в которую была перемещена задача
         const targetColumnId = result.destination.droppableId;
@@ -146,8 +143,8 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
             // Отправление нового поряка на сервер
             const orderedColumnIds = reorderedColumns.map((column) => column.id);
             try {
-                await updateColumnOrder({ orderedColumnIds });
                 setData(reorderedColumns); // Обновление локальных данных
+                await updateColumnOrder({ orderedColumnIds });
             } catch (error) {
                 console.error('Ошибка при обновлении порядка колонок:', error);
             }
@@ -157,9 +154,10 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
 
         // Логика для перемещения задач
         else if (type === "TASK") {
+            // Получение ID задачи
+            const taskId = result.draggableId;
             try {
                 await updateTaskColumn(taskId, targetColumnId);
-
                 handleTaskLocalUpdate();
             } catch (error) {
                 console.error("Ошибка при обновлении порядка задач:", error);
