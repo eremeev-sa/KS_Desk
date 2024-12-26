@@ -7,13 +7,14 @@
 		public const int MAX_PASSWORD_LENGTH = 20;
 		public const int MIN_PASSWORD_LENGTH = 5;
 
-		private UserKanban(Guid id, string name, string login, string password, Permissions role)
+		private UserKanban(Guid id, string name, string login, string password, string role, string token = null)
 		{
 			Id = id;
 			Name = name;
 			Login = login;
 			Password = password;
 			Role = role;
+			Token = token;
 		}
 
 		public Guid Id { get; }
@@ -24,9 +25,11 @@
 
 		public string Password { get; } = string.Empty;
 
-		public Permissions Role { get; }
+		public string Role { get; } = string.Empty;
+		
+		public string? Token { get; set; }
 
-		public static (UserKanban? User, string Error) Create(Guid id, string name, string login, string password)
+		public static (UserKanban? User, string Error) Create(Guid id, string name, string login, string password, string role)
 		{
 			var error = string.Empty;
 
@@ -45,7 +48,7 @@
 
 			if (string.IsNullOrEmpty(error))
 			{
-				var user = new UserKanban(id, name, login, password, Permissions.Read);
+				var user = new UserKanban(id, name, login, password, role);
 				return (user, error);
 			}
 

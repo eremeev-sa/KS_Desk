@@ -28,7 +28,7 @@ namespace KanbanApp.DataAccess.Configurations
 				.IsRequired();  // Пароль обязателен для заполнения
 
 			// Преобразование перечисления Permissions
-			builder.Property(b => b.Permissions)
+			builder.Property(b => b.Role)
 				.HasConversion<int>();  // Перечисление Permissions будет сохраняться в базе как целое число (например, 0 для Read, 1 для Write и т.д.)
 
 			}

@@ -2,6 +2,7 @@
 using KanbanApp.API.Contracts.ColumnsControllers;
 using KanbanApp.Core.Abstractions.IBoards;
 using KanbanApp.Core.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanApp.API.Controllers
@@ -21,6 +22,7 @@ namespace KanbanApp.API.Controllers
 
 		// Метод для получения всех канбан-досок
 		[HttpGet]
+		[Authorize(Roles = ("admin"))]
 		public async Task<ActionResult<List<BoardsKanbanResponse>>> GetBoards()
 		{
 			var boards = await _boardsService.GetAllBoardsKanban();
