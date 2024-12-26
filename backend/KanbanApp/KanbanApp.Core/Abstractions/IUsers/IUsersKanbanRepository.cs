@@ -8,12 +8,14 @@ namespace KanbanApp.Core.Abstractions.IUsers
         Task<List<UserKanban>> Get();
 
         // Метод для создания нового пользователя
-        Task<Guid> Create(UserKanban user);
+        Task<Guid> Register (UserKanban user);
 
         // Метод для обновления пользователя
-        Task<Guid> Update(Guid id, string name, string login, string password);
+        Task<Guid> Update(Guid id, string name, string login, string password, string role);
 
         // Метод для удаления пользователя
         Task<Guid> Delete(Guid id);
+        bool IsUniqueLogin (string login);
+        Task<UserKanban> Login (LoginRequest request);
     }
 }

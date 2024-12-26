@@ -16,7 +16,7 @@
 
 		public Guid Id { get; }
 
-		public string Name { get; set; } = string.Empty;
+		public string Name { get; } = string.Empty;
 
 		public static (BoardKanban BoardKanban, string Error) Create(Guid id, string name)
 		{

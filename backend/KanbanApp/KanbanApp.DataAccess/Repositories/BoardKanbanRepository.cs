@@ -18,11 +18,11 @@ public class BoardKanbanRepository : IBoardsKanbanRepository
 	{
 		var boardEntities = await _context.Boards
 			.AsNoTracking()  // Отключение отслеживания изменений
-			.ToListAsync();  // Асинхронная загрузка всех сущностей Board
+			.ToListAsync();  
 
 		var boards = boardEntities
-			.Select(b => BoardKanban.Create(b.Id, b.Name).BoardKanban)  // Преобразование
-			.ToList();  // Список моделей данных
+			.Select(b => BoardKanban.Create(b.Id, b.Name).BoardKanban)  
+			.ToList();  
 
 		return boards;  
 	}

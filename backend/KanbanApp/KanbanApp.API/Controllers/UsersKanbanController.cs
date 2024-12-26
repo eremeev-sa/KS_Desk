@@ -1,7 +1,10 @@
 ﻿using KanbanApp.API.Contracts.UsersControllers;
 using KanbanApp.Core.Abstractions.IUsers;
 using KanbanApp.Core.Model;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using LoginRequest = KanbanApp.Core.Model.LoginRequest;
+
 
 namespace KanbanApp.API.Controllers
 {
@@ -26,24 +29,39 @@ namespace KanbanApp.API.Controllers
 		}
 
 		// Метод для создания нового пользователя
-		[HttpPost]
-		public async Task<ActionResult<Guid>> CreateUser([FromBody] UsersKanbanRequest request)
+		[HttpPost("register")]
+		public async Task<ActionResult<Guid>> RegisterUser([FromBody] UsersKanbanRequest request)
 		{
 			(UserKanban? user, string error) = UserKanban.Create(
 				Guid.NewGuid(),
 				request.Name,
 				request.Login,
-				request.Password);
+				request.Password,
+				request.Role);
 
 			if (user == null)
 			{
 				return BadRequest(error);
 			}
 
-			var userId = await _usersService.CreateUser(user);
+			var userId = await _usersService.RegisterUser(user);
 
 			return Ok(userId);
 		}
+
+		 [HttpPost("login")]
+		 public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request)
+		 {
+			var user = await _usersService.Login(request);
+			if (user == null)
+			{
+				return Unauthorized("Неверный логин или пароль.");
+			}
+
+			var response = new LoginResponse(user, user.Token);
+			return Ok(response);
+		 }
+
 
 		// Метод для обновления данных пользователя
 		[HttpPut("{id:guid}")]
@@ -55,7 +73,7 @@ namespace KanbanApp.API.Controllers
 				return BadRequest("Имя, ЛОгин, Пароль обязательны для заполнения");	
 			}
 			
-			var userId = await _usersService.UpdateUser(id, request.Name, request.Login, request.Password);
+			var userId = await _usersService.UpdateUser(id, request.Name, request.Login, request.Password, request.Role);
 			return Ok(userId);
 		}
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KanbanApp.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class Kanban : Migration
+    public partial class Kanban11 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,7 +31,7 @@ namespace KanbanApp.DataAccess.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Login = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
-                    Permissions = table.Column<int>(type: "integer", nullable: false)
+                    Role = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,11 +64,10 @@ namespace KanbanApp.DataAccess.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Assignee = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Priority = table.Column<string>(type: "text", nullable: false),
                     ColumnId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AssignedUserId = table.Column<Guid>(type: "uuid", nullable: true)
+                    AssignedId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -80,8 +79,8 @@ namespace KanbanApp.DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Tasks_Users_AssignedUserId",
-                        column: x => x.AssignedUserId,
+                        name: "FK_Tasks_Users_AssignedId",
+                        column: x => x.AssignedId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
@@ -117,9 +116,9 @@ namespace KanbanApp.DataAccess.Migrations
                 column: "TaskId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tasks_AssignedUserId",
+                name: "IX_Tasks_AssignedId",
                 table: "Tasks",
-                column: "AssignedUserId");
+                column: "AssignedId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_ColumnId",

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KanbanApp.DataAccess.Migrations
 {
     [DbContext(typeof(KanbanAppDbContext))]
-    [Migration("20241216172358_Kanban.0.3")]
-    partial class Kanban03
+    [Migration("20241218153450_Kanban.1.1")]
+    partial class Kanban11
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,8 +81,9 @@ namespace KanbanApp.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Permissions")
-                        .HasColumnType("integer");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

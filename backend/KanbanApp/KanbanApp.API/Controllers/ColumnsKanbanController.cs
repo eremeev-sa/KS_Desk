@@ -2,6 +2,7 @@
 using KanbanApp.Application.Services;
 using KanbanApp.Core.Abstractions.IBoards;
 using KanbanApp.Core.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanApp.API.Controllers
@@ -23,6 +24,7 @@ namespace KanbanApp.API.Controllers
 
 		// Метод для получения всех колонок канбан-досок
 		[HttpGet]
+		[Authorize]
 		public async Task<ActionResult<List<ColumnsKanbanResponse>>> GetColumns()
 		{
 			var columns = await _columnsService.GetAllColumnsKanban();

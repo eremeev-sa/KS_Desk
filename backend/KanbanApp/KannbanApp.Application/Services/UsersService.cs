@@ -1,6 +1,7 @@
 ﻿using KanbanApp.Core.Abstractions.IUsers;
 using KanbanApp.Core.Model;
 
+
 namespace KanbanApp.Application.Services
 {
     public class UsersService : IUsersKanbanService
@@ -19,15 +20,15 @@ namespace KanbanApp.Application.Services
 		}
 
 		// Метод для создания нового пользователя
-		public async Task<Guid> CreateUser(UserKanban user)
+		public async Task<Guid> RegisterUser(UserKanban user)
 		{
-			return await _usersRepository.Create(user);
+			return await _usersRepository.Register(user);
 		}
 
 		// Метод для обновления данных пользователя
-		public async Task<Guid> UpdateUser(Guid id, string name, string login, string password)
+		public async Task<Guid> UpdateUser(Guid id, string name, string login, string password, string role)
 		{
-			return await _usersRepository.Update(id, name, login, password);
+			return await _usersRepository.Update(id, name, login, password, role);
 		}
 
 		// Метод для удаления пользователя
@@ -35,5 +36,10 @@ namespace KanbanApp.Application.Services
 		{
 			return await _usersRepository.Delete(id);
 		}
+		public async Task<UserKanban> Login(LoginRequest request)
+		{
+			return await _usersRepository.Login(request);
+		}
+
 	}
 }

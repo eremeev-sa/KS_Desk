@@ -4,6 +4,7 @@
 	public record UsersKanbanRequest(
 		string Name,
 		string Login,
-		string Password
+		string Password,
+		string Role
 	);
 }
