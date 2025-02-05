@@ -10,7 +10,7 @@ using KanbanApp.Core.Abstractions.IUsers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-public class UserRepository : IUsersKanbanRepository
+public class UserRepository : IUsersRepository
 {
 	private KanbanAppDbContext _context;
 	private string _secretKey;
@@ -28,14 +28,14 @@ public class UserRepository : IUsersKanbanRepository
 
 
 	// Получение всех пользователей
-	public async Task<List<UserKanban>> Get()
+	public async Task<List<User>> Get()
 	{
 		var userEntities = await _context.Users
 			.AsNoTracking()
 			.ToListAsync();
 
 		var users = userEntities
-			.Select(b => UserKanban.Create(b.Id, b.Name, b.Login, b.Password, b.Role).User)
+			.Select(b => User.Create(b.Id, b.Name, b.Login, b.Password, b.Role).User)
 			.Where(user => user != null)
 			.ToList();
 
@@ -43,15 +43,18 @@ public class UserRepository : IUsersKanbanRepository
 	}
 
 	// Создание нового пользователя
-	public async Task<Guid> Register(UserKanban user)
+	public async Task<Guid> Register(User user)
 	{
-		var userEntity = new UserKanbanEntity
+		// Хешируем пароль перед сохранением в базу данных
+		var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
+		var userEntity = new UserEntity
 		{
 			Id = user.Id,
 			Name = user.Name,
 			Login = user.Login,
-			Password = user.Password,
-			Role = user.Role
+			Password = hashedPassword,  
+			Role = "user"
 		};
 
 		await _context.Users.AddAsync(userEntity);
@@ -63,13 +66,16 @@ public class UserRepository : IUsersKanbanRepository
 	// Обновление данных пользователя
 	public async Task<Guid> Update(Guid id, string name, string login, string password, string role)
 	{
+		// Хешируем пароль перед обновлением
+		var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
 		await _context.Users
 			.Where(b => b.Id == id)
 			.ExecuteUpdateAsync(s => s
-				.SetProperty(b => b.Name, b => name)
-				.SetProperty(b => b.Login, b => login)
-				.SetProperty(b => b.Password, b => password)
-				.SetProperty(b => b.Role, b => role)
+				.SetProperty(b => b.Name, name)
+				.SetProperty(b => b.Login, login)
+				.SetProperty(b => b.Password, hashedPassword)  // Хешируем пароль
+				.SetProperty(b => b.Role, role)
 			);
 
 		return id;
@@ -92,12 +98,13 @@ public class UserRepository : IUsersKanbanRepository
 		return false;
 	}
 
-	public async Task<UserKanban> Login(LoginRequest request)
+	// Логин пользователя (сравнивается хеш пароля)
+	public async Task<User> Login(LoginRequest request)
 	{
 		var userEntity = _context.Users
-			.FirstOrDefault(b => b.Login.ToLower() == request.Login.ToLower() && b.Password == request.Password);
-        
-		if (userEntity == null)
+			.FirstOrDefault(b => b.Login.ToLower() == request.Login.ToLower());
+
+		if (userEntity == null || !BCrypt.Net.BCrypt.Verify(request.Password, userEntity.Password)) // Проверка хешированного пароля
 		{
 			return null;
 		}
@@ -108,7 +115,7 @@ public class UserRepository : IUsersKanbanRepository
 
 		var tokenDescriptor = new SecurityTokenDescriptor
 		{
-			Subject = new ClaimsIdentity(new Claim[]
+			Subject = new ClaimsIdentity(new[]
 			{
 				new Claim(ClaimTypes.Name, userEntity.Id.ToString()),
 				new Claim(ClaimTypes.Role, userEntity.Role)
@@ -119,14 +126,22 @@ public class UserRepository : IUsersKanbanRepository
 
 		var token = tokenHandler.CreateToken(tokenDescriptor);
 		var tokenString = tokenHandler.WriteToken(token);
-		
-		var (userKanban, _) = UserKanban.Create(userEntity.Id, userEntity.Name, userEntity.Login, userEntity.Password, userEntity.Role);
+        
+		var (userKanban, _) = User.Create(userEntity.Id, userEntity.Name, userEntity.Login, userEntity.Password, userEntity.Role);
 
 		if (userKanban != null)
 		{
 			userKanban.Token = tokenString;
 		}
+
 		return userKanban;
+	}
+	
+	// Получение пользователя по ID
+	public async Task<User?> GetUserById(Guid id)
+	{
+		var userEntity = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+		return userEntity != null ? User.Create(userEntity.Id, userEntity.Name, userEntity.Login, userEntity.Password, userEntity.Role).User : null;
 	}
 }
 

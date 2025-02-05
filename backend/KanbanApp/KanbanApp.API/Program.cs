@@ -43,18 +43,18 @@ builder.Services.AddDbContext<KanbanAppDbContext>(
 		options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(KanbanAppDbContext)));
 	});
 
-builder.Services.AddScoped<IBoardsKanbanService, BoardsKanbanService>();
-builder.Services.AddScoped<IColumnsKanbanService, ColumnsKanbanService>();
-builder.Services.AddScoped<ITasksKanbanService, TasksKanbanService>();
-builder.Services.AddScoped<IUsersKanbanService, UsersService>();
-builder.Services.AddScoped<ISubtasksKanbanService, SubtasksKanbanService>();
+builder.Services.AddScoped<IBoardsService, BoardsService>();
+builder.Services.AddScoped<IColumnsKanbanService, ColumnsService>();
+builder.Services.AddScoped<ITasksService, TasksService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<ISubtasksKanbanService, SubtasksService>();
 
 
-builder.Services.AddScoped<IBoardsKanbanRepository, BoardKanbanRepository>();
-builder.Services.AddScoped<IColumnsKanbanRepository, ColumnKanbanRepository>();
-builder.Services.AddScoped<ITasksKanbanRepository, TaskKanbanRepository>();
-builder.Services.AddScoped<IUsersKanbanRepository, UserRepository>();
-builder.Services.AddScoped<ISubtasksKanbanRepository, SubtaskKanbanRepository>();
+builder.Services.AddScoped<IBoardsRepository, BoardRepository>();
+builder.Services.AddScoped<IColumnsRepository, ColumnRepository>();
+builder.Services.AddScoped<ITasksRepository, TaskRepository>();
+builder.Services.AddScoped<IUsersRepository, UserRepository>();
+builder.Services.AddScoped<ISubtasksRepository, SubtaskRepository>();
 
 var app = builder.Build();
 

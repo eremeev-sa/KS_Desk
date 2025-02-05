@@ -4,23 +4,23 @@ using KanbanApp.Core.Model;
 
 namespace KanbanApp.Application.Services
 {
-    public class UsersService : IUsersKanbanService
+    public class UsersService : IUsersService
 	{
-		private readonly IUsersKanbanRepository _usersRepository;
+		private readonly IUsersRepository _usersRepository;
 
-		public UsersService(IUsersKanbanRepository usersRepository)
+		public UsersService(IUsersRepository usersRepository)
 		{
 			_usersRepository = usersRepository;
 		}
 
 		// Метод для получения всех пользователей
-		public async Task<List<UserKanban>> GetAllUsers()
+		public async Task<List<User>> GetAllUsers()
 		{
 			return await _usersRepository.Get();
 		}
 
 		// Метод для создания нового пользователя
-		public async Task<Guid> RegisterUser(UserKanban user)
+		public async Task<Guid> RegisterUser(User user)
 		{
 			return await _usersRepository.Register(user);
 		}
@@ -36,9 +36,15 @@ namespace KanbanApp.Application.Services
 		{
 			return await _usersRepository.Delete(id);
 		}
-		public async Task<UserKanban> Login(LoginRequest request)
+		public async Task<User> Login(LoginRequest request)
 		{
 			return await _usersRepository.Login(request);
+		}
+		
+		// Метод для получения пользователя по ID
+		public async Task<User?> GetUserById(Guid id)
+		{
+			return await _usersRepository.GetUserById(id);
 		}
 
 	}
