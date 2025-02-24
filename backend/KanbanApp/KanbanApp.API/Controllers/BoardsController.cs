@@ -25,9 +25,11 @@ namespace KanbanApp.API.Controllers
 			_usersService = usersService;
 		}
 
-		// Метод для получения всех канбан-досок
+		/// <summary>
+		/// Метод для получения всех досок
+		/// </summary>
 		[HttpGet("all")]
-		[Authorize(Roles = ("admin"))]
+		[Authorize(Roles = "admin")]
 		public async Task<ActionResult<List<BoardsResponse>>> GetBoards()
 		{
 			var boards = await _boardsService.GetAllBoardsKanban();
@@ -35,7 +37,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(responce);
 		}
 
-		// Метод для создания новой канбан-доски
+		/// <summary>
+		/// Метод для создания новой канбан-доски
+		/// </summary>
 		[HttpPost("create")]
 		public async Task<ActionResult<Guid>> CreateBoards([FromBody] BoardsRequest request, [FromQuery] Guid userId)
 		{
@@ -52,8 +56,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(boardId);
 		}
 
-
-		// Метод для обновления существующей канбан-доски
+		/// <summary>
+		/// Метод для обновления существующей канбан-доски
+		/// </summary>
 		[HttpPut("{id:guid}/update")]
 		public async Task<ActionResult<Guid>> UpdateBoards(Guid id, [FromBody] BoardsRequest request)
 		{
@@ -61,14 +66,18 @@ namespace KanbanApp.API.Controllers
 			return (boardId);
 		}
 
-		// Метод для удаления канбан-доски по ID
+		/// <summary>
+		/// Метод для удаления канбан-доски по ID
+		/// </summary>
 		[HttpDelete("{id:guid}/delete")]
 		public async Task<ActionResult<Guid>> DeleteBoards(Guid id)
 		{
 			return Ok(await _boardsService.DeleteBoardKanban(id));
 		}
 
-		// Метод для получения колонок по ID доски
+		/// <summary>
+		/// Метод для получения колонок по ID доски
+		/// </summary>
 		[HttpGet("/columns/all")]
 		public async Task<ActionResult<List<ColumnsKanbanResponse>>> GetColumnsByBoardId(Guid boardId)
 		{
@@ -77,7 +86,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(response);
 		}
 		
-		// Метод для поиска канбан-доски по ID
+		/// <summary>
+		/// Метод для поиска канбан-доски по ID
+		/// </summary>
 		[HttpGet("details")]
 		public async Task<ActionResult<BoardsResponse>> GetBoardById(Guid id)
 		{
@@ -89,18 +100,25 @@ namespace KanbanApp.API.Controllers
 			return Ok(new BoardsResponse(board.Id, board.Name));
 		}
 		
-		// Метод для добавления пользователей на доску
-		[HttpPost("{boardId:guid}/users/add")]
+		/// <summary>
+		/// Метод для добавления пользователей на доску
+		/// </summary>
+		[HttpPost("board/users/add")]
+		[Authorize(Roles = "admin")]
 		public async Task<ActionResult> AddUsersToBoard(Guid boardId, [FromBody] Guid userId)
 		{
 			var result = await _boardsService.AddUserToBoard(new BoardUser
 			{
 				BoardId = boardId,
-				UserId = userId
+				UserId = userId,
+				Role = "user"
 			});
 			return Ok("Пользователь успешно добавлен!");
 		}
 		
+		/// <summary>
+		/// Метод для просмотра пользователей конкретной доски
+		/// </summary>
 		[HttpGet("{boardId:guid}/users/all")]
 		public async Task<ActionResult<List<UsersResponse>>> GetUsersOnBoard(Guid boardId)
 		{

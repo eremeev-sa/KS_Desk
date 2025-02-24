@@ -1,7 +1,6 @@
 ﻿using KanbanApp.API.Contracts.UsersControllers;
 using KanbanApp.Core.Abstractions.IUsers;
 using KanbanApp.Core.Model;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using LoginRequest = KanbanApp.Core.Model.LoginRequest;
 
@@ -19,16 +18,25 @@ namespace KanbanApp.API.Controllers
 			_usersService = usersService;
 		}
 
-		// Метод для получения всех пользователей
+		/// <summary>
+		/// Метод для получения всех пользователей
+		/// </summary>
 		[HttpGet("all")]
 		public async Task<ActionResult<List<UsersResponse>>> GetUsers()
 		{
 			var users = await _usersService.GetAllUsers();
-			var response = users.Select(b => new UsersResponse(b.Id, b.Name, b.Login, b.Role));
+    
+			if (users == null || !users.Any())
+			{
+				return NotFound("Пользователи не найдены");
+			}
+			var response = users.Select(b => new UsersResponse(b.Id, b.Name, b.Login, b.Role)).ToList();
 			return Ok(response);
 		}
 
-		// Метод для создания нового пользователя
+		/// <summary>
+		/// Метод регистрации пользователя
+		/// </summary>
 		[HttpPost("register")]
 		public async Task<ActionResult<Guid>> RegisterUser([FromBody] UsersRequest request)
 		{
@@ -48,7 +56,10 @@ namespace KanbanApp.API.Controllers
 
 			return Ok(userId);
 		}
-
+		
+		/// <summary>
+		/// Метод проверки логина пользователя
+		/// </summary>
 		 [HttpPost("login")]
 		 public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request)
 		 {
@@ -61,9 +72,10 @@ namespace KanbanApp.API.Controllers
 			var response = new LoginResponse(user, user.Token);
 			return Ok(response);
 		 }
-
-
-		// Метод для обновления данных пользователя
+		
+		/// <summary>
+		/// Метод для обновления данных пользователя
+		/// </summary>
 		[HttpPut("{id:guid}/update")]
 		public async Task<ActionResult<Guid>> UpdateUsers(Guid id, [FromBody] UsersRequest request)
 		{
@@ -83,7 +95,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(userId);
 		}
 
-		// Метод для удаления пользователя
+		/// <summary>
+		/// Метод для удаления пользователя
+		/// </summary>
 		[HttpDelete("{id:guid}/delete")]
 		public async Task<ActionResult<Guid>> DeleteUser(Guid id)
 		{

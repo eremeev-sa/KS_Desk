@@ -1,14 +1,14 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.AccessControl;
 using System.Security.Claims;
 using System.Text;
+using KanbanApp.Core.Abstractions.IUsers;
 using KanbanApp.Core.Model;
 using KanbanApp.DataAccess.Entites;
-using KanbanApp.DataAccess;
 using Microsoft.EntityFrameworkCore;
-using KanbanApp.Core.Abstractions.IUsers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+
+namespace KanbanApp.DataAccess.Repositories;
 
 public class UserRepository : IUsersRepository
 {
@@ -30,15 +30,11 @@ public class UserRepository : IUsersRepository
 	// Получение всех пользователей
 	public async Task<List<User>> Get()
 	{
-		var userEntities = await _context.Users
-			.AsNoTracking()
-			.ToListAsync();
-
+		var userEntities = await _context.Users.AsNoTracking().ToListAsync();
 		var users = userEntities
 			.Select(b => User.Create(b.Id, b.Name, b.Login, b.Password, b.Role).User)
 			.Where(user => user != null)
 			.ToList();
-
 		return users;
 	}
 
@@ -133,7 +129,6 @@ public class UserRepository : IUsersRepository
 		{
 			userKanban.Token = tokenString;
 		}
-
 		return userKanban;
 	}
 	
@@ -144,5 +139,3 @@ public class UserRepository : IUsersRepository
 		return userEntity != null ? User.Create(userEntity.Id, userEntity.Name, userEntity.Login, userEntity.Password, userEntity.Role).User : null;
 	}
 }
-
-

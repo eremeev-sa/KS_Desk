@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KanbanApp.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class Kanban11 : Migration
+    public partial class Kanban10 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,8 @@ namespace KanbanApp.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,6 +55,31 @@ namespace KanbanApp.DataAccess.Migrations
                         name: "FK_Columns_Boards_BoardId",
                         column: x => x.BoardId,
                         principalTable: "Boards",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BoardUsers",
+                columns: table => new
+                {
+                    BoardId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Role = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BoardUsers", x => new { x.BoardId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_BoardUsers_Boards_BoardId",
+                        column: x => x.BoardId,
+                        principalTable: "Boards",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BoardUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -106,6 +132,11 @@ namespace KanbanApp.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_BoardUsers_UserId",
+                table: "BoardUsers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Columns_BoardId",
                 table: "Columns",
                 column: "BoardId");
@@ -129,6 +160,9 @@ namespace KanbanApp.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "BoardUsers");
+
             migrationBuilder.DropTable(
                 name: "Subtasks");
 

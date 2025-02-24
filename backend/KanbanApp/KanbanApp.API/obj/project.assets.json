@@ -4057,11 +4057,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Work\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\KanbanApp.API.csproj",
+      "projectUniqueName": "D:\\Work\\KS_Desk\\backend\\KanbanApp\\KanbanApp.API\\KanbanApp.API.csproj",
       "projectName": "KanbanApp.API",
-      "projectPath": "D:\\Work\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\KanbanApp.API.csproj",
+      "projectPath": "D:\\Work\\KS_Desk\\backend\\KanbanApp\\KanbanApp.API\\KanbanApp.API.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "D:\\Work\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\obj\\",
+      "outputPath": "D:\\Work\\KS_Desk\\backend\\KanbanApp\\KanbanApp.API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -4079,14 +4079,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\Work\\Kanban_App\\backend\\KanbanApp\\KanbanApp.Core\\KanbanApp.Core.csproj": {
-              "projectPath": "D:\\Work\\Kanban_App\\backend\\KanbanApp\\KanbanApp.Core\\KanbanApp.Core.csproj"
+            "D:\\Work\\KS_Desk\\backend\\KanbanApp\\KanbanApp.Core\\KanbanApp.Core.csproj": {
+              "projectPath": "D:\\Work\\KS_Desk\\backend\\KanbanApp\\KanbanApp.Core\\KanbanApp.Core.csproj"
             },
-            "D:\\Work\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj": {
-              "projectPath": "D:\\Work\\Kanban_App\\backend\\KanbanApp\\KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj"
+            "D:\\Work\\KS_Desk\\backend\\KanbanApp\\KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj": {
+              "projectPath": "D:\\Work\\KS_Desk\\backend\\KanbanApp\\KanbanApp.DataAccess\\KanbanApp.DataAccess.csproj"
             },
-            "D:\\Work\\Kanban_App\\backend\\KanbanApp\\KannbanApp.Application\\KanbanApp.Application.csproj": {
-              "projectPath": "D:\\Work\\Kanban_App\\backend\\KanbanApp\\KannbanApp.Application\\KanbanApp.Application.csproj"
+            "D:\\Work\\KS_Desk\\backend\\KanbanApp\\KannbanApp.Application\\KanbanApp.Application.csproj": {
+              "projectPath": "D:\\Work\\KS_Desk\\backend\\KanbanApp\\KannbanApp.Application\\KanbanApp.Application.csproj"
             }
           }
         }

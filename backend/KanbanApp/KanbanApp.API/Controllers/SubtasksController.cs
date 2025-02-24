@@ -15,8 +15,10 @@ namespace KanbanApp.API.Controllers
 		{
 			_subatasksService = subtasksService;
 		}
-
-		//Метод для получение всех подзадач
+		
+		/// <summary>
+		/// Метод для получение всех подзадач
+		/// </summary>
 		[HttpGet("all")]
 		public async Task<ActionResult<List<SubtasksResponce>>> GetSubtask()
 		{
@@ -28,7 +30,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(responce);
 		}
 
-		//Метод для создания подзадачи
+		/// <summary>
+		/// Метод для создания подзадачи
+		/// </summary>
 		[HttpPost("create")]
 		public async Task<ActionResult<Guid>> CreateSubtask([FromBody] SubtasksRequest request)
 		{
@@ -46,7 +50,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(subtaskId);
 		}
 
-		//Метод для обновления подзадачи
+		/// <summary>
+		/// Метод для обновления подзадачи
+		/// </summary>
 		[HttpPut("{id:guid}/update")]
 		public async Task<ActionResult<Guid>> UpdateSubtask(Guid id, [FromBody] SubtasksUpdateRequest request)
 		{
@@ -57,6 +63,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(subtaskId);
 		}
 
+		/// <summary>
+		/// Метод для удаления подзадачи
+		/// </summary>
 		[HttpDelete("{id:guid}/delete")]
 		public async Task<ActionResult<Guid>> DeleteSubtask(Guid id)
 		{

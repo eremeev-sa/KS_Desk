@@ -6,7 +6,7 @@ namespace KanbanApp.Core.Model
 	{
 		public const int MAX_NAME_LENGTH = 250;
 		public const int MAX_LOGIN_LENGTH = 60;
-		public const int MAX_PASSWORD_LENGTH = 20;
+		public const int MAX_PASSWORD_LENGTH = 200;
 		public const int MIN_PASSWORD_LENGTH = 5;
 
 		private User(Guid id, string name, string login, string password, string role, string token = null)

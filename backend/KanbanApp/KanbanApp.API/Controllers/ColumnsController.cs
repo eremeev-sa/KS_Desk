@@ -22,7 +22,9 @@ namespace KanbanApp.API.Controllers
 			_tasksService = tasksService;
 		}
 
-		// Метод для получения всех колонок канбан-досок
+		/// <summary>
+		/// Метод для получения всех колонок канбан-досок
+		/// </summary>
 		[HttpGet("all")]
 		public async Task<ActionResult<List<ColumnsKanbanResponse>>> GetColumns()
 		{
@@ -31,7 +33,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(response);
 		}
 
-		// Метод для создания новой колонки в канбан-доске
+		/// <summary>
+		/// Метод для создания новой колонки в канбан-доске
+		/// </summary>
 		[HttpPost("create")]
 		public async Task<ActionResult<Guid>> CreateColumns([FromBody] ColumnsRequest request)
 		{
@@ -56,7 +60,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(columnId);
 		}
 
-		// Метод для обновления существующей колонки
+		/// <summary>
+		/// Метод для обновления существующей колонки
+		/// </summary>
 		[HttpPut("{id:guid}/update")]
 		public async Task<ActionResult<Guid>> UpdateColumns(Guid id, [FromBody] ColumnsRequest request)
 		{
@@ -65,14 +71,18 @@ namespace KanbanApp.API.Controllers
 			return Ok(columnId);
 		}
 
-		// Метод для удаления колонки
+		/// <summary>
+		/// Метод для удаления колонки
+		/// </summary>
 		[HttpDelete("{id:guid}/delete")]
 		public async Task<ActionResult<Guid>> DeleteColumns(Guid id)
 		{
 			return Ok(await _columnsService.DeleteColumnKanban(id));
 		}
 
-		// Метод для обновления порядка колонок
+		/// <summary>
+		/// Метод для обновления порядка колонок
+		/// </summary>
 		[HttpPut("order")]
 		public async Task<ActionResult> UpdateColumnsOrder([FromBody] UpdateColumnsOrderRequest request)
 		{
@@ -80,11 +90,13 @@ namespace KanbanApp.API.Controllers
 			return Ok();
 		}
 
+		/// <summary>
+		/// Метод для просмотра всех задач конкретной колонки
+		/// </summary>
 		[HttpGet("{columnId:guid}/tasks/all")]
 		public async Task<ActionResult<List<TaskKanban>>> GetTasksByColumnId(Guid columnId)
 		{
 			var tasks = await _tasksService.GetTasksByColumnId(columnId);
-
 			return Ok(tasks);
 		}
 	}

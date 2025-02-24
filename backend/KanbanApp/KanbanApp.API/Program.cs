@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using KanbanApp.Application.Services;
 using KanbanApp.Core.Abstractions.IBoards;
@@ -35,6 +36,13 @@ builder.Services.AddAuthentication(x =>
 		ValidateIssuer = false,
 		ValidateAudience = false
 	};
+});
+
+builder.Services.AddSwaggerGen(options =>
+{
+	var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+	var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+	options.IncludeXmlComments(xmlPath);
 });
 
 builder.Services.AddDbContext<KanbanAppDbContext>(

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "StgAqtv1vHc=",
+  "dgSpecHash": "ZXa7UEoSwfE=",
   "success": true,
-  "projectFilePath": "D:\\Work\\Kanban_App\\backend\\KanbanApp\\KanbanApp.API\\KanbanApp.API.csproj",
+  "projectFilePath": "D:\\Work\\KS_Desk\\backend\\KanbanApp\\KanbanApp.API\\KanbanApp.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\user\\.nuget\\packages\\bcrypt\\1.0.0\\bcrypt.1.0.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",

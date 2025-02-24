@@ -18,6 +18,9 @@ namespace KanbanApp.API.Controllers
 			_subtasksService = subtasksService;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		// Метод для получения всех задач канбан-доски
 		[HttpGet("all")]
 		public async Task<ActionResult<List<TasksKanbanResponse>>> GetTasks()
@@ -37,7 +40,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(response);
 		}
 
-		// Метод для создания новой задачи
+		/// <summary>
+		/// Метод для создания новой задачи
+		/// </summary>
 		[HttpPost("create")]
 		public async Task<ActionResult<Guid>> CreateTasks([FromBody] TasksRequest request)
 		{
@@ -66,7 +71,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(taskId);
 		}
 
-		// Метод для обновления существующей задачи
+		/// <summary>
+		/// Метод для обновления существующей задачи
+		/// </summary>
 		[HttpPut("{id:guid}/update")]
 		public async Task<ActionResult<Guid>> UpdateTasks(Guid id, [FromBody] TasksUpdateRequest request)
 		{
@@ -84,8 +91,10 @@ namespace KanbanApp.API.Controllers
 			);
 			return Ok(taskId);
 		}
-
-		// Метод для удаления задачи
+		
+		/// <summary>
+		/// Метод для удаления задачи
+		/// </summary>
 		[HttpDelete("{id:guid}/delete")]
 		public async Task<ActionResult<Guid>> DeleteTask(Guid id)
 		{
@@ -100,6 +109,9 @@ namespace KanbanApp.API.Controllers
 			return Ok(subtasks);
 		}
 		
+		/// <summary>
+		/// Метод для обновления переноса подзадачи между колонками
+		/// </summary>
 		[HttpPatch("{id:guid}/column/update")]
 		public async Task<ActionResult<Guid>> UpdateTaskColumn(Guid id, [FromBody] Guid columnId)
 		{

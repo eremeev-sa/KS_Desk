@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KanbanApp.DataAccess.Migrations
 {
     [DbContext(typeof(KanbanAppDbContext))]
-    [Migration("20241218153652_Kanban.1.2")]
-    partial class Kanban12
+    [Migration("20250224153814_Kanban.1.0")]
+    partial class Kanban10
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace KanbanApp.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("KanbanApp.DataAccess.Entites.BoardKanbanEntity", b =>
+            modelBuilder.Entity("KanbanApp.DataAccess.Entites.BoardEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,12 +35,34 @@ namespace KanbanApp.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.ToTable("Boards");
                 });
 
-            modelBuilder.Entity("KanbanApp.DataAccess.Entites.ColumnKanbanEntity", b =>
+            modelBuilder.Entity("KanbanApp.DataAccess.Entites.BoardUserEntity", b =>
+                {
+                    b.Property<Guid>("BoardId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("BoardId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BoardUsers");
+                });
+
+            modelBuilder.Entity("KanbanApp.DataAccess.Entites.ColumnEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -63,7 +85,7 @@ namespace KanbanApp.DataAccess.Migrations
                     b.ToTable("Columns");
                 });
 
-            modelBuilder.Entity("KanbanApp.DataAccess.Entites.UserKanbanEntity", b =>
+            modelBuilder.Entity("KanbanApp.DataAccess.Entites.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -90,7 +112,7 @@ namespace KanbanApp.DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("SubtaskKanbanEntity", b =>
+            modelBuilder.Entity("SubtaskEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,7 +132,7 @@ namespace KanbanApp.DataAccess.Migrations
                     b.ToTable("Subtasks");
                 });
 
-            modelBuilder.Entity("TaskKanbanEntity", b =>
+            modelBuilder.Entity("TaskEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,9 +164,28 @@ namespace KanbanApp.DataAccess.Migrations
                     b.ToTable("Tasks");
                 });
 
-            modelBuilder.Entity("KanbanApp.DataAccess.Entites.ColumnKanbanEntity", b =>
+            modelBuilder.Entity("KanbanApp.DataAccess.Entites.BoardUserEntity", b =>
                 {
-                    b.HasOne("KanbanApp.DataAccess.Entites.BoardKanbanEntity", "Board")
+                    b.HasOne("KanbanApp.DataAccess.Entites.BoardEntity", "Board")
+                        .WithMany("BoardUsers")
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KanbanApp.DataAccess.Entites.UserEntity", "User")
+                        .WithMany("BoardUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Board");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("KanbanApp.DataAccess.Entites.ColumnEntity", b =>
+                {
+                    b.HasOne("KanbanApp.DataAccess.Entites.BoardEntity", "Board")
                         .WithMany("Columns")
                         .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -153,9 +194,9 @@ namespace KanbanApp.DataAccess.Migrations
                     b.Navigation("Board");
                 });
 
-            modelBuilder.Entity("SubtaskKanbanEntity", b =>
+            modelBuilder.Entity("SubtaskEntity", b =>
                 {
-                    b.HasOne("TaskKanbanEntity", "Task")
+                    b.HasOne("TaskEntity", "Task")
                         .WithMany("Subtasks")
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -164,14 +205,14 @@ namespace KanbanApp.DataAccess.Migrations
                     b.Navigation("Task");
                 });
 
-            modelBuilder.Entity("TaskKanbanEntity", b =>
+            modelBuilder.Entity("TaskEntity", b =>
                 {
-                    b.HasOne("KanbanApp.DataAccess.Entites.UserKanbanEntity", "Assigned")
+                    b.HasOne("KanbanApp.DataAccess.Entites.UserEntity", "Assigned")
                         .WithMany("AssignedTasks")
                         .HasForeignKey("AssignedId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("KanbanApp.DataAccess.Entites.ColumnKanbanEntity", "Column")
+                    b.HasOne("KanbanApp.DataAccess.Entites.ColumnEntity", "Column")
                         .WithMany("Tasks")
                         .HasForeignKey("ColumnId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -182,22 +223,26 @@ namespace KanbanApp.DataAccess.Migrations
                     b.Navigation("Column");
                 });
 
-            modelBuilder.Entity("KanbanApp.DataAccess.Entites.BoardKanbanEntity", b =>
+            modelBuilder.Entity("KanbanApp.DataAccess.Entites.BoardEntity", b =>
                 {
+                    b.Navigation("BoardUsers");
+
                     b.Navigation("Columns");
                 });
 
-            modelBuilder.Entity("KanbanApp.DataAccess.Entites.ColumnKanbanEntity", b =>
+            modelBuilder.Entity("KanbanApp.DataAccess.Entites.ColumnEntity", b =>
                 {
                     b.Navigation("Tasks");
                 });
 
-            modelBuilder.Entity("KanbanApp.DataAccess.Entites.UserKanbanEntity", b =>
+            modelBuilder.Entity("KanbanApp.DataAccess.Entites.UserEntity", b =>
                 {
                     b.Navigation("AssignedTasks");
+
+                    b.Navigation("BoardUsers");
                 });
 
-            modelBuilder.Entity("TaskKanbanEntity", b =>
+            modelBuilder.Entity("TaskEntity", b =>
                 {
                     b.Navigation("Subtasks");
                 });
