@@ -1,5 +1,20 @@
 import React, { useEffect, useState } from "react";
-import Board from "./Board";
+import {
+  Box,
+  Text,
+  Group,
+  TextInput,
+  ActionIcon,
+  ScrollArea,
+  Divider,
+  List,
+  Badge,
+  Menu,
+  Button,
+  rem,
+  Space
+} from '@mantine/core';
+import { IconPlus, IconCheck, IconX, IconDots, IconPencil, IconTrash } from '@tabler/icons-react';
 import { updateBoard, BoardRequest, createBoard, getBoards } from "../../services/Board";
 
 type BoardListProps = {
@@ -17,104 +32,214 @@ const BoardList: React.FC<BoardListProps> = ({
   onBoardClick,
   currentBoardId,
 }) => {
-  const [addNewBoard, setAddNewBoard] = useState(false); // Состояние для добавления новой доски
-  const [tempName, setTempName] = useState(""); // Временное название для новой доски
-  const [boardsData, setBoardsData] = useState(data); // Локальное состояние данных о досках
+  const [addNewBoard, setAddNewBoard] = useState(false);
+  const [tempName, setTempName] = useState("");
+  const [editingBoardId, setEditingBoardId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [boardsData, setBoardsData] = useState(data);
 
-  // Обновление локального состояния при изменении данных из props
   useEffect(() => {
     setBoardsData(data);
-    console.log("Полученные данные в BoardList:", data);
   }, [data]);
 
-  // Функция для добавления новой доски
   const handleAddClick = async () => {
     try {
-      const boardRequest = { Name: tempName }; // Формируем объект для API
-      await createBoard(boardRequest); // Отправляем запрос на создание доски
-      const updatedBoards = await getBoards(); // Получаем обновленный список досок с сервера
-      setBoardsData(updatedBoards); // Обновляем локальное состояние
-      setAddNewBoard(false); // Закрываем форму добавления
-      setTempName(""); // Очищаем временное название
+      const boardRequest = { Name: tempName };
+      await createBoard(boardRequest);
+      const updatedBoards = await getBoards();
+      setBoardsData(updatedBoards);
+      setAddNewBoard(false);
+      setTempName("");
     } catch (error) {
       console.error("Ошибка при добавлении доски:", error);
     }
   };
 
-  // Функция для отмены добавления новой доски
   const handleCancelClick = () => {
     setTempName("");
     setAddNewBoard(false);
   };
 
+  const startEditing = (board: { id: string; name: string }) => {
+    setEditingBoardId(board.id);
+    setEditName(board.name);
+  };
+
+  const cancelEditing = () => {
+    setEditingBoardId(null);
+    setEditName("");
+  };
+
+  const saveEditing = async (id: string) => {
+    try {
+      const boardRequest = { Name: editName };
+      await onUpdate(id, boardRequest);
+      setEditingBoardId(null);
+    } catch (error) {
+      console.error("Ошибка при обновлении доски:", error);
+    }
+  };
+
   return (
-    <div className="">
-      {/* Заголовок секции с досками */}
-      <div className="sidebar-title">
-        <h3 className="board-info">Доски</h3>
-        {!addNewBoard && (
-          <button
-            className="btn btn-add"
-            onClick={() => setAddNewBoard(true)}
-          >
-            +
-          </button>
-        )}
-      </div>
+    <Box p="sm">
+      {/* Заголовок секции с кнопкой добавления */}
+      <Group justify="space-between" mb="md" wrap="nowrap">
+        <Text size="lg" fw={500}>
+          Доски
+        </Text>
+
+      </Group>
+
+      <Divider mb="sm" />
 
       {/* Список досок */}
-      <div className="boards-list">
+      <ScrollArea scrollbars="y" w={'200px'} style={{ height: 'calc(100vh - 260px)', borderBottom: '1px solid #e9ecef' }}>
         {boardsData.length === 0 ? (
-          <a className="center">Нет досок</a>
+          <Text color="dimmed" ta="center" py="md">Нет досок</Text>
         ) : (
-          boardsData.map((board) => (
-            <div
-              key={board.id}
-              className={`kanban-boards custom-button ${
-                currentBoardId === board.id ? "selected" : "custom-color"
-              }`} // Добавляем класс, если доска выбрана
-            >
-              <Board
+          <List spacing="xs" size="sm" withPadding={false}>
+            {boardsData.map((board) => (
+              <List.Item
+                onClick={() => onBoardClick(board.id)}
                 key={board.id}
-                Id={board.id}
-                Name={board.name}
-                onDelete={onDelete}
-                onUpdate={onUpdate}
-                onBoardClick={onBoardClick}
-              />
-            </div>
-          ))
+                style={{
+                  cursor: 'pointer',
+                  backgroundColor: currentBoardId === board.id ? 'var(--mantine-color-blue-light)' : 'transparent',
+                  borderRadius: 'var(--mantine-radius-sm)',
+                  padding: '6px 10px',
+                  listStyleType: 'none',
+                  '&:hover': {
+                    backgroundColor: 'var(--mantine-color-blue-1)'
+                  }
+                }}
+              >
+                {editingBoardId === board.id ? (
+                  <Group gap="xs" align="flex-end">
+                    <TextInput
+                      value={editName}
+                      onChange={(e) => setEditName(e.currentTarget.value)}
+                      style={{ flex: 1 }}
+                      size="sm"
+                      autoFocus
+                    />
+                    <ActionIcon
+                      color="green"
+                      variant="light"
+                      onClick={() => saveEditing(board.id)}
+                      disabled={!editName.trim()}
+                    >
+                      <IconCheck size={16} />
+                    </ActionIcon>
+                    <ActionIcon
+                      color="red"
+                      variant="light"
+                      onClick={cancelEditing}
+                    >
+                      <IconX size={16} />
+                    </ActionIcon>
+                  </Group>
+                ) : (
+                  <Group justify="space-between" wrap="nowrap" style={{ width: '100%' }}>
+                    <Text
+                      miw={130}
+                      maw={130}
+                      style={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        display: 'block'
+                      }}
+                      onClick={() => onBoardClick(board.id)}
+                    >
+                      {board.name}
+                    </Text>
+
+                    <Box style={{ marginLeft: 'auto', flexShrink: 0 }}>
+                      <Menu withinPortal position="bottom-end" shadow="sm" offset={5}>
+                        <Menu.Target>
+                          <ActionIcon
+                            variant="subtle"
+                            color="gray"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <IconDots style={{ width: rem(16), height: rem(16) }} />
+                          </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                          <Menu.Item
+                            leftSection={<IconPencil style={{ width: rem(14), height: rem(14) }} />}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              startEditing(board);
+                            }}
+                          >
+                            Редактировать
+                          </Menu.Item>
+                          <Menu.Item
+                            leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
+                            color="red"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDelete(board.id);
+                            }}
+                          >
+                            Удалить
+                          </Menu.Item>
+                        </Menu.Dropdown>
+                      </Menu>
+                    </Box>
+                  </Group>
+                )}
+              </List.Item>
+            ))}
+          </List>
         )}
 
-        {/* Форма для добавления новой доски */}
+        {/* Форма добавления новой доски */}
+        {!addNewBoard && (
+          <Box pt={'10px'} maw={'180px'} pb={'10px'}>
+            <Button
+              variant="light"
+              color="gray"
+              leftSection={<IconPlus size={16} />}
+              onClick={() => setAddNewBoard(true)}
+              fullWidth
+            >
+              Добавить доску
+            </Button>
+          </Box>
+        )}
         {addNewBoard && (
-          <div className="list-group-item new-board d-flex align-items-center justify-content-between">
-            <input
-              title="Название доски"
-              placeholder="Название доски"
-              type="text"
-              className="form-control board me-2"
-              value={tempName}
-              onChange={(e) => setTempName(e.target.value)}
-            />
-            <div className="button-container">
-              <button
-                className="btn btn-accept btn-sm"
+          <Box mt="sm" pb={'10px'} p="xs" style={{ border: '1px solid var(--mantine-color-gray-3)', borderRadius: 'var(--mantine-radius-sm)' }}>
+            <Group gap="xs" align="flex-end">
+              <TextInput
+                placeholder="Название доски"
+                value={tempName}
+                onChange={(e) => setTempName(e.currentTarget.value)}
+                style={{ flex: 1 }}
+                size="sm"
+                autoFocus
+              />
+              <ActionIcon
+                color="green"
+                variant="light"
                 onClick={handleAddClick}
+                disabled={!tempName.trim()}
               >
-                ✔
-              </button>
-              <button
-                className="btn btn-cance btn-sm"
+                <IconCheck size={16} />
+              </ActionIcon>
+              <ActionIcon
+                color="red"
+                variant="light"
                 onClick={handleCancelClick}
               >
-                ✖
-              </button>
-            </div>
-          </div>
+                <IconX size={16} />
+              </ActionIcon>
+            </Group>
+          </Box>
         )}
-      </div>
-    </div>
+      </ScrollArea>
+    </Box>
   );
 };
 

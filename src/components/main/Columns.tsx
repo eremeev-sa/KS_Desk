@@ -5,6 +5,17 @@ import { ColumnRequest, createColumn, deleteColumn, getColumns, updateColumn, up
 import { getAllTasks, TaskRequest, TaskUpdateRequest, updateTask, updateTaskColumn } from '../../services/Task';
 import styled from 'styled-components';
 import { TaskType } from '../../models/models';
+import {
+    Box,
+    Text,
+    TextInput,
+    Button,
+    Group,
+    ActionIcon,
+    ScrollArea
+} from '@mantine/core';
+import { IconPlus, IconCheck, IconX } from '@tabler/icons-react';
+import classesKanbanColumns from '../../styles/KanbanColumns.module.css';
 
 type ColumnsProps = {
     currentBoardId: string; // Текущий идентификатор доски
@@ -169,92 +180,109 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
 
 
     return (
-        <div className="kanban-columns-container mt-4">
-            {loading ? (
-                <p className='ms-2'>Загрузка...</p>
-            ) : (
-                <>
-                    <DragDropContext onDragEnd={handleOnDragEnd}>
-                        <Droppable
-                            droppableId={currentBoardId}
-                            type="COLUMN"
-                            direction="horizontal"
-                            isCombineEnabled={false}
-                        >
-                            {(provided) => (
-                                <div
-                                    ref={provided.innerRef}
-                                    {...provided.droppableProps}
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                    }}
-                                >
-                                    {data.map((column, index) => (
-                                        <Column
-                                            key={column.id}
-                                            {...column}
-                                            index={index}
-                                            onUpdate={handleUpdate}
-                                            onDelete={handleDelete}
-                                            tasks={tasks.filter(task => task.columnId === column.id)}
-                                            handleTaskUpdate={handleTaskUpdate}
-                                            handleTaskLocalUpdate={handleTaskLocalUpdate}
-                                        />
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            )}
+        <ScrollArea w={'100vw'} h={'100vh'}
+            className={classesKanbanColumns.kanbanColumnsContainer}
+        >
+            <Group wrap="nowrap" ml="sm" align="flex-start" pt="md">
+                {loading ? (
+                    <Text ml="sm">Загрузка...</Text>
+                ) : (
+                    <>
+                        <DragDropContext onDragEnd={handleOnDragEnd}>
+                            <Droppable
+                                droppableId={currentBoardId}
+                                type="COLUMN"
+                                direction="horizontal"
+                                isCombineEnabled={false}
+                            >
+                                {(provided) => (
+                                    <Group
+                                        ref={provided.innerRef}
+                                        {...provided.droppableProps}
+                                        align="flex-start"
+                                        gap="sm"
+                                        wrap="nowrap"
+                                        style={{
+                                            paddingBottom: 16 // Для скролла
+                                        }}
+                                    >
+                                        {data.map((column, index) => (
+                                            <Column
+                                                key={column.id}
+                                                {...column}
+                                                index={index}
+                                                onUpdate={handleUpdate}
+                                                onDelete={handleDelete}
+                                                tasks={tasks.filter(task => task.columnId === column.id)}
+                                                handleTaskUpdate={handleTaskUpdate}
+                                                handleTaskLocalUpdate={handleTaskLocalUpdate}
+                                            />
+                                        ))}
+                                        {provided.placeholder}
+                                    </Group>
+                                )}
+                            </Droppable>
+                        </DragDropContext>
 
-                        </Droppable>
-                    </DragDropContext>
-                    {addNewColumn ? <>
-                        <div className="new-column">
-                            <div className="ms-4">
-                                <div className="card">
-                                    <input
-                                        title="Название доски"
-                                        placeholder="Название доски"
-                                        type="text"
-                                        className="form-control me-2"
-                                        value={tempName}
-                                        onChange={(e) => setTempName(e.target.value)}
-                                    />
-                                    <div className="card-body">
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="button-container ms-4">
-                                <button
-                                    className="btn btn-accept btn-sm"
-                                    onClick={handleAddClick} // Добавление новой записи
+                        {/* Кнопка добавления внутри ScrollArea */}
+                        {!addNewColumn && (
+                            <Box mr="10px" style={{ minWidth: 250, flexShrink: 0 }}>
+                                <Button
+                                    variant="light"
+                                    color="gray"
+                                    leftSection={<IconPlus size={16} />}
+                                    onClick={() => setAddNewColumn(true)}
+                                    fullWidth
                                 >
-                                    ✔
-                                </button>
-                                <button
-                                    className="btn btn-cancel btn-sm"
-                                    onClick={handleCancelClick} // Отмена
-                                >
-                                    ✖
-                                </button>
-                            </div>
-                        </div>
-
-                    </> :
-                        <div className="mb-4 ms-4 new-column">
-                            <button
-                                className="btn btn-add w-100 bth-add-task center"
-                                onClick={() => setAddNewColumn(true)}>
-                                +
-                                <div className='text-on-bth'>
                                     Добавить колонку
-                                </div>
-                            </button>
-                        </div>
-                    }
-                </>
-            )}
-        </div>
+                                </Button>
+                            </Box>
+                        )}
+                        {/* Форма добавления новой колонки (фиксированная внизу) */}
+                        {addNewColumn && (
+                            <Box
+                                mt="sm"
+                                style={{
+                                    width: 250,
+                                    position: 'sticky',
+                                    left: 0,
+                                    bottom: 0,
+                                    background: 'var(--mantine-color-body)',
+                                    zIndex: 10
+                                }}
+                            >
+                                <TextInput
+                                    placeholder="Название колонки"
+                                    value={tempName}
+                                    onChange={(e) => setTempName(e.currentTarget.value)}
+                                    mb="sm"
+                                />
+                                <Group>
+                                    <Button
+                                        variant="light"
+                                        color="green"
+                                        size="sm"
+                                        leftSection={<IconCheck size={16} />}
+                                        onClick={handleAddClick}
+                                    >
+                                        Добавить
+                                    </Button>
+                                    <Button
+                                        variant="light"
+                                        color="red"
+                                        size="sm"
+                                        leftSection={<IconX size={16} />}
+                                        onClick={handleCancelClick}
+                                    >
+                                        Отмена
+                                    </Button>
+                                </Group>
+                            </Box>
+                        )}
+                    </>
+                )}
+            </Group>
+        </ScrollArea >
     );
 };
 

@@ -3,6 +3,13 @@ import BoardList from "./BoardList";
 import UserInfo from "./UserInfo";
 import { getBoards, updateBoard, BoardRequest, deleteBoard } from "../../services/Board";
 import "@fontsource/ibm-plex-sans";
+import { Text, ScrollArea, Loader, Group, Box, Divider } from '@mantine/core';
+import { IconLayoutKanban } from '@tabler/icons-react';
+import { IconMoon, IconSun } from '@tabler/icons-react';
+import cx from 'clsx';
+import { ActionIcon, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
+import classes from '../../styles/ActionToggle.module.css'
+import classesSidebar from '../../styles/Sidebar.module.css';
 
 type SidebarProps = {
   userName: string; // Имя текущего пользователя
@@ -14,7 +21,8 @@ type SidebarProps = {
 const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick, currentBoardId }) => {
   const [data, setData] = useState<{ id: string; name: string }[]>([]); // Список досок
   const [loading, setLoading] = useState(true); // Состояние загрузки
-
+  const { setColorScheme, colorScheme } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
   // Загрузка данных о досках при монтировании компонента
   useEffect(() => {
     const fetchBoards = async () => {
@@ -54,33 +62,50 @@ const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick, cur
   };
 
   return (
-    <div className="sidebar">
+    <Box
+      className={classesSidebar.sidebar}
+      bg={colorScheme === 'dark' ? 'dark.7' : 'gray.1'}
+    >
       {/* Заголовок боковой панели */}
-      <div className="sidebar-header-text">
-        <div className="sidebar-header-ico"></div>
-        <div>КС Деск</div>
-      </div>
+      <Group className={classesSidebar.header} justify="space-between">
+        <Group gap="sm" align="center">
+          <Box className={(colorScheme === 'light' ? classesSidebar.sidebarHeaderIcoLight : classesSidebar.sidebarHeaderIcoDark)} />
+          <Text fw={700} size="xl">КС Деск</Text>
+        </Group>
+        
+        <ActionIcon
+          onClick={() => setColorScheme(colorScheme === 'light' ? 'dark' : 'light')}
+          variant="default"
+          size="xl"
+          aria-label="Toggle color scheme"
+        >
+          {colorScheme === 'dark' ? <IconSun size={20} /> : <IconMoon size={20} />}
+        </ActionIcon>
+      </Group>
 
       {/* Список досок */}
-      <div className="boards">
+      <Box className={classes.content}>
         {loading ? (
-          <h2>Загрузка...</h2>
+          <Group mt="xl" justify="center">
+            <Loader size="sm" />
+            <Text>Загрузка...</Text>
+          </Group>
         ) : (
           <BoardList
-            currentBoardId={currentBoardId} // Текущая выбранная доска
-            data={data} // Данные досок
-            onUpdate={handleUpdate} // Обработчик обновления доски
-            onDelete={handleDelete} // Обработчик удаления доски
-            onBoardClick={onBoardClick} // Обработчик выбора доски
+            currentBoardId={currentBoardId}
+            data={data}
+            onUpdate={handleUpdate}
+            onDelete={handleDelete}
+            onBoardClick={onBoardClick}
           />
         )}
-      </div>
+      </Box>
 
       {/* Информация о пользователе */}
-      <div className="user">
+      <Box className={classes.footer}>
         <UserInfo userName={userName} onLogout={onLogout} />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

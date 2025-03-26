@@ -3,6 +3,8 @@ import Sidebar from '../components/menu/Sidebar';
 import Columns from '../components/main/Columns';
 import '../styles/custom.css';
 import { useUser } from '../context/UserContext'; // Используем хук для работы с глобальным состоянием пользователя
+import { Text, ScrollArea, Loader, Group, Box, Divider } from '@mantine/core';
+import classes from '../styles/KanbanWindow.module.css';
 
 type KanbanWindowProps = {
     onLogout: () => void; // Функция для выхода из системы
@@ -14,22 +16,17 @@ const KanbanWindow: React.FC<KanbanWindowProps> = ({ onLogout }) => {
     const [currentBoardId, setCurrentBoardId] = useState<string>(""); // ID текущей доски
 
     return (
-        <div className="d-flex custom-color">
-            {/* Боковая панель, фиксированная по высоте и ширине */}
-            <div className="custom-color position-fixed h-100 sidebar-content">
-                <Sidebar
-                    currentBoardId={currentBoardId} // Текущая доска
-                    userName={userName} // Имя пользователя
-                    onLogout={onLogout} // Выход из системы
-                    onBoardClick={(id) => setCurrentBoardId(id)} // Обновление ID доски при выборе
-                />
-            </div>
+        <Group className={classes.container}>
+            <Sidebar
+                currentBoardId={currentBoardId}
+                userName={currentUser}
+                onLogout={onLogout}
+                onBoardClick={(id) => setCurrentBoardId(id)}
+            />
 
-            {/* Основная рабочая область с колонками */}
-            <div className="w-100p bg-white">
-                <Columns currentBoardId={currentBoardId} />
-            </div>
-        </div>
+
+            <Columns currentBoardId={currentBoardId} />
+        </Group>
     );
 };
 

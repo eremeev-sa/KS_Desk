@@ -5,29 +5,23 @@ import { Draggable } from 'react-beautiful-dnd'; // Библиотека для 
 import styled from 'styled-components'; // Для стилизации компонентов
 import { colors } from '@atlaskit/theme'; // Цветовые палитры
 import { TaskUpdateRequest } from '../../services/Task'; // Интерфейсы и функции для работы с задачами
-
-interface HeaderProps {
-    isDragging: boolean; // Флаг, обозначающий, перетаскивается ли элемент
-}
+import {
+    Box,
+    Text,
+    TextInput,
+    Button,
+    ActionIcon,
+    Card,
+    Group,
+    Flex
+} from '@mantine/core';
+import { IconGripVertical, IconTrash, IconCheck, IconX } from '@tabler/icons-react';
 
 const Container = styled.div`
   margin: 0px;
   display: flex;
   flex-direction: column;
 `;
-
-const Header = styled.div<HeaderProps>`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 20px;
-    background-color: ${({ isDragging }) =>
-        isDragging ? colors.Y75 : '#f4f5f6'}; // Изменение цвета при перетаскивании
-    transition: background-color 0.2s ease;
-    &:hover {
-      background-color: #ffffff;
-    }
-  `;
 
 type ColumnProps = {
     id: string; // Идентификатор колонки
@@ -63,7 +57,7 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
         onUpdate(id, columnRequest);
         setIsEditing(false); // Выход из режима редактирования
     };
-    
+
     // Отмена изменений названия колонки
     const handleCancelClick = () => {
         setTempName(name); // Сбрасываем временное имя
@@ -73,88 +67,93 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
     return (
         <Draggable draggableId={id} index={index} key={id}>
             {(provided, snapshot) => (
-                <Container ref={provided.innerRef} {...provided.draggableProps}>
-                    <div className="ms-4">
-                        <div className="card">
-                            <div className='kanban-column'>
-                                <div className="custom-card-header text-center d-flex">
-                                    {isEditing ? (
-                                        // Отображение поля ввода и кнопок в режиме редактирования
-                                        <>
-                                            <input
-                                                title="Название колонки"
-                                                type="text"
-                                                className="form-control column me-2"
-                                                value={tempName}
-                                                onChange={(e) => setTempName(e.target.value)}
-                                            />
-                                            <div className="button-container d-flex align-items-center">
-                                                <button
-                                                    className="btn btn-accept btn-sm me-2"
-                                                    style={{ flexShrink: 0 }}
-                                                    onClick={handleSaveClick}
-                                                >
-                                                    ✔
-                                                </button>
-                                                <button
-                                                    className="btn btn-cancel btn-sm"
-                                                    style={{ flexShrink: 0 }}
-                                                    onClick={handleCancelClick}
-                                                >
-                                                    ✖
-                                                </button>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        // Отображение названия и кнопки удаления в обычном режиме
-                                        <div className="d-flex w-100">
-                                            <Header isDragging={snapshot.isDragging}>
-                                                {/* Область для захвата при перетаскивании */}
-                                                <div
-                                                    {...provided.dragHandleProps}
-                                                    className="drag-handle center"
-                                                >
-                                                    ✥
-                                                </div>
-                                            </Header>
+                <Box
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    style={{
+                        ...provided.draggableProps.style,
+                        minWidth: 330,
+                        maxWidth: 330,
+                        flexShrink: 0
+                    }}
+                >
+                    <Card
+                        withBorder
+                        shadow="sm"
+                        radius="md"
+                        p="sm"
+                        style={{
+                            backgroundColor: snapshot.isDragging ? 'var(--mantine-color-gray-2)' : undefined
+                        }}
+                    >
+                        {/* Заголовок колонки */}
+                        <Card.Section p="xs" withBorder>
+                            {isEditing ? (
+                                <Group>
+                                    <TextInput
+                                        value={tempName}
+                                        onChange={(e) => setTempName(e.currentTarget.value)}
+                                        style={{ flex: 1 }}
+                                        size="sm"
+                                        autoFocus
+                                    />
+                                    <ActionIcon
+                                        color="green"
+                                        variant="light"
+                                        onClick={handleSaveClick}
+                                    >
+                                        <IconCheck size={16} />
+                                    </ActionIcon>
+                                    <ActionIcon
+                                        color="red"
+                                        variant="light"
+                                        onClick={handleCancelClick}
+                                    >
+                                        <IconX size={16} />
+                                    </ActionIcon>
+                                </Group>
+                            ) : (
+                                <Group justify="space-between">
+                                    <Group gap="xs">
+                                        <Box
+                                            {...provided.dragHandleProps}
+                                            style={{ cursor: 'grab' }}
+                                        >
+                                            <IconGripVertical size={18} />
+                                        </Box>
+                                        <Text
+                                            fw={600}
+                                            onDoubleClick={handleEditClick}
+                                            style={{ cursor: 'text' }}
+                                        >
+                                            {name}
+                                        </Text>
+                                    </Group>
+                                    <ActionIcon
+                                        variant="subtle"
+                                        color="red"
+                                        onClick={() => onDelete(id)}
+                                    >
+                                        <IconTrash size={16} />
+                                    </ActionIcon>
+                                </Group>
+                            )}
+                        </Card.Section>
 
-                                            <div
-                                                style={{
-                                                    fontWeight: 'bold',
-                                                    margin: '8px',
-                                                }}
-                                            >
-                                                <span
-                                                    className="text-container noselect"
-                                                    onDoubleClick={handleEditClick} // Двойной клик для редактирования
-                                                >
-                                                    {name}
-                                                </span>
-                                            </div>
-
-                                            <div className="button-container d-flex align-items-center ms-auto">
-                                                <button
-                                                    className="btn btn-delete btn-sm"
-                                                    onClick={() => onDelete(id)}
-                                                >
-                                                    🗑
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                    )}
-                                </div>
-                                {/* Отображение списка задач */}
-                                <div className="card-body">
-                                    <Tasks tasks={tasks} handleTaskUpdate={handleTaskUpdate} handleTaskLocalUpdate={handleTaskLocalUpdate} columnId={id} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </Container>
+                        {/* Список задач */}
+                        <Box pt="sm">
+                            <Tasks
+                                tasks={tasks}
+                                handleTaskUpdate={handleTaskUpdate}
+                                handleTaskLocalUpdate={handleTaskLocalUpdate}
+                                columnId={id}
+                            />
+                        </Box>
+                    </Card>
+                </Box>
             )}
         </Draggable>
-    )
+    );
 };
 
 

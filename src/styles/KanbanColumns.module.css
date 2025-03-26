@@ -1,0 +1,7 @@
+.kanbanColumnsContainer {
+    /* Стили для контейнера колонок канбан-доски */
+    margin-left: 250px;
+    display: flex;
+    white-space: nowrap;
+    min-height: 100vh;
+}

@@ -1,4 +1,6 @@
 import React from "react";
+import { Group, Text, Button, Box } from '@mantine/core';
+import { IconLogout } from '@tabler/icons-react';
 
 type UserInfoProps = {
   userName: string; // Имя пользователя
@@ -7,15 +9,24 @@ type UserInfoProps = {
 
 const UserInfo: React.FC<UserInfoProps> = ({ userName, onLogout }) => {
   return (
-    <div className="user-info">
-      {/* Отображение имени пользователя */}
-      <h2 className="user-name">{userName}</h2>
+    <Box p="sm" pt='0' mah={'70px'}>
+      <Group justify="space-between">
+        {/* Имя пользователя с иконкой */}
+        <Text size="md" maw={'120px'} fw={500}>
+          {userName}
+        </Text>
 
-      {/* Кнопка выхода */}
-      <button className="btn btn-exit" onClick={onLogout}>
-        Выйти
-      </button>
-    </div>
+        {/* Кнопка выхода */}
+        <Button
+          variant="subtle"
+          color="red"
+          onClick={onLogout}
+          size="sm"
+        >
+          <IconLogout size={16} />
+        </Button>
+      </Group>
+    </Box>
   );
 };
 

@@ -4,6 +4,17 @@ import { Droppable } from 'react-beautiful-dnd';
 import { createTask, deleteTask, TaskUpdateRequest } from '../../services/Task';
 import { TaskType, UserType } from '../../models/models';
 import { getUsers } from '../../services/User';
+import {
+    Box,
+    Text,
+    TextInput,
+    Button,
+    ActionIcon,
+    Group,
+    Stack,
+    Card
+} from '@mantine/core';
+import { IconPlus, IconCheck, IconX } from '@tabler/icons-react';
 
 type TasksProps = {
     tasks: {
@@ -75,89 +86,87 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
     };
 
     return (
-        <div className="row task">
-            {/* Обертка для работы с перетаскиванием задач */}
-            <div className="accordion accordion-flush overflow-y-on" id="accordion">
-                <Droppable
-                    droppableId={columnId}
-                    type="TASK"
-                    direction="vertical"
-                    isCombineEnabled={false}
-                >
-                    {(provided) => (
-                        <div
-                            ref={provided.innerRef}
-                            {...provided.droppableProps}
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                minHeight: "100px", // минимальная высота для визуализации
-                            }}
-                        >
-                            {localTasks.length === 0 ? (
-                                <div style={{ textAlign: "center", padding: "10px" }}>
-                                    Задач нет
-                                </div>
-                            ) : (
-                                localTasks.map((task, index) => (
-                                    <div className="accordion-item" key={task.id}>
-                                        <Task
-                                            key={task.id}
-                                            {...task}
-                                            index={index}
-                                            task={task}
-                                            onDelete={handleDelete}
-                                            handleTaskUpdate={handleTaskUpdate}
-                                            usersData={usersData}
-                                        />
-                                    </div>
-                                ))
-                            )}
-                            {provided.placeholder} {/* Место для визуализации перетаскивания */}
-                        </div>
-                    )}
-                </Droppable>
-            </div>
+        <Box p="xs">
+            {/* Область для перетаскивания задач */}
+            <Droppable
+                droppableId={columnId}
+                type="TASK"
+                direction="vertical"
+                isCombineEnabled={false}
+            >
+                {(provided) => (
+                    <Stack
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        gap="xs"
+                        style={{ minHeight: 100 }}
+                    >
+                        {localTasks.length === 0 ? (
+                            <Text ta="center" py="md">
+                                Задач нет
+                            </Text>
+                        ) : (
+                            localTasks.map((task, index) => (
+                                <Task
+                                    key={task.id}
+                                    {...task}
+                                    index={index}
+                                    task={task}
+                                    onDelete={handleDelete}
+                                    handleTaskUpdate={handleTaskUpdate}
+                                    usersData={usersData}
+                                />
+                            ))
+                        )}
+                        {provided.placeholder}
+                    </Stack>
+                )}
+            </Droppable>
 
-            {/* Форма для добавления новой задачи */}
+            {/* Форма добавления новой задачи */}
             {addNewTask ? (
-                <div className="row mt-2">
-                    <input
-                        type="text"
-                        className="form-control mb-2"
+                <Box mt="sm">
+                    <TextInput
                         placeholder="Название задачи"
                         value={tempTaskName}
-                        onChange={(e) => setTempTaskName(e.target.value)}
+                        onChange={(e) => setTempTaskName(e.currentTarget.value)}
+                        mb="xs"
+                        autoFocus
                     />
-                    <div className="button-container">
-                        <button
-                            className="btn btn-accept"
+                    <Group>
+                        <Button
+                            variant="light"
+                            color="green"
+                            size="sm"
+                            leftSection={<IconCheck size={16} />}
                             onClick={handleAddClick}
                         >
-                            ✔
-                        </button>
-                        <button
-                            className="btn btn-cancel"
+                            Добавить
+                        </Button>
+                        <Button
+                            variant="light"
+                            color="red"
+                            size="sm"
+                            leftSection={<IconX size={16} />}
                             onClick={handleCancelClick}
                         >
-                            ✖
-                        </button>
-                    </div>
-                </div>
+                            Отмена
+                        </Button>
+                    </Group>
+                </Box>
             ) : (
-                // Кнопка для отображения формы добавления
-                <div className="row w-100 mt-2 center">
-                    <button
-                        className="btn btn-add w-100 me-2 bth-add-task center"
-                        onClick={() => setAddNewTask(true)}>
-                        +
-                        <div className='text-on-bth'>
-                            Добавить задачу
-                        </div>
-                    </button>
-                </div>
+                <Button
+                    fullWidth
+                    variant="light"
+                    color="gray"
+                    mt="sm"
+                    leftSection={<IconPlus size={16} />}
+                    onClick={() => setAddNewTask(true)}
+                >
+                    Добавить задачу
+                </Button>
             )}
-        </div>
+        </Box>
     );
 };
 
