@@ -23,7 +23,7 @@ type TasksProps = {
         description: string;
         priority: string;
         columnId: string;
-        assigneeId: string;
+        assignedId: string;
     }[];
     columnId: string;
 
@@ -50,6 +50,15 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
         }
         fetchColumns();
     }, []);
+
+    type PriorityLevel = 'Высокий' | 'Средний' | 'Низкий' | ''
+
+    const priorityOrder: Record<PriorityLevel, number> = {
+        'Высокий': 3,
+        'Средний': 2,
+        'Низкий': 1,
+        '': 0
+    };
 
     // Добавление новой задачи
     const handleAddClick = async () => {
@@ -106,7 +115,7 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                                 Задач нет
                             </Text>
                         ) : (
-                            localTasks.map((task, index) => (
+                            localTasks.sort((a, b) => priorityOrder[b.priority as PriorityLevel] - priorityOrder[a.priority as PriorityLevel]).map((task, index) => (
                                 <Task
                                     key={task.id}
                                     {...task}
@@ -117,7 +126,8 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                                     usersData={usersData}
                                 />
                             ))
-                        )}
+                        )
+                        }
                         {provided.placeholder}
                     </Stack>
                 )}

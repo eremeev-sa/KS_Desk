@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tasks from './Tasks'; // Компонент для отображения задач
 import { ColumnRequest } from '../../services/Column'; // Интерфейсы и функции для работы с колонками
 import { Draggable } from 'react-beautiful-dnd'; // Библиотека для Drag-and-Drop
@@ -33,7 +33,7 @@ type ColumnProps = {
         description: string;
         priority: string;
         columnId: string;
-        assigneeId: string;
+        assignedId: string;
     }[];
 
     handleTaskUpdate: (id: string, taskRequest: TaskUpdateRequest) => void; // Обновление задачи
@@ -45,7 +45,12 @@ type ColumnProps = {
 const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, tasks, handleTaskUpdate, handleTaskLocalUpdate }) => {
     const [isEditing, setIsEditing] = useState(false); // Флаг режима редактирования
     const [tempName, setTempName] = useState(name); // Временное имя для редактирования
+    const [columnTasks, setColumnTasks] = useState(tasks.filter(task => task.columnId === id));
 
+    useEffect(() => {
+        console.log("Changes changed!");
+        setColumnTasks(tasks.filter(task => task.columnId === id));
+    }, [tasks])
     // Обработка клика для перехода в режим редактирования
     const handleEditClick = () => {
         setIsEditing(true);
@@ -143,7 +148,7 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
                         {/* Список задач */}
                         <Box pt="sm">
                             <Tasks
-                                tasks={tasks}
+                                tasks={columnTasks}
                                 handleTaskUpdate={handleTaskUpdate}
                                 handleTaskLocalUpdate={handleTaskLocalUpdate}
                                 columnId={id}

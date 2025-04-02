@@ -28,7 +28,7 @@ type TaskProps = {
         description: string;
         priority: string;
         columnId: string;
-        assigneeId: string;
+        assignedId: string;
     };
     index: number;
     onDelete: (id: string) => void;
@@ -46,9 +46,9 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
     const [isEditing, setIsEditing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [tempName, setTempName] = useState(task.name);
-    const [tempUser, setTempUser] = useState(task.assigneeId || "");
-    const [tempDescription, setTempDescription] = useState(task.description);
-    const [tempPriority, setTempPriority] = useState(task.priority);
+    const [tempUser, setTempUser] = useState(task.assignedId || null);
+    const [tempDescription, setTempDescription] = useState(task.description || "");
+    const [tempPriority, setTempPriority] = useState(task.priority || "");
     const [subtaskData, setSubtaskData] = useState<SubtaskType[]>([]);
 
     useEffect(() => {
@@ -80,7 +80,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
             name: tempName,
             description: tempDescription,
             priority: tempPriority,
-            assigneeId: tempUser
+            assignedId: tempUser
         };
         handleTaskUpdate(task.id, taskRequest);
         console.log(usersData);
@@ -92,7 +92,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
         setTempName(task.name);
         setTempDescription(task.description);
         setTempPriority(task.priority);
-        setTempUser(task.assigneeId);
+        setTempUser(task.assignedId);
         setIsEditing(false);
     };
 
@@ -149,7 +149,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
                                             label="Исполнитель"
                                             data={userOptions}
                                             value={tempUser} // Просто передаём значение ID (string)
-                                            onChange={(value) => setTempUser(value || "")} // value уже будет string
+                                            onChange={(value) => setTempUser(value || null)} // value уже будет string
                                             searchable
                                             mb="xs"
                                         />
@@ -165,7 +165,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
                                             {task.priority}
                                         </Badge>
                                         <Text size="sm" c="dimmed" mt={4}>
-                                            {usersData.find(u => String(u.id) === String(task.assigneeId))?.name || "Не назначен"}
+                                            {usersData.find(u => String(u.id) === String(task.assignedId))?.name || "Не назначен"}
                                         </Text>
                                     </>
                                 )}

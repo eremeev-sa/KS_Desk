@@ -16,6 +16,7 @@ import {
 } from '@mantine/core';
 import { IconPlus, IconCheck, IconX } from '@tabler/icons-react';
 import classesKanbanColumns from '../../styles/KanbanColumns.module.css';
+import Task from './Task';
 
 type ColumnsProps = {
     currentBoardId: string; // Текущий идентификатор доски
@@ -167,6 +168,23 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
         else if (type === "TASK") {
             // Получение ID задачи
             const taskId = result.draggableId;
+            const task = tasks.find(task => task.id === taskId);
+            const changedTasks = Array.from(tasks);
+            if(task === undefined)
+            {
+                return;
+            }
+            changedTasks.forEach(task => {
+                if (task.id === taskId) {
+                    task.columnId = targetColumnId;
+                    console.log("Changed task column!");
+                }
+            });
+            //const changedTasks = Array.from(tasks).filter((task) => task.id != taskId);
+            task.columnId = targetColumnId;
+            //changedTasks.unshift(task);
+            setTasks(changedTasks);
+            console.log(tasks); 
             try {
                 await updateTaskColumn(taskId, targetColumnId);
                 handleTaskLocalUpdate();
@@ -213,7 +231,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                                                 index={index}
                                                 onUpdate={handleUpdate}
                                                 onDelete={handleDelete}
-                                                tasks={tasks.filter(task => task.columnId === column.id)}
+                                                tasks={tasks}
                                                 handleTaskUpdate={handleTaskUpdate}
                                                 handleTaskLocalUpdate={handleTaskLocalUpdate}
                                             />
