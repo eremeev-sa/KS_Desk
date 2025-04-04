@@ -1,1 +1,1 @@
-export const BASE_URL = "http://localhost:5208";
+export const BASE_URL = "https://kanban-backend-d7kp.onrender.com";
