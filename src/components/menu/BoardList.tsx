@@ -155,7 +155,7 @@ const BoardList: React.FC<BoardListProps> = ({
                     </Text>
 
                     <Box style={{ marginLeft: 'auto', flexShrink: 0 }}>
-                      <Menu withinPortal position="bottom-end" shadow="sm" offset={5}>
+                      <Menu withinPortal position="bottom-end" zIndex={"1000000"} shadow="sm" offset={5}>
                         <Menu.Target>
                           <ActionIcon
                             variant="subtle"

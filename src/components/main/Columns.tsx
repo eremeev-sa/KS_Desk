@@ -198,7 +198,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
 
 
     return (
-        <ScrollArea w={'100vw'} h={'100vh'}
+        <ScrollArea w={'100vw'}
             className={classesKanbanColumns.kanbanColumnsContainer}
         >
             <Group wrap="nowrap" ml="sm" align="flex-start" pt="md">

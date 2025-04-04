@@ -12,9 +12,11 @@ import {
     ActionIcon,
     Group,
     Stack,
-    Card
+    Card,
+    ScrollArea
 } from '@mantine/core';
 import { IconPlus, IconCheck, IconX } from '@tabler/icons-react';
+import classesKanbanTasks from '../../styles/KanbanTasks.module.css';
 
 type TasksProps = {
     tasks: {
@@ -95,88 +97,90 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
     };
 
     return (
-        <Box p="xs">
-            {/* Область для перетаскивания задач */}
-            <Droppable
-                droppableId={columnId}
-                type="TASK"
-                direction="vertical"
-                isCombineEnabled={false}
-            >
-                {(provided) => (
-                    <Stack
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        gap="xs"
-                        style={{ minHeight: 100 }}
-                    >
-                        {localTasks.length === 0 ? (
-                            <Text ta="center" py="md">
-                                Задач нет
-                            </Text>
-                        ) : (
-                            localTasks.sort((a, b) => priorityOrder[b.priority as PriorityLevel] - priorityOrder[a.priority as PriorityLevel]).map((task, index) => (
-                                <Task
-                                    key={task.id}
-                                    {...task}
-                                    index={index}
-                                    task={task}
-                                    onDelete={handleDelete}
-                                    handleTaskUpdate={handleTaskUpdate}
-                                    usersData={usersData}
-                                />
-                            ))
-                        )
-                        }
-                        {provided.placeholder}
-                    </Stack>
-                )}
-            </Droppable>
-
-            {/* Форма добавления новой задачи */}
-            {addNewTask ? (
-                <Box mt="sm">
-                    <TextInput
-                        placeholder="Название задачи"
-                        value={tempTaskName}
-                        onChange={(e) => setTempTaskName(e.currentTarget.value)}
-                        mb="xs"
-                        autoFocus
-                    />
-                    <Group>
-                        <Button
-                            variant="light"
-                            color="green"
-                            size="sm"
-                            leftSection={<IconCheck size={16} />}
-                            onClick={handleAddClick}
-                        >
-                            Добавить
-                        </Button>
-                        <Button
-                            variant="light"
-                            color="red"
-                            size="sm"
-                            leftSection={<IconX size={16} />}
-                            onClick={handleCancelClick}
-                        >
-                            Отмена
-                        </Button>
-                    </Group>
-                </Box>
-            ) : (
-                <Button
-                    fullWidth
-                    variant="light"
-                    color="gray"
-                    mt="sm"
-                    leftSection={<IconPlus size={16} />}
-                    onClick={() => setAddNewTask(true)}
+        <ScrollArea.Autosize mah={"90vh"}>
+            <Box p="xs">
+                {/* Область для перетаскивания задач */}
+                <Droppable
+                    droppableId={columnId}
+                    type="TASK"
+                    direction="vertical"
+                    isCombineEnabled={false}
                 >
-                    Добавить задачу
-                </Button>
-            )}
-        </Box>
+                    {(provided) => (
+                        <Stack
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                            gap="xs"
+                            style={{ minHeight: 100 }}
+                        >
+                            {localTasks.length === 0 ? (
+                                <Text ta="center" py="md">
+                                    Задач нет
+                                </Text>
+                            ) : (
+                                localTasks.sort((a, b) => priorityOrder[b.priority as PriorityLevel] - priorityOrder[a.priority as PriorityLevel]).map((task, index) => (
+                                    <Task
+                                        key={task.id}
+                                        {...task}
+                                        index={index}
+                                        task={task}
+                                        onDelete={handleDelete}
+                                        handleTaskUpdate={handleTaskUpdate}
+                                        usersData={usersData}
+                                    />
+                                ))
+                            )
+                            }
+                            {provided.placeholder}
+                        </Stack>
+                    )}
+                </Droppable>
+
+                {/* Форма добавления новой задачи */}
+                {addNewTask ? (
+                    <Box mt="sm">
+                        <TextInput
+                            placeholder="Название задачи"
+                            value={tempTaskName}
+                            onChange={(e) => setTempTaskName(e.currentTarget.value)}
+                            mb="xs"
+                            autoFocus
+                        />
+                        <Group>
+                            <Button
+                                variant="light"
+                                color="green"
+                                size="sm"
+                                leftSection={<IconCheck size={16} />}
+                                onClick={handleAddClick}
+                            >
+                                Добавить
+                            </Button>
+                            <Button
+                                variant="light"
+                                color="red"
+                                size="sm"
+                                leftSection={<IconX size={16} />}
+                                onClick={handleCancelClick}
+                            >
+                                Отмена
+                            </Button>
+                        </Group>
+                    </Box>
+                ) : (
+                    <Button
+                        fullWidth
+                        variant="light"
+                        color="gray"
+                        mt="sm"
+                        leftSection={<IconPlus size={16} />}
+                        onClick={() => setAddNewTask(true)}
+                    >
+                        Добавить задачу
+                    </Button>
+                )}
+            </Box>
+        </ScrollArea.Autosize>
     );
 };
 
