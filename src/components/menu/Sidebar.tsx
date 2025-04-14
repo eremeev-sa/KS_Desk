@@ -20,7 +20,7 @@ type SidebarProps = {
 
 const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick, currentBoardId }) => {
   const [data, setData] = useState<{ id: string; name: string }[]>([]); // Список досок
-  const [loading, setLoading] = useState(true); // Состояние загрузки
+  const [dataGettingLoading, setDataGettingLoading] = useState(true); // Состояние загрузки
   const { setColorScheme, colorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
   // Загрузка данных о досках при монтировании компонента
@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick, cur
       try {
         const boards = await getBoards(); // Получение списка досок с сервера
         setData(boards); // Обновление состояния с досками
-        setLoading(false); // Завершение загрузки
+        setDataGettingLoading(false); // Завершение загрузки
       } catch (error) {
         console.error("Ошибка при загрузке досок:", error);
       }
@@ -72,7 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick, cur
           <Box className={(colorScheme === 'light' ? classesSidebar.sidebarHeaderIcoLight : classesSidebar.sidebarHeaderIcoDark)} />
           <Text fw={700} size="xl">КС Деск</Text>
         </Group>
-        
+
         <ActionIcon
           onClick={() => setColorScheme(colorScheme === 'light' ? 'dark' : 'light')}
           variant="default"
@@ -85,20 +85,14 @@ const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick, cur
 
       {/* Список досок */}
       <Box className={classes.content}>
-        {loading ? (
-          <Group mt="xl" justify="center">
-            <Loader size="sm" />
-            <Text>Загрузка...</Text>
-          </Group>
-        ) : (
-          <BoardList
-            currentBoardId={currentBoardId}
-            data={data}
-            onUpdate={handleUpdate}
-            onDelete={handleDelete}
-            onBoardClick={onBoardClick}
-          />
-        )}
+        <BoardList
+          currentBoardId={currentBoardId}
+          data={data}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+          onBoardClick={onBoardClick}
+          dataGettingLoading={dataGettingLoading}
+        />
       </Box>
 
       {/* Информация о пользователе */}

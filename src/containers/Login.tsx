@@ -4,10 +4,13 @@ import { useUser } from '../context/UserContext';
 
 import {
   Anchor,
+  Box,
   Button,
   Checkbox,
   Divider,
   Group,
+  Loader,
+  LoadingOverlay,
   Paper,
   PaperProps,
   PasswordInput,
@@ -27,11 +30,14 @@ const Login: React.FC<LoginProps> = ({ onLogin, ...props }) => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [usersData, setUsersData] = useState<UserRequest[]>([]);
+  const [loadingStatus, setLoadingStatus] = useState(true);
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setLoadingStatus(true);
       const users = await getUsers();
       setUsersData(users);
+      setLoadingStatus(false);
     };
     fetchUsers();
   }, []);
@@ -63,34 +69,43 @@ const Login: React.FC<LoginProps> = ({ onLogin, ...props }) => {
 
   return (
     <Paper radius="md" p="xl" withBorder {...props}>
+      {loadingStatus ?
+        (
+          <LoadingOverlay visible={loadingStatus} loaderProps={{
+            children:
+              <Loader size="xl" />
+          }} />
+        ) : (
+          <form onSubmit={form.onSubmit(() => { })}>
+            <TextInput
+              required
+              label="Логин"
+              placeholder="Ваш логин"
+              value={form.values.login}
+              onChange={(event) => form.setFieldValue('login', event.currentTarget.value)}
+              error={form.errors.email && 'Неверный логин'}
+              radius="md"
+            />
 
-      <TextInput
-        required
-        label="Логин"
-        placeholder="Ваш логин"
-        value={form.values.login}
-        onChange={(event) => form.setFieldValue('login', event.currentTarget.value)}
-        error={form.errors.email && 'Неверный логин'}
-        radius="md"
-      />
+            <PasswordInput
+              required
+              label="Пароль"
+              placeholder="Ваш пароль"
+              value={form.values.password}
+              onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
+              error={form.errors.password && 'Пароль должен включать не менее 6 символов'}
+              radius="md"
+            />
 
-      <PasswordInput
-        required
-        label="Пароль"
-        placeholder="Ваш пароль"
-        value={form.values.password}
-        onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
-        error={form.errors.password && 'Пароль должен включать не менее 6 символов'}
-        radius="md"
-      />
 
-      <form onSubmit={form.onSubmit(() => { })}>
-        <Group justify="space-between" mt="xl">
-          <Button type="submit" onClick={handleLogin} radius="xl">
-            {"Войти"}
-          </Button>
-        </Group>
-      </form>
+            <Group justify="space-between" mt="xl">
+              <Button type="submit" onClick={handleLogin} radius="xl">
+                {"Войти"}
+              </Button>
+            </Group>
+          </form>
+        )
+      }
     </Paper>
   );
 }

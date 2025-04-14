@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import {
     createSubtask,
     deleteSubtask,
@@ -17,16 +17,26 @@ import {
     Flex
 } from '@mantine/core';
 import { IconPlus, IconCheck, IconX } from '@tabler/icons-react';
+import { useForm } from '@mantine/form';
 
-type SubtaskProps = {
+type SubtasksProps = {
     data: { id: string; name: string }[];
     taskId: string;
 };
 
-const Subtasks: React.FC<SubtaskProps> = ({ data, taskId }) => {
+
+const Subtasks: React.FC<SubtasksProps> = ({ data, taskId }) => {
     const [addNewSubtask, setAddNewSubtask] = useState(false);
-    const [tempSubtaskName, setTempSubtaskName] = useState("");
     const [localSubtasks, setLocalSubtasks] = useState<SubtaskType[]>(data);
+
+    const form = useForm({
+        initialValues: {
+            subtaskName: '',
+        },
+        validate: {
+            subtaskName: (value: string) => (value.trim() ? null : 'Введите название подзадачи'),
+        },
+    });
 
     useEffect(() => {
         setLocalSubtasks(data);
@@ -37,13 +47,13 @@ const Subtasks: React.FC<SubtaskProps> = ({ data, taskId }) => {
         setLocalSubtasks(updatedSubasks);
     };
 
-    const handleAddClick = async () => {
+    const handleAddClick = async (event: any) => {
         try {
-            const newTask = { name: tempSubtaskName, taskId: taskId };
+            event.preventDefault();
+            const newTask = { name: form.values.subtaskName, taskId: taskId };
             await createSubtask(newTask);
-
-            handleSubtaskLocalUpdate();
-            setTempSubtaskName("");
+            await handleSubtaskLocalUpdate();
+            form.reset();
             setAddNewSubtask(false);
         } catch (error) {
             console.error("Ошибка при добавлении подзадачи:", error);
@@ -51,18 +61,16 @@ const Subtasks: React.FC<SubtaskProps> = ({ data, taskId }) => {
     };
 
     const handleDelete = async (id: string) => {
-        console.log("Удаление доски с id:", id);
         try {
             await deleteSubtask(id);
-            const updatedSubasks = await getSubtasks(taskId);
-            setLocalSubtasks(updatedSubasks);
+            await handleSubtaskLocalUpdate();
         } catch (error) {
             console.error("Ошибка при удалении подзадачи:", error);
         }
     };
 
     const handleCancelClick = () => {
-        setTempSubtaskName("");
+        form.reset();
         setAddNewSubtask(false);
     };
 
@@ -75,42 +83,43 @@ const Subtasks: React.FC<SubtaskProps> = ({ data, taskId }) => {
                             listStyleType: 'none',
                         }}>
                         <Subtask
-                            id={subtask.id}
-                            name={subtask.name}
+                            subtask={subtask}
                             onDelete={handleDelete}
                             onUpdate={handleSubtaskLocalUpdate}
                         />
                     </List.Item>
                 ))}
             </List>
-
             {addNewSubtask ? (
-                <Box>
-                    <Flex gap="sm" align="center">
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    form.onSubmit(handleAddClick)
+                }}>
+                    <Group align="start" wrap="nowrap" gap={5} top={0}>
                         <TextInput
                             placeholder="Название подзадачи"
-                            value={tempSubtaskName}
-                            onChange={(e) => setTempSubtaskName(e.currentTarget.value)}
+                            {...form.getInputProps('subtaskName')}
                             style={{ flex: 1 }}
+                            autoFocus
                         />
-                        <Group gap={4}>
+                        <Group mt={5} gap={5}>
                             <ActionIcon
+                                type="submit"
                                 color="green"
-                                variant="filled"
-                                onClick={handleAddClick}
+                                variant="light"
                             >
-                                <IconCheck size="1rem" />
+                                <IconCheck size={16} />
                             </ActionIcon>
                             <ActionIcon
                                 color="red"
-                                variant="filled"
+                                variant="light"
                                 onClick={handleCancelClick}
                             >
-                                <IconX size="1rem" />
+                                <IconX size={16} />
                             </ActionIcon>
                         </Group>
-                    </Flex>
-                </Box>
+                    </Group>
+                </form>
             ) : (
                 <Button
                     variant="light"
@@ -120,8 +129,9 @@ const Subtasks: React.FC<SubtaskProps> = ({ data, taskId }) => {
                 >
                     Добавить подзадачу
                 </Button>
-            )}
-        </Stack>
+            )
+            }
+        </Stack >
     );
 };
 

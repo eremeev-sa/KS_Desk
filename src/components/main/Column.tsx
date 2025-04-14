@@ -13,19 +13,15 @@ import {
     ActionIcon,
     Card,
     Group,
-    Flex
+    Flex,
+    Loader
 } from '@mantine/core';
 import { IconGripVertical, IconTrash, IconCheck, IconX } from '@tabler/icons-react';
-
-const Container = styled.div`
-  margin: 0px;
-  display: flex;
-  flex-direction: column;
-`;
+import { useForm, UseFormReturnType } from '@mantine/form';
+import { ColumnType } from '../../models/models';
 
 type ColumnProps = {
-    id: string; // Идентификатор колонки
-    name: string; // Название колонки
+    column: ColumnType;
     index: number; // Порядковый номер колонки
     tasks: { // Список задач
         id: string;
@@ -35,21 +31,35 @@ type ColumnProps = {
         columnId: string;
         assignedId: string;
     }[];
+    tasksLoading: Boolean;
 
     handleTaskUpdate: (id: string, taskRequest: TaskUpdateRequest) => void; // Обновление задачи
     handleTaskLocalUpdate: () => void; // Локальное обновление задач
     onDelete: (id: string) => void; // Удаление колонки
     onUpdate: (id: string, columnRequest: ColumnRequest) => void; // Обновление колонки
+    columnNameValidate: (id: string, name: string) => Boolean;
 };
 
-const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, tasks, handleTaskUpdate, handleTaskLocalUpdate }) => {
+const Column: React.FC<ColumnProps> = ({ column, index, onDelete, onUpdate, tasks, tasksLoading, handleTaskUpdate, handleTaskLocalUpdate, columnNameValidate }) => {
     const [isEditing, setIsEditing] = useState(false); // Флаг режима редактирования
-    const [tempName, setTempName] = useState(name); // Временное имя для редактирования
-    const [columnTasks, setColumnTasks] = useState(tasks.filter(task => task.columnId === id));
+    const [columnTasks, setColumnTasks] = useState(tasks.filter(task => task.columnId === column.id));
+
+    const form = useForm({
+        initialValues: {
+            columnName: column.name,
+        },
+        validate: {
+            columnName: (value: string) => (
+                value.trim()
+                    ? (columnNameValidate(column.id, value)
+                        ? null
+                        : "Доска с таким названием уже существует!")
+                    : "Введите название доски"),
+        }
+    });
 
     useEffect(() => {
-        console.log("Changes changed!");
-        setColumnTasks(tasks.filter(task => task.columnId === id));
+        setColumnTasks(tasks.filter(task => task.columnId === column.id));
     }, [tasks])
     // Обработка клика для перехода в режим редактирования
     const handleEditClick = () => {
@@ -58,19 +68,21 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
 
     // Сохранение изменений названия колонки
     const handleSaveClick = () => {
-        const columnRequest = { id: id, name: tempName };
-        onUpdate(id, columnRequest);
+        if (column.name != form.values.columnName) {
+            const columnRequest = { id: column.id, name: form.values.columnName };
+            onUpdate(column.id, columnRequest);
+        }
         setIsEditing(false); // Выход из режима редактирования
     };
 
     // Отмена изменений названия колонки
     const handleCancelClick = () => {
-        setTempName(name); // Сбрасываем временное имя
+        form.reset();
         setIsEditing(false); // Выход из режима редактирования
     };
 
     return (
-        <Draggable draggableId={id} index={index} key={id}>
+        <Draggable draggableId={column.id} index={index} key={column.id}>
             {(provided, snapshot) => (
                 <Box
                     ref={provided.innerRef}
@@ -95,27 +107,34 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
                         <Card.Section p="xs" withBorder>
                             {isEditing ? (
                                 <Group>
-                                    <TextInput
-                                        value={tempName}
-                                        onChange={(e) => setTempName(e.currentTarget.value)}
-                                        style={{ flex: 1 }}
-                                        size="sm"
-                                        autoFocus
-                                    />
-                                    <ActionIcon
-                                        color="green"
-                                        variant="light"
-                                        onClick={handleSaveClick}
-                                    >
-                                        <IconCheck size={16} />
-                                    </ActionIcon>
-                                    <ActionIcon
-                                        color="red"
-                                        variant="light"
-                                        onClick={handleCancelClick}
-                                    >
-                                        <IconX size={16} />
-                                    </ActionIcon>
+                                    <form onSubmit={form.onSubmit(handleSaveClick)}>
+                                        <Group align="start" wrap="nowrap" gap={5} miw={"100%"}>
+                                            <TextInput
+                                                placeholder='Название колонки'
+                                                {...form.getInputProps('columnName')}
+                                                style={{ flex: 1 }}
+                                                size="sm"
+                                                w={250}
+                                                autoFocus
+                                            />
+                                            <Group mt={5} wrap="nowrap" gap={5}>
+                                                <ActionIcon
+                                                    type='submit'
+                                                    color="green"
+                                                    variant="light"
+                                                >
+                                                    <IconCheck size={16} />
+                                                </ActionIcon>
+                                                <ActionIcon
+                                                    color="red"
+                                                    variant="light"
+                                                    onClick={handleCancelClick}
+                                                >
+                                                    <IconX size={16} />
+                                                </ActionIcon>
+                                            </Group>
+                                        </Group>
+                                    </form>
                                 </Group>
                             ) : (
                                 <Group justify="space-between">
@@ -131,13 +150,13 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
                                             onDoubleClick={handleEditClick}
                                             style={{ cursor: 'text' }}
                                         >
-                                            {name}
+                                            {column.name}
                                         </Text>
                                     </Group>
                                     <ActionIcon
                                         variant="subtle"
                                         color="red"
-                                        onClick={() => onDelete(id)}
+                                        onClick={() => onDelete(column.id)}
                                     >
                                         <IconTrash size={16} />
                                     </ActionIcon>
@@ -147,12 +166,21 @@ const Column: React.FC<ColumnProps> = ({ id, name, index, onDelete, onUpdate, ta
 
                         {/* Список задач */}
                         <Box pt="sm">
-                            <Tasks
-                                tasks={columnTasks}
-                                handleTaskUpdate={handleTaskUpdate}
-                                handleTaskLocalUpdate={handleTaskLocalUpdate}
-                                columnId={id}
-                            />
+                            {tasksLoading ? (
+                                <Group m="xl" justify="center">
+                                    <Loader size="sm" />
+                                    <Text>Загрузка...</Text>
+                                </Group>
+                            ) :
+                                (
+                                    <Tasks
+                                        tasks={columnTasks}
+                                        handleTaskUpdate={handleTaskUpdate}
+                                        handleTaskLocalUpdate={handleTaskLocalUpdate}
+                                        columnId={column.id}
+                                    />
+                                )
+                            }
                         </Box>
                     </Card>
                 </Box>

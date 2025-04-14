@@ -24,7 +24,6 @@ const KanbanWindow: React.FC<KanbanWindowProps> = ({ onLogout }) => {
                 onBoardClick={(id) => setCurrentBoardId(id)}
             />
 
-
             <Columns currentBoardId={currentBoardId} />
         </Group>
     );

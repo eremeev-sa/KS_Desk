@@ -4,7 +4,7 @@ import Column from './Column';
 import { ColumnRequest, createColumn, deleteColumn, getColumns, updateColumn, updateColumnOrder } from '../../services/Column';
 import { getAllTasks, TaskRequest, TaskUpdateRequest, updateTask, updateTaskColumn } from '../../services/Task';
 import styled from 'styled-components';
-import { TaskType } from '../../models/models';
+import { ColumnType, TaskType } from '../../models/models';
 import {
     Box,
     Text,
@@ -12,11 +12,13 @@ import {
     Button,
     Group,
     ActionIcon,
-    ScrollArea
+    ScrollArea,
+    Loader
 } from '@mantine/core';
 import { IconPlus, IconCheck, IconX } from '@tabler/icons-react';
 import classesKanbanColumns from '../../styles/KanbanColumns.module.css';
 import Task from './Task';
+import { useForm } from '@mantine/form';
 
 type ColumnsProps = {
     currentBoardId: string; // Текущий идентификатор доски
@@ -33,10 +35,31 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
     const [tasks, setTasks] = useState<TaskType[]>([]); // Состояние задач
     const [data, setData] = useState<{ id: string; name: string }[]>([]); // Состояние колонок
     const [loading, setLoading] = useState(true); // Состояние загрузки
-    const [tempName, setTempName] = useState(""); // Название новой колонки
+    const [tasksLoading, setTasksLoading] = useState(true); // Состояние загрузки
     const [addNewColumn, setAddNewColumn] = useState(false); // Флаг добавления новой колонки
 
+    function columnNameValidate (id: string, name: string){
+        const otherColumns: ColumnType[] = data.filter((e) => e.id != id);
+        if(otherColumns.find((e) => e.name === name) === undefined) 
+            return true;
+        else
+        return false;
+    }
 
+    const form = useForm({
+        initialValues: {
+            columnName: ''
+        },
+        validate: {
+            columnName: (value: string) => (
+                value.trim()
+                    ? (data.find((e) => e.name === value) === undefined
+                        ? null
+                        : "Колонка с таким названием уже существует!")
+                    : "Введите название колонки"),
+        }
+    });
+    
     // Загрузка колонок при изменении текущей доски
     useEffect(() => {
         const fetchColumns = async () => {
@@ -62,9 +85,16 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
     useEffect(() => {
         const loadAllTasks = async () => {
             if (data.length > 0) {
-                const columnIds = data.map(column => column.id);  // Получаем список всех columnId
-                const allTasks = await getAllTasks(columnIds);  // Загружаем все задачи для этой доски
-                setTasks(allTasks);
+                try {
+                    setTasksLoading(true);
+                    const columnIds = data.map(column => column.id);  // Получаем список всех columnId
+                    const allTasks = await getAllTasks(columnIds);  // Загружаем все задачи для этой доски
+                    setTasks(allTasks);
+                } catch (error) {
+                    console.error("Ошибка при загрузке задач:", error);
+                } finally {
+                    setTasksLoading(false);
+                }
             }
         };
 
@@ -74,21 +104,22 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
     // Добавление новой колонки
     const handleAddClick = async () => {
         try {
-            const columnRequest = { name: tempName, boardId: currentBoardId };
+            const columnRequest = { name: form.values.columnName, boardId: currentBoardId };
+            setAddNewColumn(false);
+            // Очищаем поле ввода
+            form.reset();
             await createColumn(columnRequest);
             const updatedBoards = await getColumns(currentBoardId);
             setData(updatedBoards);
-            setAddNewColumn(false);
-            // Очищаем поле ввода
-            setTempName("");
             console.log(data);
         } catch (error) {
             console.error("Ошибка при добавлении доски:", error);
         }
     };
 
+    // Отмена добавления колонки
     const handleCancelClick = () => {
-        setTempName("");
+        form.reset();
         setAddNewColumn(false);
     };
 
@@ -170,8 +201,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
             const taskId = result.draggableId;
             const task = tasks.find(task => task.id === taskId);
             const changedTasks = Array.from(tasks);
-            if(task === undefined)
-            {
+            if (task === undefined) {
                 return;
             }
             changedTasks.forEach(task => {
@@ -184,7 +214,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
             task.columnId = targetColumnId;
             //changedTasks.unshift(task);
             setTasks(changedTasks);
-            console.log(tasks); 
+            console.log(tasks);
             try {
                 await updateTaskColumn(taskId, targetColumnId);
                 handleTaskLocalUpdate();
@@ -202,8 +232,13 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
             className={classesKanbanColumns.kanbanColumnsContainer}
         >
             <Group wrap="nowrap" ml="sm" align="flex-start" pt="md">
-                {loading ? (
-                    <Text ml="sm">Загрузка...</Text>
+                {loading && currentBoardId != "" ? (
+                    <Group m="xl" justify="center">
+                        <Loader size="sm" />
+                        <Text>Загрузка...</Text>
+                    </Group>
+                ) : currentBoardId == "" ? (
+                    <Text ml="sm">Выберите доску</Text>
                 ) : (
                     <>
                         <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -221,19 +256,21 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                                         gap="sm"
                                         wrap="nowrap"
                                         style={{
-                                            paddingBottom: 16 // Для скролла
+                                            paddingBottom: 16
                                         }}
                                     >
                                         {data.map((column, index) => (
                                             <Column
                                                 key={column.id}
-                                                {...column}
+                                                column={column}
                                                 index={index}
                                                 onUpdate={handleUpdate}
                                                 onDelete={handleDelete}
                                                 tasks={tasks}
                                                 handleTaskUpdate={handleTaskUpdate}
                                                 handleTaskLocalUpdate={handleTaskLocalUpdate}
+                                                tasksLoading={tasksLoading}
+                                                columnNameValidate={columnNameValidate}
                                             />
                                         ))}
                                         {provided.placeholder}
@@ -242,7 +279,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                             </Droppable>
                         </DragDropContext>
 
-                        {/* Кнопка добавления внутри ScrollArea */}
+                        {/* Кнопка добавления новой колонки */}
                         {!addNewColumn && (
                             <Box mr="10px" style={{ minWidth: 250, flexShrink: 0 }}>
                                 <Button
@@ -256,7 +293,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                                 </Button>
                             </Box>
                         )}
-                        {/* Форма добавления новой колонки (фиксированная внизу) */}
+                        {/* Форма добавления новой колонки */}
                         {addNewColumn && (
                             <Box
                                 mt="sm"
@@ -269,32 +306,34 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                                     zIndex: 10
                                 }}
                             >
-                                <TextInput
-                                    placeholder="Название колонки"
-                                    value={tempName}
-                                    onChange={(e) => setTempName(e.currentTarget.value)}
-                                    mb="sm"
-                                />
-                                <Group>
-                                    <Button
-                                        variant="light"
-                                        color="green"
-                                        size="sm"
-                                        leftSection={<IconCheck size={16} />}
-                                        onClick={handleAddClick}
-                                    >
-                                        Добавить
-                                    </Button>
-                                    <Button
-                                        variant="light"
-                                        color="red"
-                                        size="sm"
-                                        leftSection={<IconX size={16} />}
-                                        onClick={handleCancelClick}
-                                    >
-                                        Отмена
-                                    </Button>
-                                </Group>
+                                <form onSubmit={form.onSubmit(handleAddClick)}>
+                                    <TextInput
+                                        placeholder="Название колонки"
+                                        {...form.getInputProps('columnName')}
+                                        mb="sm"
+                                        autoFocus
+                                    />
+                                    <Group>
+                                        <Button
+                                            type='submit'
+                                            variant="light"
+                                            color="green"
+                                            size="sm"
+                                            leftSection={<IconCheck size={16} />}
+                                        >
+                                            Добавить
+                                        </Button>
+                                        <Button
+                                            variant="light"
+                                            color="red"
+                                            size="sm"
+                                            leftSection={<IconX size={16} />}
+                                            onClick={handleCancelClick}
+                                        >
+                                            Отмена
+                                        </Button>
+                                    </Group>
+                                </form>
                             </Box>
                         )}
                     </>

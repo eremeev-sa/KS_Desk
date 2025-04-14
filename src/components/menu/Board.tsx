@@ -1,83 +1,129 @@
 import React, { useEffect, useState } from "react";
 import { updateBoard, BoardRequest } from "../../services/Board";
+import { ActionIcon, Text, Box, Group, List, Menu, TextInput, rem } from "@mantine/core";
+import { IconCheck, IconDots, IconPencil, IconTrash, IconX } from "@tabler/icons-react";
+import { BoardType } from "../../models/models";
+import { useForm, UseFormReturnType } from "@mantine/form";
 
 type BoardProps = {
-    Id: string;
-    Name: string;
+    board: BoardType;
+    currentBoardId: string;
+    editingBoardId: string | null;
+    saveEditing: () => void;
+    cancelEditing: () => void;
+    startEditing: (board: BoardType) => void;
     onDelete: (id: string) => void;
     onUpdate: (id: string, boardRequest: BoardRequest) => void;
     onBoardClick: (id: string) => void;
+    form: UseFormReturnType<{ boardName: string }, (values: { boardName: string }) => { boardName: string }>;
 };
 
-const Board: React.FC<BoardProps> = ({ Id, Name, onDelete, onUpdate, onBoardClick }) => {
+const Board: React.FC<BoardProps> = ({ board, currentBoardId, editingBoardId, saveEditing, cancelEditing, onDelete, onUpdate, onBoardClick, startEditing, form }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [tempName, setTempName] = useState(Name);
-
-    const handleEditClick = () => {
-        setIsEditing(true);
-    };
-
-    const handleSaveClick = () => {
-        const boardRequest = { Id: Id, Name: tempName };
-        onUpdate(Id, boardRequest);
-        setIsEditing(false);
-    };
-
-    const handleCancelClick = () => {
-        setTempName(Name);
-        setIsEditing(false);
-    };
+    const [tempName, setTempName] = useState(board.name);
 
     useEffect(() => {
-        console.log("Полученные имена в BoardList:", tempName);
+        // console.log("Полученные имена в BoardList:", tempName);
     }, [tempName]);
 
     return (
-        <div
-            onClick={() => onBoardClick(Id)}
-            className="list-group-item d-flex align-items-center justify-content-between"
+        <List.Item
+            onClick={() => onBoardClick(board.id)}
+            key={board.id}
+            style={{
+                cursor: 'pointer',
+                backgroundColor: currentBoardId === board.id ? 'var(--mantine-color-blue-light)' : 'transparent',
+                borderRadius: 'var(--mantine-radius-sm)',
+                padding: '6px 10px',
+                listStyleType: 'none',
+                '&:hover': {
+                    backgroundColor: 'var(--mantine-color-blue-1)'
+                }
+            }}
         >
-            {isEditing ? (
-                <>
-                    <input
-                        title="Название доски"
-                        type="text"
-                        className="form-control board me-2"
-                        value={tempName}
-                        onChange={(e) => setTempName(e.target.value)}
-                    />
-                    <div className="button-container d-flex align-items-center">
-                        <button
-                            className="btn btn-accept btn-sm me-2"
-                            style={{ flexShrink: 0 }}
-                            onClick={handleSaveClick}
-                        >
-                            ✔
-                        </button>
-                        <button
-                            className="btn btn-cancel btn-sm"
-                            style={{ flexShrink: 0 }}
-                            onClick={handleCancelClick}
-                        >
-                            ✖
-                        </button>
-                    </div>
-                </>
+            {editingBoardId === board.id ? (
+                <Group gap="xs" align="flex-end">
+                    <form onSubmit={form.onSubmit(saveEditing)}>
+                        <Group align="start" wrap="nowrap" gap={5}>
+                                <TextInput
+                                    placeholder="Название доски"
+                                    {...form.getInputProps('boardName')}
+                                    style={{ flex: 1 }}
+                                    size="sm"
+                                    autoFocus
+                                />
+                                <Group mt={5} gap={5}>
+                                    <ActionIcon
+                                        type="submit"
+                                        color="green"
+                                        variant="light"
+                                    >
+                                        <IconCheck size={16} />
+                                    </ActionIcon>
+                                    <ActionIcon
+                                        color="red"
+                                        variant="light"
+                                        onClick={() => cancelEditing()}
+                                    >
+                                        <IconX size={16} />
+                                    </ActionIcon>
+                                </Group>
+                        </Group>
+                    </form>
+                </Group>
             ) : (
-                <div className="d-flex w-100 align-items-center justify-content-between">
-                    <span className="text-container noselect" onDoubleClick={handleEditClick}>{Name}</span>
-                    <div className="button-container d-flex align-items-center">
-                        <button
-                            className="btn btn-delete btn-sm"
-                            onClick={() => onDelete(Id)}
-                        >
-                            🗑
-                        </button>
-                    </div>
-                </div>
-            )}
-        </div>
+                <Group justify="space-between" wrap="nowrap" style={{ width: '100%' }}>
+                    <Text
+                        miw={130}
+                        maw={130}
+                        style={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            display: 'block'
+                        }}
+                        onClick={() => onBoardClick(board.id)}
+                    >
+                        {board.name}
+                    </Text>
 
+                    <Box style={{ marginLeft: 'auto', flexShrink: 0 }}>
+                        <Menu withinPortal position="bottom-end" zIndex={"1000000"} shadow="sm" offset={5}>
+                            <Menu.Target>
+                                <ActionIcon
+                                    variant="subtle"
+                                    color="gray"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <IconDots style={{ width: rem(16), height: rem(16) }} />
+                                </ActionIcon>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                <Menu.Item
+                                    leftSection={<IconPencil style={{ width: rem(14), height: rem(14) }} />}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        startEditing(board);
+                                    }}
+                                >
+                                    Редактировать
+                                </Menu.Item>
+                                <Menu.Item
+                                    leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
+                                    color="red"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDelete(board.id);
+                                    }}
+                                >
+                                    Удалить
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
+                    </Box>
+                </Group>
+            )}
+        </List.Item>
     );
 };
 

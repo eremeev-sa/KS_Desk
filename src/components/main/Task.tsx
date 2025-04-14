@@ -20,6 +20,7 @@ import Subtasks from './Subtasks';
 import { TaskUpdateRequest } from '../../services/Task';
 import { SubtaskType } from '../../models/models';
 import { getSubtasks } from '../../services/Subtask';
+import { useForm } from '@mantine/form';
 
 type TaskProps = {
     task: {
@@ -45,11 +46,21 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
     const theme = useMantineTheme();
     const [isEditing, setIsEditing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
-    const [tempName, setTempName] = useState(task.name);
-    const [tempUser, setTempUser] = useState(task.assignedId || null);
-    const [tempDescription, setTempDescription] = useState(task.description || "");
-    const [tempPriority, setTempPriority] = useState(task.priority || "");
     const [subtaskData, setSubtaskData] = useState<SubtaskType[]>([]);
+
+    const form = useForm({
+        initialValues: {
+            taskName: task.name,
+            taskDescription: task.description,
+            taskPriority: task.priority,
+            taskUser: task.assignedId,
+        },
+        validate: {
+            taskName: (value: string) => (
+                value.trim() ? null : 'Введите название задачи!'
+            )
+        }
+    });
 
     useEffect(() => {
         const fetchSubtasks = async () => {
@@ -77,22 +88,17 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
 
     const handleSaveClick = () => {
         const taskRequest = {
-            name: tempName,
-            description: tempDescription,
-            priority: tempPriority,
-            assignedId: tempUser
+            name: form.values.taskName,
+            description: form.values.taskDescription,
+            priority: form.values.taskPriority === null ? '' : form.values.taskPriority,
+            assignedId: form.values.taskUser == null ? null : form.values.taskUser
         };
         handleTaskUpdate(task.id, taskRequest);
-        console.log(usersData);
-        console.log(tempUser);
         setIsEditing(false);
     };
 
     const handleCancelClick = () => {
-        setTempName(task.name);
-        setTempDescription(task.description);
-        setTempPriority(task.priority);
-        setTempUser(task.assignedId);
+        form.reset();
         setIsEditing(false);
     };
 
@@ -109,6 +115,7 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
         <Draggable draggableId={task.id} index={index} key={task.id}>
             {(provided, snapshot) => (
                 <Box
+                    maw={"280"}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     style={{
@@ -124,100 +131,147 @@ const Task: React.FC<TaskProps> = ({ task, index, onDelete, handleTaskUpdate, us
                             backgroundColor: snapshot.isDragging ? theme.colors.gray[1] : undefined
                         }}
                     >
-                        <Group align="flex-start" wrap='nowrap'>
-                            <Box {...provided.dragHandleProps} style={{ cursor: 'grab' }}>
-                                <IconGripVertical size={16} />
-                            </Box>
 
-                            <Box mb={'10px'} style={{ flex: 1 }} onClick={() => !isEditing && setIsExpanded(!isExpanded)}>
-                                {isEditing ? (
-                                    <>
-                                        <TextInput
-                                            value={tempName}
-                                            onChange={(e) => setTempName(e.currentTarget.value)}
-                                            label="Название задачи"
-                                            mb="xs"
-                                        />
-                                        <Select
-                                            label="Приоритет"
-                                            data={priorityOptions}
-                                            value={tempPriority}
-                                            onChange={(value) => setTempPriority(value || '')}
-                                            mb="xs"
-                                        />
-                                        <Select
-                                            label="Исполнитель"
-                                            data={userOptions}
-                                            value={tempUser} // Просто передаём значение ID (string)
-                                            onChange={(value) => setTempUser(value || null)} // value уже будет string
-                                            searchable
-                                            mb="xs"
-                                        />
-                                    </>
-                                ) : (
-                                    <>
-                                        <Text fw={500}>{task.name}</Text>
-                                        <Badge
-                                            color={getPriorityColor(task.priority)}
-                                            variant="light"
-                                            mt={4}
-                                        >
-                                            {task.priority}
-                                        </Badge>
-                                        <Text size="sm" c="dimmed" mt={4}>
-                                            {usersData.find(u => String(u.id) === String(task.assignedId))?.name || "Не назначен"}
-                                        </Text>
-                                    </>
-                                )}
-                            </Box>
+                        <form onSubmit={form.onSubmit(handleSaveClick)}>
+                            <Group align="flex-start" wrap='nowrap'>
+                                <Box {...provided.dragHandleProps} style={{ cursor: 'grab' }}>
+                                    <IconGripVertical size={16} />
+                                </Box>
 
-                            <Group gap={4}>
-                                {isEditing ? (
-                                    <>
-                                        <ActionIcon color="green" onClick={handleSaveClick}>
-                                            <IconCheck size={16} />
-                                        </ActionIcon>
-                                        <ActionIcon color="red" onClick={handleCancelClick}>
-                                            <IconX size={16} />
-                                        </ActionIcon>
-                                    </>
-                                ) : (
-                                    <>
-                                        <ActionIcon variant="subtle" onClick={handleEditClick}>
-                                            <IconEdit size={16} />
-                                        </ActionIcon>
-                                        <ActionIcon color="red" variant="subtle" onClick={() => onDelete(task.id)}>
-                                            <IconTrash size={16} />
-                                        </ActionIcon>
-                                    </>
-                                )}
+                                <Box mb={'10px'} style={{ flex: 1 }} onClick={() => !isEditing && setIsExpanded(!isExpanded)}>
+                                    {isEditing ? (
+                                        <>
+                                            <TextInput
+                                                {...form.getInputProps('taskName')}
+                                                label="Название задачи"
+                                                mb="xs"
+                                                autoFocus
+                                            />
+                                            <Select
+                                                label="Приоритет"
+                                                data={priorityOptions}
+                                                {...form.getInputProps('taskPriority')}
+                                                mb="xs"
+                                                clearable
+                                            />
+                                            <Select
+                                                label="Исполнитель"
+                                                data={userOptions}
+                                                {...form.getInputProps('taskUser')}
+                                                searchable
+                                                mb="xs"
+                                                clearable
+                                            />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Group align="start" wrap="nowrap">
+                                                <Text fw={500}
+                                                    maw={150}
+                                                    style={{
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                        display: 'block'
+                                                    }}
+                                                >
+                                                    {task.name}
+                                                </Text>
+                                                <Group align="end" left={'auto'} right={20} pos={'absolute'} wrap="nowrap" gap={5}>
+                                                    <ActionIcon variant="subtle" type='button' onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        handleEditClick();
+                                                    }}>
+                                                        <IconEdit type='button' size={16} />
+                                                    </ActionIcon>
+                                                    <ActionIcon color="red" variant="subtle" type='button' onClick={() => onDelete(task.id)}>
+                                                        <IconTrash size={16} />
+                                                    </ActionIcon>
+                                                </Group>
+                                            </Group>
+                                            <Badge
+                                                maw={130}
+                                                style={{
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap',
+                                                    display: 'block'
+                                                }}
+                                                color={getPriorityColor(task.priority)}
+                                                variant="light"
+                                                mt={4}
+                                            >
+                                                {task.priority}
+                                            </Badge>
+                                            <Text size="sm" c="dimmed" mt={4}
+                                                maw={130}
+                                            >
+                                                {usersData.find(u => task.assignedId != null && String(u.id) === String(task.assignedId))?.name || "Не назначен"}
+                                            </Text>
+                                        </>
+                                    )}
+                                </Box>
+
+
+                                <Group align="start" wrap="nowrap" gap={5}>
+                                    {isEditing ? (
+                                        <Group mt={5} gap={5}>
+                                            <ActionIcon
+                                                color="green"
+                                                variant="light"
+                                                type="submit"
+                                            >
+                                                <IconCheck size={16} />
+                                            </ActionIcon>
+                                            <ActionIcon
+                                                color="red"
+                                                variant="light"
+                                                onClick={handleCancelClick}
+                                            >
+                                                <IconX size={16} />
+                                            </ActionIcon>
+                                        </Group>
+                                    ) : (
+                                        <>
+                                        </>
+                                    )}
+                                </Group>
                             </Group>
-                        </Group>
 
-                        <Collapse in={isExpanded || isEditing}>
-                        <Divider></Divider>
-                            <Box mt="md">
-                                {isEditing ? (
-                                    <Textarea
-                                        label="Описание"
-                                        value={tempDescription}
-                                        onChange={(e) => setTempDescription(e.currentTarget.value)}
-                                        autosize
-                                        minRows={2}
-                                        maxRows={4}
-                                    />
-                                ) : (
-                                    <Text size="sm" style={{ whiteSpace: 'pre-line' }}>
-                                        {task.description}
-                                    </Text>
-                                )}
-                                <Subtasks data={subtaskData} taskId={task.id} />
-                            </Box>
-                        </Collapse>
+                            <Collapse in={isExpanded || isEditing}>
+                                <Divider></Divider>
+                                <Box mt="xs">
+                                    {isEditing ? (
+                                        <Textarea
+                                            label="Описание"
+                                            {...form.getInputProps('taskDescription')}
+                                            autosize
+                                            minRows={2}
+                                            maxRows={4}
+                                            resize='vertical'
+                                        />
+                                    ) : (
+                                        <Text size="sm" fs={"oblique"}
+                                            style={{
+                                                whiteSpace: 'pre-line',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                display: 'block'
+                                            }}
+                                        >
+                                            {task.description}
+                                        </Text>
+                                    )}
+                                    <Subtasks data={subtaskData} taskId={task.id} />
+                                </Box>
+                            </Collapse>
+                        </form>
                     </Card>
                 </Box>
-            )}
-        </Draggable>
+            )
+            }
+        </Draggable >
     );
 };
 

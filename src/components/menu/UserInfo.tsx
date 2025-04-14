@@ -9,7 +9,7 @@ type UserInfoProps = {
 
 const UserInfo: React.FC<UserInfoProps> = ({ userName, onLogout }) => {
   return (
-    <Box p="sm" pt='0' mah={'70px'}>
+    <Box pos={"absolute"} bottom={0} p="sm" pt='0' mah={'70px'}>
       <Group justify="space-between">
         {/* Имя пользователя с иконкой */}
         <Text size="md" maw={'120px'} fw={500}>

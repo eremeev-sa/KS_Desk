@@ -9,40 +9,44 @@ import {
     Flex
 } from '@mantine/core';
 import { IconCheck, IconX, IconTrash, IconEdit } from '@tabler/icons-react';
+import { useForm } from '@mantine/form';
+import { SubtaskType } from '../../models/models';
 
 type SubtaskProps = {
-    id: string;
-    name: string;
+    subtask: SubtaskType;
     onDelete: (id: string) => void;
     onUpdate: () => void;
 };
 
-const Subtask: React.FC<SubtaskProps> = ({ id, name, onDelete, onUpdate }) => {
+const Subtask: React.FC<SubtaskProps> = ({ subtask, onDelete, onUpdate }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [tempName, setTempName] = useState(name);
+
+    const form = useForm({
+        initialValues: {
+            subtaskName: '',
+        },
+        validate: {
+            subtaskName: (value: string) => (value.trim() ? null : 'Введите название подзадачи'),
+        },
+    });
 
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
-    const handleSubtaskUpdate = async (id: string) => {
+    const handleSaveClick = async () => {
         try {
-            const updatedSubtask = { name: tempName };
-            await updateSubtask(id, updatedSubtask);
+            await updateSubtask(subtask.id, { name: form.values.subtaskName });
             onUpdate();
-            setTempName("");
+            form.reset();
+            setIsEditing(false);
         } catch (error) {
             console.error("Ошибка при обновлении подзадачи:", error);
         }
     };
 
-    const handleSaveClick = () => {
-        handleSubtaskUpdate(id);
-        setIsEditing(false);
-    };
-
     const handleCancelClick = () => {
-        setTempName(name);
+        form.reset();
         setIsEditing(false);
     };
 
@@ -51,26 +55,35 @@ const Subtask: React.FC<SubtaskProps> = ({ id, name, onDelete, onUpdate }) => {
             <Flex align="center" gap="sm">
                 {isEditing ? (
                     <>
-                        <TextInput
-                            value={tempName}
-                            onChange={(e) => setTempName(e.currentTarget.value)}
-                            autoFocus
-                            style={{ flex: 1 }}
-                        />
-                        <ActionIcon
-                            color="green"
-                            variant="filled"
-                            onClick={handleSaveClick}
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault(); // защитимся от автоотправки
+                                form.onSubmit(handleSaveClick)(e); // вызовем сохранение через mantine
+                            }}
                         >
-                            <IconCheck size="1rem" />
-                        </ActionIcon>
-                        <ActionIcon
-                            color="red"
-                            variant="filled"
-                            onClick={handleCancelClick}
-                        >
-                            <IconX size="1rem" />
-                        </ActionIcon>
+                            <Group gap={4}>
+                                <TextInput
+                                    placeholder='Название подзадачи'
+                                    {...form.getInputProps('subtaskName')}
+                                    autoFocus
+                                    style={{ flex: 1 }}
+                                />
+                                <ActionIcon
+                                    type='submit'
+                                    color="green"
+                                    variant="filled"
+                                >
+                                    <IconCheck size="1rem" />
+                                </ActionIcon>
+                                <ActionIcon
+                                    color="red"
+                                    variant="filled"
+                                    onClick={handleCancelClick}
+                                >
+                                    <IconX size="1rem" />
+                                </ActionIcon>
+                            </Group>
+                        </form>
                     </>
                 ) : (
                     <>
@@ -78,7 +91,7 @@ const Subtask: React.FC<SubtaskProps> = ({ id, name, onDelete, onUpdate }) => {
                             onDoubleClick={handleEditClick}
                             style={{ flex: 1, cursor: 'pointer' }}
                         >
-                            {name}
+                            {subtask.name}
                         </Text>
                         <Group gap={4}>
                             <ActionIcon
@@ -89,7 +102,7 @@ const Subtask: React.FC<SubtaskProps> = ({ id, name, onDelete, onUpdate }) => {
                                 <IconEdit size="1rem" />
                             </ActionIcon>
                             <ActionIcon
-                                onClick={() => onDelete(id)}
+                                onClick={() => onDelete(subtask.id)}
                                 color="red"
                                 variant="subtle"
                             >
@@ -99,7 +112,7 @@ const Subtask: React.FC<SubtaskProps> = ({ id, name, onDelete, onUpdate }) => {
                     </>
                 )}
             </Flex>
-        </Box>
+        </Box >
     );
 };
 

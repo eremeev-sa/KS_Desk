@@ -17,6 +17,7 @@ import {
 } from '@mantine/core';
 import { IconPlus, IconCheck, IconX } from '@tabler/icons-react';
 import classesKanbanTasks from '../../styles/KanbanTasks.module.css';
+import { useForm } from '@mantine/form';
 
 type TasksProps = {
     tasks: {
@@ -38,6 +39,17 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
     const [tempTaskName, setTempTaskName] = useState(''); // Временное название задачи
     const [localTasks, setLocalTasks] = useState<TaskType[]>(tasks); // Локальное состояние задач
     const [usersData, setUsersData] = useState<UserType[]>([]); // Данные о пользователях для назначений задач
+
+    const form = useForm({
+        initialValues: {
+            taskName: '',
+        },
+        validate: {
+            taskName: (value: string) => (
+                value.trim()? null : 'Введите название задачи!'
+            )
+        }
+    });
 
     // Обновление локального состояния задач при изменении props.tasks
     useEffect(() => {
@@ -66,15 +78,15 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
     const handleAddClick = async () => {
         try {
             const newTask = {
-                name: tempTaskName,
+                name: form.values.taskName,
                 description: "",
                 priority: "",
                 columnId: columnId,
             };
+            form.reset(); // Очищаем поле ввода
+            setAddNewTask(false); // Скрываем форму добавления
             await createTask(newTask); // Отправляем запрос на создание задачи
             handleTaskLocalUpdate(); // Уведомляем родительский компонент об обновлении задач
-            setTempTaskName(''); // Очищаем поле ввода
-            setAddNewTask(false); // Скрываем форму добавления
         } catch (error) {
             console.error("Ошибка при добавлении задачи:", error);
         }
@@ -92,12 +104,12 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
 
     // Отмена добавления задачи
     const handleCancelClick = () => {
-        setTempTaskName(""); // Очищаем временное название
+        form.reset(); // Очищаем временное название
         setAddNewTask(false); // Скрываем форму добавления
     };
 
     return (
-        <ScrollArea.Autosize mah={"90vh"}>
+        <ScrollArea.Autosize style={{overflowX: 'hidden'}} mah={"90vh"}>
             <Box p="xs">
                 {/* Область для перетаскивания задач */}
                 <Droppable
@@ -139,37 +151,38 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                 {/* Форма добавления новой задачи */}
                 {addNewTask ? (
                     <Box mt="sm">
-                        <TextInput
-                            placeholder="Название задачи"
-                            value={tempTaskName}
-                            onChange={(e) => setTempTaskName(e.currentTarget.value)}
-                            mb="xs"
-                            autoFocus
-                        />
-                        <Group>
-                            <Button
-                                variant="light"
-                                color="green"
-                                size="sm"
-                                leftSection={<IconCheck size={16} />}
-                                onClick={handleAddClick}
-                            >
-                                Добавить
-                            </Button>
-                            <Button
-                                variant="light"
-                                color="red"
-                                size="sm"
-                                leftSection={<IconX size={16} />}
-                                onClick={handleCancelClick}
-                            >
-                                Отмена
-                            </Button>
-                        </Group>
+                        <form onSubmit={form.onSubmit(handleAddClick)}>
+                            <TextInput
+                                placeholder="Название задачи"
+                                {...form.getInputProps('taskName')}
+                                mb="xs"
+                                autoFocus
+                            />
+                            <Group>
+                                <Button
+                                    type='submit'
+                                    variant="light"
+                                    color="green"
+                                    size="sm"
+                                    leftSection={<IconCheck size={16} />}
+                                >
+                                    Добавить
+                                </Button>
+                                <Button
+                                    variant="light"
+                                    color="red"
+                                    size="sm"
+                                    leftSection={<IconX size={16} />}
+                                    onClick={handleCancelClick}
+                                >
+                                    Отмена
+                                </Button>
+                            </Group>
+                        </form>
                     </Box>
                 ) : (
                     <Button
-                        fullWidth
+                        w={280}
                         variant="light"
                         color="gray"
                         mt="sm"

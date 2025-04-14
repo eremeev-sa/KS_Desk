@@ -21,7 +21,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState("");
 
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider>
       {/* UserProvider предоставляет доступ к контексту пользователя всем вложенным компонентам*/}
       <UserProvider>
         <Group>
