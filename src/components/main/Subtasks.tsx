@@ -20,7 +20,7 @@ import { IconPlus, IconCheck, IconX } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 
 type SubtasksProps = {
-    data: { id: string; name: string }[];
+    data: SubtaskType[];
     taskId: string;
 };
 
@@ -32,6 +32,10 @@ const Subtasks: React.FC<SubtasksProps> = ({ data, taskId }) => {
     const form = useForm({
         initialValues: {
             subtaskName: '',
+            description: '',
+            priority: 0,
+            endDate: new Date('"2025-04-14T15:54:14.358Z"'),
+            assignedId: null,
         },
         validate: {
             subtaskName: (value: string) => (value.trim() ? null : 'Введите название подзадачи'),
@@ -47,10 +51,18 @@ const Subtasks: React.FC<SubtasksProps> = ({ data, taskId }) => {
         setLocalSubtasks(updatedSubasks);
     };
 
-    const handleAddClick = async (event: any) => {
+    const handleAddClick = async () => {
         try {
-            event.preventDefault();
-            const newTask = { name: form.values.subtaskName, taskId: taskId };
+            form.validate()
+            if (!form.isValid()) {
+                return;
+            }
+            const newTask = { name: form.values.subtaskName, 
+                description: form.values.description, 
+                priority: form.values.priority, 
+                endDate: new Date("2025-04-14T09:54:19.742Z"), 
+                assignedId: null, 
+                taskId: taskId };
             await createSubtask(newTask);
             await handleSubtaskLocalUpdate();
             form.reset();
@@ -74,6 +86,12 @@ const Subtasks: React.FC<SubtasksProps> = ({ data, taskId }) => {
         setAddNewSubtask(false);
     };
 
+    const handleKeyPress = (event: any) => {
+        if (event.key === 'Enter') {
+            handleAddClick();
+        }
+    }
+
     return (
         <Stack gap="sm">
             <List spacing="xs" size="sm" center>
@@ -91,35 +109,31 @@ const Subtasks: React.FC<SubtasksProps> = ({ data, taskId }) => {
                 ))}
             </List>
             {addNewSubtask ? (
-                <form onSubmit={(e) => {
-                    e.preventDefault();
-                    form.onSubmit(handleAddClick)
-                }}>
-                    <Group align="start" wrap="nowrap" gap={5} top={0}>
-                        <TextInput
-                            placeholder="Название подзадачи"
-                            {...form.getInputProps('subtaskName')}
-                            style={{ flex: 1 }}
-                            autoFocus
-                        />
-                        <Group mt={5} gap={5}>
-                            <ActionIcon
-                                type="submit"
-                                color="green"
-                                variant="light"
-                            >
-                                <IconCheck size={16} />
-                            </ActionIcon>
-                            <ActionIcon
-                                color="red"
-                                variant="light"
-                                onClick={handleCancelClick}
-                            >
-                                <IconX size={16} />
-                            </ActionIcon>
-                        </Group>
+                <Group align="start" wrap="nowrap" gap={5} top={0}>
+                    <TextInput
+                        placeholder="Название подзадачи"
+                        {...form.getInputProps('subtaskName')}
+                        style={{ flex: 1 }}
+                        onKeyDown={handleKeyPress}
+                        autoFocus
+                    />
+                    <Group mt={5} gap={5}>
+                        <ActionIcon
+                            onClick={handleAddClick}
+                            color="green"
+                            variant="light"
+                        >
+                            <IconCheck size={16} />
+                        </ActionIcon>
+                        <ActionIcon
+                            color="red"
+                            variant="light"
+                            onClick={handleCancelClick}
+                        >
+                            <IconX size={16} />
+                        </ActionIcon>
                     </Group>
-                </form>
+                </Group>
             ) : (
                 <Button
                     variant="light"

@@ -12,14 +12,13 @@ type KanbanWindowProps = {
 
 const KanbanWindow: React.FC<KanbanWindowProps> = ({ onLogout }) => {
     const { currentUser } = useUser(); // Получаем текущего пользователя из глобального состояния
-    const [userName] = useState(currentUser); // Устанавливаем имя пользователя
     const [currentBoardId, setCurrentBoardId] = useState<string>(""); // ID текущей доски
 
     return (
         <Group className={classes.container}>
             <Sidebar
                 currentBoardId={currentBoardId}
-                userName={currentUser}
+                userName={currentUser?.name}
                 onLogout={onLogout}
                 onBoardClick={(id) => setCurrentBoardId(id)}
             />

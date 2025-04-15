@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useUser } from '../../context/UserContext'; // Используем хук для работы с глобальным состоянием пользователя
 import {
   Box,
   Text,
@@ -26,7 +27,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { relative } from "path";
 
 type BoardListProps = {
-  data: { id: string; name: string }[];
+  data: BoardType[];
   onDelete: (id: string) => void;
   onUpdate: (id: string, boardRequest: BoardRequest) => void;
   onBoardClick: (id: string) => void;
@@ -47,6 +48,7 @@ const BoardList: React.FC<BoardListProps> = ({
   const [initialBoardEditName, setInitialBoardEditName] = useState("");
   const [boardsData, setBoardsData] = useState(data);
   const [uploadingBoardChanges, setUploadingBoardChanges] = useState(false);
+  const { currentUser } = useUser(); // Получаем текущего пользователя из глобального состояния
 
   useEffect(() => {
     setBoardsData(data);
@@ -101,9 +103,10 @@ const BoardList: React.FC<BoardListProps> = ({
 
   const handleAddClick = async () => {
     try {
-      if (boardsData.find((e) => e.name === form.values.boardName) === undefined) {
+      form.validate();
+      if (form.values.boardName.trim() && boardsData.find((e) => e.name === form.values.boardName) === undefined) {
         setUploadingBoardChanges(true);
-        const boardRequest = { Name: form.values.boardName };
+        const boardRequest = { name: form.values.boardName, ownerId: currentUser?.id };
         setAddNewBoard(false);
         form.reset();
         await createBoard(boardRequest);
@@ -124,43 +127,52 @@ const BoardList: React.FC<BoardListProps> = ({
     setUploadingBoardChanges(false);
   }
 
-  const handleCancelClick = () => {
+  const handleCancelClick = () => { // Скрываем форму добавления доски
     form.reset();
     setAddNewBoard(false);
   };
 
-  const startEditing = (board: BoardType) => {
+  const startEditing = (board: BoardType) => { // Показываем форму редактирования доски
     setEditingBoardId(board.id);
   };
 
-  const cancelEditing = () => {
+  const cancelEditing = () => { // Скрываем форму редактирования доски
     setEditingBoardId('');
     editForm.reset();
   };
 
-  const saveEditing = async () => {
+  const handleSaveEditing = async () => { // Обрабатываем изменения доски
     try {
+      editForm.validate();
+      if (!editForm.values.boardName.trim()) { // Поле имени не пустое
+        return
+      }
       const thisboard = boardsData.find((e) => e.id === editingBoardId)
-      if (thisboard != undefined && thisboard.name === editForm.values.boardName) {
+      if (thisboard != undefined && thisboard.name === editForm.values.boardName) { // Если название доски не поменяли, запрос в бэкенд не делаем
         setEditingBoardId('');
+        editForm.reset();
       }
       else
-        if (boardsData.find((e) => e.name === editForm.values.boardName) === undefined) {
+        if (boardsData.find((e) => e.name === editForm.values.boardName) === undefined) { // Название доски уникальное => делаем запрос
           setUploadingBoardChanges(true);
-          const boardRequest = { Name: editForm.values.boardName };
+          const boardRequest = { name: editForm.values.boardName, ownerId: currentUser?.id };
           await onUpdate(editingBoardId, boardRequest);
           setEditingBoardId('');
+          editForm.reset();
           setUploadingBoardChanges(false);
-        }
-        else {
         }
     } catch (error) {
       console.error("Ошибка при обновлении доски:", error);
     }
     finally {
-      editForm.reset();
     }
   };
+
+  const handleKeyPress = (event: any) => { // Обработчик 
+    if (event.key === 'Enter') {
+      handleAddClick();
+    }
+  }
 
   return (
     <Box p="sm">
@@ -194,7 +206,7 @@ const BoardList: React.FC<BoardListProps> = ({
                       board={board}
                       currentBoardId={currentBoardId}
                       editingBoardId={editingBoardId}
-                      saveEditing={saveEditing}
+                      handleSaveEditing={handleSaveEditing}
                       cancelEditing={cancelEditing}
                       startEditing={startEditing}
                       onDelete={deleteBoard}
@@ -222,33 +234,32 @@ const BoardList: React.FC<BoardListProps> = ({
                 </Box>
               )}
               {addNewBoard && (
-                <form onSubmit={form.onSubmit(handleAddClick)}>
-                  <Group align="start" wrap="nowrap" gap={5} top={0}>
-                    <TextInput
-                      placeholder="Название доски"
-                      {...form.getInputProps('boardName')}
-                      style={{ flex: 1 }}
-                      size="sm"
-                      autoFocus
-                    />
-                    <Group mt={5} gap={5}>
-                      <ActionIcon
-                        color="green"
-                        variant="light"
-                        type="submit"
-                      >
-                        <IconCheck size={16} />
-                      </ActionIcon>
-                      <ActionIcon
-                        color="red"
-                        variant="light"
-                        onClick={handleCancelClick}
-                      >
-                        <IconX size={16} />
-                      </ActionIcon>
-                    </Group>
+                <Group align="start" wrap="nowrap" gap={5} top={0}>
+                  <TextInput
+                    placeholder="Название доски"
+                    {...form.getInputProps('boardName')}
+                    style={{ flex: 1 }}
+                    size="sm"
+                    onKeyDown={handleKeyPress}
+                    autoFocus
+                  />
+                  <Group mt={5} gap={5}>
+                    <ActionIcon
+                      color="green"
+                      variant="light"
+                      onClick={handleAddClick}
+                    >
+                      <IconCheck size={16} />
+                    </ActionIcon>
+                    <ActionIcon
+                      color="red"
+                      variant="light"
+                      onClick={handleCancelClick}
+                    >
+                      <IconX size={16} />
+                    </ActionIcon>
                   </Group>
-                </form>
+                </Group>
               )
               }
             </Group>

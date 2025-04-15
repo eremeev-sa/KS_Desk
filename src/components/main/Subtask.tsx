@@ -24,6 +24,10 @@ const Subtask: React.FC<SubtaskProps> = ({ subtask, onDelete, onUpdate }) => {
     const form = useForm({
         initialValues: {
             subtaskName: '',
+            description: '',
+            priority: 0,
+            endDate: new Date('"2025-04-14T15:54:14.358Z"'),
+            assignedId: null,
         },
         validate: {
             subtaskName: (value: string) => (value.trim() ? null : 'Введите название подзадачи'),
@@ -36,7 +40,18 @@ const Subtask: React.FC<SubtaskProps> = ({ subtask, onDelete, onUpdate }) => {
 
     const handleSaveClick = async () => {
         try {
-            await updateSubtask(subtask.id, { name: form.values.subtaskName });
+            form.validate()
+            if (!form.isValid()) {
+                return;
+            }
+            await updateSubtask(subtask.id,
+                {
+                    name: form.values.subtaskName,
+                    description: form.values.description,
+                    priority: form.values.priority,
+                    endDate: new Date('"2025-04-14T15:54:14.358Z"'),
+                    assignedId: null
+                });
             onUpdate();
             form.reset();
             setIsEditing(false);
@@ -50,64 +65,66 @@ const Subtask: React.FC<SubtaskProps> = ({ subtask, onDelete, onUpdate }) => {
         setIsEditing(false);
     };
 
+    const handleKeyPress = (event: any) => {
+        if (event.key === 'Enter') {
+            handleSaveClick();
+        }
+    }
+
     return (
         <Box py="xs">
             <Flex align="center" gap="sm">
                 {isEditing ? (
                     <>
-                        <form
-                            onSubmit={(e) => {
-                                e.preventDefault(); // защитимся от автоотправки
-                                form.onSubmit(handleSaveClick)(e); // вызовем сохранение через mantine
-                            }}
-                        >
-                            <Group gap={4}>
-                                <TextInput
-                                    placeholder='Название подзадачи'
-                                    {...form.getInputProps('subtaskName')}
-                                    autoFocus
-                                    style={{ flex: 1 }}
-                                />
-                                <ActionIcon
-                                    type='submit'
-                                    color="green"
-                                    variant="filled"
-                                >
-                                    <IconCheck size="1rem" />
-                                </ActionIcon>
-                                <ActionIcon
-                                    color="red"
-                                    variant="filled"
-                                    onClick={handleCancelClick}
-                                >
-                                    <IconX size="1rem" />
-                                </ActionIcon>
-                            </Group>
-                        </form>
+                        <Group gap={4}>
+                            <TextInput
+                                placeholder='Название подзадачи'
+                                {...form.getInputProps('subtaskName')}
+                                autoFocus
+                                style={{ flex: 1 }}
+                                onKeyDown={handleKeyPress}
+                            />
+                            <ActionIcon
+                                onClick={handleSaveClick}
+                                color="green"
+                                variant="filled"
+                            >
+                                <IconCheck size="1rem" />
+                            </ActionIcon>
+                            <ActionIcon
+                                color="red"
+                                variant="filled"
+                                onClick={handleCancelClick}
+                            >
+                                <IconX size="1rem" />
+                            </ActionIcon>
+                        </Group>
                     </>
                 ) : (
                     <>
-                        <Text
-                            onDoubleClick={handleEditClick}
-                            style={{ flex: 1, cursor: 'pointer' }}
-                        >
-                            {subtask.name}
-                        </Text>
-                        <Group gap={4}>
-                            <ActionIcon
-                                onClick={handleEditClick}
-                                variant="subtle"
-                                color="gray"
+                        <Group align="start" wrap="nowrap">
+                            <Text
+                                onDoubleClick={handleEditClick}
+                                style={{ flex: 1, cursor: 'pointer' }}
                             >
-                                <IconEdit size="1rem" />
-                            </ActionIcon>
-                            <ActionIcon
-                                onClick={() => onDelete(subtask.id)}
-                                color="red"
-                                variant="subtle"
-                            >
-                                <IconTrash size="1rem" />
-                            </ActionIcon>
+                                {subtask.name}
+                            </Text>
+                            <Group align="end" left={'auto'} right={20} pos={'absolute'} wrap="nowrap" gap={5}>
+                                <ActionIcon
+                                    onClick={handleEditClick}
+                                    variant="subtle"
+                                    color="gray"
+                                >
+                                    <IconEdit size="1rem" />
+                                </ActionIcon>
+                                <ActionIcon
+                                    onClick={() => onDelete(subtask.id)}
+                                    color="red"
+                                    variant="subtle"
+                                >
+                                    <IconTrash size="1rem" />
+                                </ActionIcon>
+                            </Group>
                         </Group>
                     </>
                 )}

@@ -1,9 +1,15 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
+type User = {
+    id: string;
+    name: string;
+    role: string;
+}
+
 // Типы данных для контекста
 type UserContextType = {
-    currentUser: string;
-    setCurrentUser: (user: string) => void;
+    currentUser: User | null;
+    setCurrentUser: (user: User | null) => void;
 };
 
 // Создаём контекст с начальным значением null
@@ -20,7 +26,7 @@ export const useUser = () => {
 
 // Провайдер для передачи состояния
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-    const [currentUser, setCurrentUser] = useState("");
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
 
     return (
         <UserContext.Provider value={{ currentUser, setCurrentUser }}>

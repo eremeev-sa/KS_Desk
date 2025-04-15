@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Login from './containers/Login'; // Компонент для отображения страницы входа
-import 'bootstrap/dist/css/bootstrap.min.css'; // Подключение стилей Bootstrap для оформления
 import KanbanWindow from './containers/KanbanWindow'; // Основной компонент для отображения интерфейса Канбан-доски
 import { UserProvider } from './context/UserContext'; // Провайдер контекста пользователя для управления состоянием пользователя на уровне приложения
 import { Group, Box } from '@mantine/core';

@@ -3,23 +3,33 @@ import { BASE_URL } from './config';
 export interface TaskRequest {
     name: string;
     description: string;
-    priority: string;
+    priority: number;
+    endDate: Date;
     columnId: string;
+    assignedId: string | null;
 };
 
 export interface TaskUpdateRequest {
     name: string;
     description: string;
-    priority: string;
+    priority: number;
+    endDate: Date;
     assignedId: string | null;
 };
 
-const CURRENT_URL = `${BASE_URL}/TasksKanban`;
+export interface UpdateTaskOrderRequest {
+    order: number;
+};
+
+export interface UpdateTaskColumnRequest {
+    columnId: number;
+};
+const CURRENT_URL = `${BASE_URL}/tasks`;
 
 // Функция для получения списка задач
 export const getTasks = async (columnId: string) => {
     try {
-        const response = await fetch(`${BASE_URL}/ColumnsKanban/${columnId}/tasks`);
+        const response = await fetch(`${BASE_URL}/columns/${columnId}/tasks`);
         if (!response.ok) {
             throw new Error("Не удалось получить данные с бэкенда");
         }
@@ -77,14 +87,14 @@ export const deleteTask = async (id: string) => {
     });
 };
 
-// Функция для обновления задачи
-export const updateTaskColumn = async (id: string, columnId: string) => {
+// Функция для изменения колонки задачи
+export const updateTaskColumn = async (id: string, taskRequest: UpdateTaskColumnRequest) => {
     const response = await fetch(`${CURRENT_URL}/${id}/column`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(columnId),
+        body: JSON.stringify(taskRequest),
     });
 
     if (!response.ok) {
@@ -92,4 +102,16 @@ export const updateTaskColumn = async (id: string, columnId: string) => {
     }
 
     return response.json(); // Возвращаем обновлённые данные
+};
+
+
+// Функция для изменения последовательностей колонок
+export const updateTaskOrder = async (id: string, taskRequest: UpdateTaskOrderRequest) => {
+    await fetch(`${CURRENT_URL}/${id}/order`, {
+        method: "PATCH",
+        headers: {
+            "content-type": "application/json",
+        },
+        body: JSON.stringify(taskRequest),
+    });
 };

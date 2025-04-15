@@ -3,7 +3,7 @@ import Task from './Task';
 import { Droppable } from 'react-beautiful-dnd';
 import { createTask, deleteTask, TaskUpdateRequest } from '../../services/Task';
 import { TaskType, UserType } from '../../models/models';
-import { getUsers } from '../../services/User';
+import { getUsers, UserRequest } from '../../services/User';
 import {
     Box,
     Text,
@@ -18,16 +18,10 @@ import {
 import { IconPlus, IconCheck, IconX } from '@tabler/icons-react';
 import classesKanbanTasks from '../../styles/KanbanTasks.module.css';
 import { useForm } from '@mantine/form';
+import { useUser } from '../../context/UserContext';
 
 type TasksProps = {
-    tasks: {
-        id: string;
-        name: string;
-        description: string;
-        priority: string;
-        columnId: string;
-        assignedId: string;
-    }[];
+    tasks: TaskType[];
     columnId: string;
 
     handleTaskUpdate: (id: string, taskRequest: TaskUpdateRequest) => void;
@@ -39,6 +33,8 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
     const [tempTaskName, setTempTaskName] = useState(''); // Временное название задачи
     const [localTasks, setLocalTasks] = useState<TaskType[]>(tasks); // Локальное состояние задач
     const [usersData, setUsersData] = useState<UserType[]>([]); // Данные о пользователях для назначений задач
+    const { currentUser } = useUser(); // Получаем текущего пользователя из глобального состояния
+    const [user] = useState(currentUser); // Устанавливаем имя пользователя
 
     const form = useForm({
         initialValues: {
@@ -46,7 +42,7 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
         },
         validate: {
             taskName: (value: string) => (
-                value.trim()? null : 'Введите название задачи!'
+                value.trim() ? null : 'Введите название задачи!'
             )
         }
     });
@@ -59,29 +55,30 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
     // Получение данных пользователей из API
     useEffect(() => {
         const fetchColumns = async () => {
-            const users = await getUsers();
+            const users: UserRequest[] = [
+                    {id: 'd848d900-a1db-4b86-a79d-c81ed6581e23', name: 'Alex', login: 'Merser', password: '12345', role: 'user'}, 
+                    {id: 'e726830a-3814-4762-b44a-adf033018baa', name: 'Ivan', login: 'Ivanov', password: '12345', role: 'user'},
+                    {id: '5a9ae92c-c463-4f97-a4eb-e35c5249db81', name: 'Иванов Иван Иванович', login: 'string', password: 'string', role: 'user'},
+                  ] // await getUsers();
             setUsersData(users);
         }
         fetchColumns();
     }, []);
 
-    type PriorityLevel = 'Высокий' | 'Средний' | 'Низкий' | ''
-
-    const priorityOrder: Record<PriorityLevel, number> = {
-        'Высокий': 3,
-        'Средний': 2,
-        'Низкий': 1,
-        '': 0
-    };
-
     // Добавление новой задачи
     const handleAddClick = async () => {
         try {
-            const newTask = {
+            form.validate()
+            if (!form.isValid()) {
+                return;
+            }
+            const newTask = {   
                 name: form.values.taskName,
                 description: "",
-                priority: "",
+                priority: 0,
+                endDate: new Date("2025-04-14T09:54:19.742Z"),
                 columnId: columnId,
+                assignedId: null,
             };
             form.reset(); // Очищаем поле ввода
             setAddNewTask(false); // Скрываем форму добавления
@@ -108,8 +105,14 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
         setAddNewTask(false); // Скрываем форму добавления
     };
 
+    const handleKeyPress = (event: any) => {
+        if (event.key === 'Enter') {
+            handleAddClick();
+        }
+    }
+
     return (
-        <ScrollArea.Autosize style={{overflowX: 'hidden'}} mah={"90vh"}>
+        <ScrollArea.Autosize style={{ overflowX: 'hidden' }} mah={"90vh"}>
             <Box p="xs">
                 {/* Область для перетаскивания задач */}
                 <Droppable
@@ -130,7 +133,7 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                                     Задач нет
                                 </Text>
                             ) : (
-                                localTasks.sort((a, b) => priorityOrder[b.priority as PriorityLevel] - priorityOrder[a.priority as PriorityLevel]).map((task, index) => (
+                                localTasks.sort((a, b) => a.order - b.order).map((task, index) => (
                                     <Task
                                         key={task.id}
                                         {...task}
@@ -151,34 +154,33 @@ const Tasks: React.FC<TasksProps> = ({ tasks, columnId, handleTaskUpdate, handle
                 {/* Форма добавления новой задачи */}
                 {addNewTask ? (
                     <Box mt="sm">
-                        <form onSubmit={form.onSubmit(handleAddClick)}>
-                            <TextInput
-                                placeholder="Название задачи"
-                                {...form.getInputProps('taskName')}
-                                mb="xs"
-                                autoFocus
-                            />
-                            <Group>
-                                <Button
-                                    type='submit'
-                                    variant="light"
-                                    color="green"
-                                    size="sm"
-                                    leftSection={<IconCheck size={16} />}
-                                >
-                                    Добавить
-                                </Button>
-                                <Button
-                                    variant="light"
-                                    color="red"
-                                    size="sm"
-                                    leftSection={<IconX size={16} />}
-                                    onClick={handleCancelClick}
-                                >
-                                    Отмена
-                                </Button>
-                            </Group>
-                        </form>
+                        <TextInput
+                            placeholder="Название задачи"
+                            {...form.getInputProps('taskName')}
+                            mb="xs"
+                            onKeyDown={handleKeyPress}
+                            autoFocus
+                        />
+                        <Group>
+                            <Button
+                                onClick={handleAddClick}
+                                variant="light"
+                                color="green"
+                                size="sm"
+                                leftSection={<IconCheck size={16} />}
+                            >
+                                Добавить
+                            </Button>
+                            <Button
+                                variant="light"
+                                color="red"
+                                size="sm"
+                                leftSection={<IconX size={16} />}
+                                onClick={handleCancelClick}
+                            >
+                                Отмена
+                            </Button>
+                        </Group>
                     </Box>
                 ) : (
                     <Button

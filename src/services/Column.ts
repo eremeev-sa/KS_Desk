@@ -10,15 +10,15 @@ export interface CreateColumnRequest {
 };
 
 export interface UpdateColumnOrderRequest {
-    orderedColumnIds: string[]
+    order: number;
 };
 
-const CURRENT_URL = `${BASE_URL}/ColumnsKanban`;
+const CURRENT_URL = `${BASE_URL}/columns`;
 
 // Функция для получения списка колонок
 export const getColumns = async (boardid: string) => {
     try {
-        const response = await fetch(`${BASE_URL}/BoardsKanban/${boardid}/columns`);
+        const response = await fetch(`${BASE_URL}/boards/${boardid}`);
         if (!response.ok) {
             throw new Error("Не удалось получить данные с бэкенда");
         }
@@ -43,8 +43,8 @@ export const createColumn = async (columnRequest: CreateColumnRequest) => {
 
 // Функция для изменения колонки
 export const updateColumn = async (id: string, columnRequest: ColumnRequest) => {
-    await fetch(`${CURRENT_URL}/${id}`, {
-        method: "PUT",
+    await fetch(`${CURRENT_URL}/${id}/name`, {
+        method: "PATCH",
         headers: {
             "content-type": "application/json",
         },
@@ -53,9 +53,9 @@ export const updateColumn = async (id: string, columnRequest: ColumnRequest) => 
 };
 
 // Функция для изменения последовательностей колонок
-export const updateColumnOrder = async (columnRequest: UpdateColumnOrderRequest) => {
-    await fetch(`${CURRENT_URL}/order`, {
-        method: "PUT",
+export const updateColumnOrder = async (id: string, columnRequest: UpdateColumnOrderRequest) => {
+    await fetch(`${CURRENT_URL}/${id}/order`, {
+        method: "PATCH",
         headers: {
             "content-type": "application/json",
         },

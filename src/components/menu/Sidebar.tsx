@@ -10,16 +10,17 @@ import cx from 'clsx';
 import { ActionIcon, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import classes from '../../styles/ActionToggle.module.css'
 import classesSidebar from '../../styles/Sidebar.module.css';
+import { BoardType } from "../../models/models";
 
 type SidebarProps = {
-  userName: string; // Имя текущего пользователя
+  userName: string | undefined; // Имя текущего пользователя
   onLogout: () => void; // Функция для выхода из системы
   onBoardClick: (id: string) => void; // Обработчик клика на доску
   currentBoardId: string; // ID текущей выбранной доски
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ userName, onLogout, onBoardClick, currentBoardId }) => {
-  const [data, setData] = useState<{ id: string; name: string }[]>([]); // Список досок
+  const [data, setData] = useState<BoardType[]>([]); // Список досок
   const [dataGettingLoading, setDataGettingLoading] = useState(true); // Состояние загрузки
   const { setColorScheme, colorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });

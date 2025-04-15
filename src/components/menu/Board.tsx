@@ -9,7 +9,7 @@ type BoardProps = {
     board: BoardType;
     currentBoardId: string;
     editingBoardId: string | null;
-    saveEditing: () => void;
+    handleSaveEditing: () => void;
     cancelEditing: () => void;
     startEditing: (board: BoardType) => void;
     onDelete: (id: string) => void;
@@ -18,13 +18,19 @@ type BoardProps = {
     form: UseFormReturnType<{ boardName: string }, (values: { boardName: string }) => { boardName: string }>;
 };
 
-const Board: React.FC<BoardProps> = ({ board, currentBoardId, editingBoardId, saveEditing, cancelEditing, onDelete, onUpdate, onBoardClick, startEditing, form }) => {
+const Board: React.FC<BoardProps> = ({ board, currentBoardId, editingBoardId, handleSaveEditing, cancelEditing, onDelete, onUpdate, onBoardClick, startEditing, form }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [tempName, setTempName] = useState(board.name);
 
     useEffect(() => {
         // console.log("Полученные имена в BoardList:", tempName);
     }, [tempName]);
+
+    const handleKeyPress = (event: any) => {
+        if (event.key === 'Enter') {
+            handleSaveEditing();
+        }
+    }
 
     return (
         <List.Item
@@ -43,33 +49,32 @@ const Board: React.FC<BoardProps> = ({ board, currentBoardId, editingBoardId, sa
         >
             {editingBoardId === board.id ? (
                 <Group gap="xs" align="flex-end">
-                    <form onSubmit={form.onSubmit(saveEditing)}>
-                        <Group align="start" wrap="nowrap" gap={5}>
-                                <TextInput
-                                    placeholder="Название доски"
-                                    {...form.getInputProps('boardName')}
-                                    style={{ flex: 1 }}
-                                    size="sm"
-                                    autoFocus
-                                />
-                                <Group mt={5} gap={5}>
-                                    <ActionIcon
-                                        type="submit"
-                                        color="green"
-                                        variant="light"
-                                    >
-                                        <IconCheck size={16} />
-                                    </ActionIcon>
-                                    <ActionIcon
-                                        color="red"
-                                        variant="light"
-                                        onClick={() => cancelEditing()}
-                                    >
-                                        <IconX size={16} />
-                                    </ActionIcon>
-                                </Group>
+                    <Group align="start" wrap="nowrap" gap={5}>
+                        <TextInput
+                            placeholder="Название доски"
+                            {...form.getInputProps('boardName')}
+                            style={{ flex: 1 }}
+                            size="sm"
+                            autoFocus
+                            onKeyDown={handleKeyPress}
+                        />
+                        <Group mt={5} gap={5}>
+                            <ActionIcon
+                                onClick={handleSaveEditing}
+                                color="green"
+                                variant="light"
+                            >
+                                <IconCheck size={16} />
+                            </ActionIcon>
+                            <ActionIcon
+                                color="red"
+                                variant="light"
+                                onClick={() => cancelEditing()}
+                            >
+                                <IconX size={16} />
+                            </ActionIcon>
                         </Group>
-                    </form>
+                    </Group>
                 </Group>
             ) : (
                 <Group justify="space-between" wrap="nowrap" style={{ width: '100%' }}>

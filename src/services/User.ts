@@ -1,12 +1,14 @@
 import { BASE_URL } from './config';
 
 export interface UserRequest {
+    id: string;
     name: string;
     login: string;
     password: string;
+    role: string;
 };
 
-const CURRENT_URL = `${BASE_URL}/UsersKanban`;
+const CURRENT_URL = `${BASE_URL}/Users`;
 
 // Функция для получения списка пользователей
 export const getUsers = async () => {

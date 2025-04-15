@@ -2,14 +2,27 @@ import { BASE_URL } from './config';
 
 export interface SubtaskRequest {
     name: string;
+    description: string;
+    priority: number;
+    endDate: Date;
+    assignedId: string | null;
+    taskId: string;
 };
 
-const CURRENT_URL = `${BASE_URL}/SubtasksKanban`;
+export interface SubtaskUpdateRequest {
+    name: string;
+    description: string;
+    priority: number;
+    endDate: Date;
+    assignedId: string | null;
+};
+
+const CURRENT_URL = `${BASE_URL}/subtasks`;
 
 // Функция для получения списка подзадач
 export const getSubtasks = async (taskId: string) => {
     try {
-        const response = await fetch(`${BASE_URL}/TasksKanban/${taskId}/subtasks`);
+        const response = await fetch(`${BASE_URL}/tasks/${taskId}/subtasks`);
         if (!response.ok) {
             throw new Error("Не удалось получить данные с бэкенда");
         }
@@ -33,7 +46,7 @@ export const createSubtask = async (subtaskRequest: SubtaskRequest) => {
 };
 
 // Функция для изменения подзадачи
-export const updateSubtask = async (id: string, subtaskRequest: SubtaskRequest) => {
+export const updateSubtask = async (id: string, subtaskRequest: SubtaskUpdateRequest) => {
     await fetch(`${CURRENT_URL}/${id}`, {
         method: "PUT",
         headers: {

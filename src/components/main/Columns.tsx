@@ -33,17 +33,17 @@ const Container = styled.div`
 
 const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
     const [tasks, setTasks] = useState<TaskType[]>([]); // Состояние задач
-    const [data, setData] = useState<{ id: string; name: string }[]>([]); // Состояние колонок
+    const [data, setData] = useState<ColumnType[]>([]); // Состояние колонок
     const [loading, setLoading] = useState(true); // Состояние загрузки
     const [tasksLoading, setTasksLoading] = useState(true); // Состояние загрузки
     const [addNewColumn, setAddNewColumn] = useState(false); // Флаг добавления новой колонки
 
-    function columnNameValidate (id: string, name: string){
+    function columnNameValidate(id: string, name: string) {
         const otherColumns: ColumnType[] = data.filter((e) => e.id != id);
-        if(otherColumns.find((e) => e.name === name) === undefined) 
+        if (otherColumns.find((e) => e.name === name) === undefined)
             return true;
         else
-        return false;
+            return false;
     }
 
     const form = useForm({
@@ -59,7 +59,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                     : "Введите название колонки"),
         }
     });
-    
+
     // Загрузка колонок при изменении текущей доски
     useEffect(() => {
         const fetchColumns = async () => {
@@ -67,7 +67,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                 try {
                     setLoading(true);
                     const columns = await getColumns(currentBoardId);
-                    setData(columns);
+                    setData(columns.sort((n1: ColumnType, n2: ColumnType) => n1.order - n2.order));
                 } catch (error) {
                     console.error("Ошибка при загрузке колонок:", error);
                 } finally {
@@ -104,6 +104,10 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
     // Добавление новой колонки
     const handleAddClick = async () => {
         try {
+            form.validate()
+            if (!form.isValid()) {
+                return;
+            }
             const columnRequest = { name: form.values.columnName, boardId: currentBoardId };
             setAddNewColumn(false);
             // Очищаем поле ввода
@@ -170,7 +174,12 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
     const handleOnDragEnd = async (result: any) => {
         const { source, destination, type } = result;
         // Если задача не была перемещена (находится в том же месте)
-        if (!destination) return;
+        if (
+            destination.droppableId === source.droppableId &&
+            destination.index === source.index
+        ) {
+            return;
+        }
 
 
         // Получение ID колонки, в которую была перемещена задача
@@ -180,14 +189,24 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
         if (type === "COLUMN") {
             // Получение новый порядок колонок
             const reorderedColumns = Array.from(data);
-            const [movedColumn] = reorderedColumns.splice(source.index, 1);
+            const [movedColumn]: ColumnType[] = reorderedColumns.splice(source.index, 1);
             reorderedColumns.splice(destination.index, 0, movedColumn);
+
+            const sourceColumn: ColumnType = data[source.index]
+
+            const destinationColumn: ColumnType = data[destination.index]
+
+
+            console.log("Source: ", sourceColumn);
+            console.log("Destination: ", destinationColumn);
+
+
 
             // Отправление нового поряка на сервер
             const orderedColumnIds = reorderedColumns.map((column) => column.id);
             try {
                 setData(reorderedColumns); // Обновление локальных данных
-                await updateColumnOrder({ orderedColumnIds });
+                await updateColumnOrder(sourceColumn.id, { order: destinationColumn.order });
             } catch (error) {
                 console.error('Ошибка при обновлении порядка колонок:', error);
             }
@@ -216,7 +235,7 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
             setTasks(changedTasks);
             console.log(tasks);
             try {
-                await updateTaskColumn(taskId, targetColumnId);
+                await updateTaskColumn(taskId, { columnId: targetColumnId });
                 handleTaskLocalUpdate();
             } catch (error) {
                 console.error("Ошибка при обновлении порядка задач:", error);
@@ -226,6 +245,11 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
         }
     };
 
+    const handleKeyPress = (event: any) => {
+        if (event.key === 'Enter') {
+            handleAddClick();
+        }
+    }
 
     return (
         <ScrollArea w={'100vw'}
@@ -306,34 +330,33 @@ const Columns: React.FC<ColumnsProps> = ({ currentBoardId }) => {
                                     zIndex: 10
                                 }}
                             >
-                                <form onSubmit={form.onSubmit(handleAddClick)}>
-                                    <TextInput
-                                        placeholder="Название колонки"
-                                        {...form.getInputProps('columnName')}
-                                        mb="sm"
-                                        autoFocus
-                                    />
-                                    <Group>
-                                        <Button
-                                            type='submit'
-                                            variant="light"
-                                            color="green"
-                                            size="sm"
-                                            leftSection={<IconCheck size={16} />}
-                                        >
-                                            Добавить
-                                        </Button>
-                                        <Button
-                                            variant="light"
-                                            color="red"
-                                            size="sm"
-                                            leftSection={<IconX size={16} />}
-                                            onClick={handleCancelClick}
-                                        >
-                                            Отмена
-                                        </Button>
-                                    </Group>
-                                </form>
+                                <TextInput
+                                    placeholder="Название колонки"
+                                    {...form.getInputProps('columnName')}
+                                    mb="sm"
+                                    onKeyDown={handleKeyPress}
+                                    autoFocus
+                                />
+                                <Group>
+                                    <Button
+                                        onClick={handleAddClick}
+                                        variant="light"
+                                        color="green"
+                                        size="sm"
+                                        leftSection={<IconCheck size={16} />}
+                                    >
+                                        Добавить
+                                    </Button>
+                                    <Button
+                                        variant="light"
+                                        color="red"
+                                        size="sm"
+                                        leftSection={<IconX size={16} />}
+                                        onClick={handleCancelClick}
+                                    >
+                                        Отмена
+                                    </Button>
+                                </Group>
                             </Box>
                         )}
                     </>

@@ -18,19 +18,12 @@ import {
 } from '@mantine/core';
 import { IconGripVertical, IconTrash, IconCheck, IconX } from '@tabler/icons-react';
 import { useForm, UseFormReturnType } from '@mantine/form';
-import { ColumnType } from '../../models/models';
+import { ColumnType, TaskType } from '../../models/models';
 
 type ColumnProps = {
     column: ColumnType;
     index: number; // Порядковый номер колонки
-    tasks: { // Список задач
-        id: string;
-        name: string;
-        description: string;
-        priority: string;
-        columnId: string;
-        assignedId: string;
-    }[];
+    tasks: TaskType[];
     tasksLoading: Boolean;
 
     handleTaskUpdate: (id: string, taskRequest: TaskUpdateRequest) => void; // Обновление задачи
@@ -68,6 +61,10 @@ const Column: React.FC<ColumnProps> = ({ column, index, onDelete, onUpdate, task
 
     // Сохранение изменений названия колонки
     const handleSaveClick = () => {
+        form.validate()
+        if (!form.isValid()) {
+            return;
+        }
         if (column.name != form.values.columnName) {
             const columnRequest = { id: column.id, name: form.values.columnName };
             onUpdate(column.id, columnRequest);
@@ -80,6 +77,12 @@ const Column: React.FC<ColumnProps> = ({ column, index, onDelete, onUpdate, task
         form.reset();
         setIsEditing(false); // Выход из режима редактирования
     };
+
+    const handleKeyPress = (event: any) => {
+        if (event.key === 'Enter') {
+            handleSaveClick();
+        }
+    }
 
     return (
         <Draggable draggableId={column.id} index={index} key={column.id}>
@@ -107,34 +110,33 @@ const Column: React.FC<ColumnProps> = ({ column, index, onDelete, onUpdate, task
                         <Card.Section p="xs" withBorder>
                             {isEditing ? (
                                 <Group>
-                                    <form onSubmit={form.onSubmit(handleSaveClick)}>
-                                        <Group align="start" wrap="nowrap" gap={5} miw={"100%"}>
-                                            <TextInput
-                                                placeholder='Название колонки'
-                                                {...form.getInputProps('columnName')}
-                                                style={{ flex: 1 }}
-                                                size="sm"
-                                                w={250}
-                                                autoFocus
-                                            />
-                                            <Group mt={5} wrap="nowrap" gap={5}>
-                                                <ActionIcon
-                                                    type='submit'
-                                                    color="green"
-                                                    variant="light"
-                                                >
-                                                    <IconCheck size={16} />
-                                                </ActionIcon>
-                                                <ActionIcon
-                                                    color="red"
-                                                    variant="light"
-                                                    onClick={handleCancelClick}
-                                                >
-                                                    <IconX size={16} />
-                                                </ActionIcon>
-                                            </Group>
+                                    <Group align="start" wrap="nowrap" gap={5} miw={"100%"}>
+                                        <TextInput
+                                            placeholder='Название колонки'
+                                            {...form.getInputProps('columnName')}
+                                            style={{ flex: 1 }}
+                                            size="sm"
+                                            w={250}
+                                            onKeyDown={handleKeyPress}
+                                            autoFocus
+                                        />
+                                        <Group mt={5} wrap="nowrap" gap={5}>
+                                            <ActionIcon
+                                                onClick={handleSaveClick}
+                                                color="green"
+                                                variant="light"
+                                            >
+                                                <IconCheck size={16} />
+                                            </ActionIcon>
+                                            <ActionIcon
+                                                color="red"
+                                                variant="light"
+                                                onClick={handleCancelClick}
+                                            >
+                                                <IconX size={16} />
+                                            </ActionIcon>
                                         </Group>
-                                    </form>
+                                    </Group>
                                 </Group>
                             ) : (
                                 <Group justify="space-between">

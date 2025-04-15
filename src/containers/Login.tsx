@@ -35,7 +35,11 @@ const Login: React.FC<LoginProps> = ({ onLogin, ...props }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       setLoadingStatus(true);
-      const users = await getUsers();
+      const users: UserRequest[] = [
+        {id: 'd848d900-a1db-4b86-a79d-c81ed6581e23', name: 'Alex', login: 'Merser', password: '12345', role: 'user'}, 
+        {id: 'e726830a-3814-4762-b44a-adf033018baa', name: 'Ivan', login: 'Ivanov', password: '12345', role: 'user'},
+        {id: '5a9ae92c-c463-4f97-a4eb-e35c5249db81', name: 'Иванов Иван Иванович', login: 'string', password: 'string', role: 'user'},
+      ] // await getUsers();
       setUsersData(users);
       setLoadingStatus(false);
     };
@@ -48,7 +52,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, ...props }) => {
     );
 
     if (user) {
-      setCurrentUser(user.name);
+      setCurrentUser(user);
       onLogin();
     } else {
       alert('Неверный логин или пароль ' + user);

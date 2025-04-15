@@ -1,10 +1,15 @@
 import { BASE_URL } from './config';
 
 export interface BoardRequest {
-    Name: string;
+    name: string;
+    ownerId: string | undefined;
 };
 
-const CURRENT_URL = `${BASE_URL}/BoardsKanban`;
+export interface UpdateBoardRequest {
+    name: string;
+};
+
+const CURRENT_URL = `${BASE_URL}/Boards`;
 
 // Функция для получения списка досок
 export const getBoards = async () => {
@@ -33,7 +38,7 @@ export const createBoard = async (boardRequest: BoardRequest) => {
 };
 
 // Функция для изменения доски
-export const updateBoard = async (id: string, boardRequest: BoardRequest) => {
+export const updateBoard = async (id: string, boardRequest: UpdateBoardRequest) => {
     await fetch(`${CURRENT_URL}/${id}`, {
         method: "PUT",
         headers: {
